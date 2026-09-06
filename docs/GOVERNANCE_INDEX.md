@@ -104,6 +104,8 @@ Live for plan duration; archived at substantiate. Drift signal: plan shipped but
 | Sprint 3b research brief | `docs/research-brief-sprint3b-visibility-test-discover-2026-09-06.md` | sprint3b-visibility-test-discover |
 | Sprint 3c plan | `docs/plan-sprint3c-dashclaw-park-and-report.md` | sprint3c-dashclaw-park-and-report |
 | Sprint 3c research brief | `docs/research-brief-sprint3c-dashclaw-park-and-report-2026-09-06.md` | sprint3c-dashclaw-park-and-report |
+| Sprint 3d plan | `docs/plan-sprint3d-packaging-remainder.md` | sprint3d-packaging-remainder |
+| Sprint 3d research brief | `docs/research-brief-sprint3d-packaging-remainder-2026-09-06.md` | sprint3d-packaging-remainder |
 
 ## Tier 5 — Reference Material
 

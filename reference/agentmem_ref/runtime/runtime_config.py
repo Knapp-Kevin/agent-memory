@@ -14,7 +14,6 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import hashlib
-from importlib import metadata
 import json
 from pathlib import Path
 from typing import Iterable, Mapping
@@ -32,12 +31,10 @@ from ..contracts.capabilities import (
     maturity_satisfies,
 )
 from ..contracts.qualification import QualificationRecord
-from .._paths import REPO_ROOT
+from ..core.receipts import schema_dir
 
 
 RUNTIME_CONFIGURATION_SCHEMA_VERSION = "1.0.0"
-_DISTRIBUTION_NAME = "agent-memory-reference"
-_RUNTIME_SCHEMA_DATA_SUFFIX = "agent_memory_reference/schemas/runtime-configuration.schema.json"
 _ALLOWED_SECRET_SCHEMES = ("env://", "secret://", "vault://", "keyring://")
 _LITERAL_SECRET_KEYS = frozenset(
     {
@@ -219,32 +216,15 @@ class RuntimeConfigurationPlan:
         }
 
 
-def _repo_root() -> Path:
-    return REPO_ROOT
-
-
 def _configuration_schema_path() -> Path:
-    """Locate the canonical runtime schema in source or an installed wheel."""
-
-    source_path = _repo_root() / "schemas" / "runtime-configuration.schema.json"
-    if source_path.is_file():
-        return source_path
-
+    """The canonical runtime schema: source tree when present, packaged copy when installed."""
     try:
-        distribution_files = metadata.files(_DISTRIBUTION_NAME) or ()
-    except metadata.PackageNotFoundError:
-        distribution_files = ()
-
-    for entry in distribution_files:
-        normalized = str(entry).replace("\\", "/")
-        if normalized.endswith(_RUNTIME_SCHEMA_DATA_SUFFIX):
-            installed_path = Path(entry.locate())
-            if installed_path.is_file():
-                return installed_path
-
-    raise RuntimeConfigurationError(
-        "runtime configuration schema is unavailable; install the distribution with its packaged schema data"
-    )
+        path = schema_dir() / "runtime-configuration.schema.json"
+    except FileNotFoundError:
+        path = None
+    if path is None or not path.is_file():
+        raise RuntimeConfigurationError("runtime configuration schema is unavailable; install the distribution with its packaged schema data")
+    return path
 
 
 def _configuration_schema() -> dict:

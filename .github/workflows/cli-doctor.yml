@@ -152,6 +152,29 @@ jobs:
           print("validate returned without error; empty receipt should not validate")
           sys.exit(1)
           PY
+      - name: Installed runtime modules resolve their schemas
+        working-directory: /tmp
+        run: |
+          /tmp/wheel-venv/bin/python - <<'PY'
+          import sys
+          from agentmem_ref import discovery, runtime_config
+
+          expected = {
+              "runtime_config": (runtime_config._configuration_schema, "runtime-configuration.schema.json"),
+              "discovery": (discovery._probe_schema, "provider-probes.schema.json"),
+          }
+          for name, (loader, schema_name) in expected.items():
+              try:
+                  schema = loader()
+              except Exception as exc:
+                  print(f"{name}: schema NOT resolved from wheel: {type(exc).__name__}: {exc}")
+                  sys.exit(1)
+              if not isinstance(schema, dict) or not str(schema.get("$id", "")).endswith(schema_name):
+                  print(f"{name}: unexpected schema payload")
+                  sys.exit(1)
+              print(f"{name}: resolved from wheel: {schema['$id']}")
+          sys.exit(0)
+          PY
       - name: Installed evidence modules import
         working-directory: /tmp
         run: /tmp/wheel-venv/bin/python -c "import agentmem_ref.portable_evidence"

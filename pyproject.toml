@@ -34,8 +34,3 @@ include = ["agentmem_ref*"]
 [tool.setuptools.package-data]
 agentmem_ref = ["_schemas/*.json"]
 
-[tool.setuptools.data-files]
-"agent_memory_reference/schemas" = [
-  "schemas/runtime-configuration.schema.json",
-  "schemas/provider-probes.schema.json",
-]
