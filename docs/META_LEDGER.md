@@ -1990,3 +1990,21 @@ committed; no push, PR, tag or merge.
 **Decision**: Entry #32 sealed tree `9c6078db4ec4...` after the workflow's YAML parsed and its invariant block passed locally. CI on PR #391 then failed the `provider-proof` job at the step before the runner: the unittest invocation in `.github/workflows/dashclaw-external-verdict.yml` carried a literal backslash-n where a line continuation belonged (the patch that added the new test to the list wrote the two characters `\n` instead of a backslash and a newline), so the last two test paths collapsed into one argument and unittest reported `No module named 'n'`. YAML parsing could not catch it -- the sequence is legal inside a block scalar -- and the local checks exercised the invariant block, not the unittest step. The correction is the one line, verified by running the workflow's exact multi-line invocation locally with `PYTHONPATH=reference`. The sealed tree is superseded by the corrected staged tree `4e130601595d1e37037a9bb906b619122da8fa14` (SHA256 `527d47bc6682f5fccec67a8274e6389f1ad15c91ce09fc61c87f2ba0fe819999`); `refs/seals/entry-32` continues to point at the tree that was sealed; this entry is not a SESSION SEAL and is not anchored. Chain integrity is unaffected: chain hashes commit to recorded hex.
 
 **Lesson, recorded.** A workflow step changed by this cycle must be executed as the workflow executes it, not merely parsed and not only its sibling steps. Sprint 3b's guard for relative imports came from the same shape of gap: a check that passed one style of invocation and not the one CI used.
+---
+
+### Entry #34: AMENDMENT
+
+**Timestamp**: 2026-09-06T15:55:00-04:00
+**Phase**: IMPLEMENT
+**Author**: Specialist
+**Risk Grade**: L2
+**Session**: 2026-09-06T1300-d8e4a1
+
+**Artifact**: `.github/workflows/dashclaw-external-verdict.yml`
+**Content Hash**: `1c113cefd92b93851f0ec571c9c0cad0fe7d66ca2e1f6b1556a8f76ab5a1779c`
+**Previous Hash**: `2cc471a65e507a995bb367e1a950fcfd3156385cc4f3034393666b935e7199ea`
+**Chain Hash**: `92668fd5636e0f9443c3dcafafb119fa3ee77dd7066d805f20b20a985fe0a167`
+
+**Decision**: Entry #33 is wrong and this entry says so. It recorded a "corrected staged tree" `4e130601595d...` and a commit (`c49f6a3`) whose message claims the line continuation was restored. It was not: the patch's match string did not find the broken line, the assertion that should have stopped the script was inside a step whose failure did not halt the rest of the command, the exact-invocation check that followed was typed by hand rather than read from the workflow, and the entry and commit were produced from the unfixed tree. The one honest signal in that run -- executing the step body extracted from the YAML, which still failed -- was printed and not acted on before the commit. This entry records the actual correction: the literal backslash-n is now a backslash and a newline, verified by extracting the step body from the workflow file and executing it under `PYTHONPATH=reference` (30 tests OK). Superseded: #33's tree `4e130601595d1e37037a9bb906b619122da8fa14`; corrected staged tree `8404032172d37a4505f7a10976a1499de60cfff9` (SHA256 `6e9de9730a67e61066ce86e09c3eb2309674ee6decd0a5f8031c2f0f535d87c1`). `refs/seals/entry-32` still points at the sealed tree. Chain integrity is unaffected: chain hashes commit to recorded hex; the content hash above is of the workflow file as it now stands.
+
+**Lesson, recorded twice in one hour.** A correction is verified by executing the corrected artifact, never by executing a hand-typed copy of what the artifact is meant to contain; and a script that asserts must be allowed to stop the pipeline when it fails.
