@@ -7,8 +7,8 @@ Single canonical cross-reference of every user-touchable feature in Agent Memory
 
 ## Coverage Summary
 
-- Total entries: **20**
-- **Verified**: 20
+- Total entries: **21**
+- **Verified**: 21
 - **Unverified**: 0
 - **N/A (operator-justified)**: 0
 
@@ -38,6 +38,7 @@ Single canonical cross-reference of every user-touchable feature in Agent Memory
 | FX018 | A refused governed operation parks with a traversable remediation path rather than failing | `decision_overwrite.py` (durable), `forbidden_hits.py`, `visibility_characterization.py`, `benchmark_security.py` | `docs/adr/ADR-037-...md` R6 | `reference/tests/test_fail_closed_review.py` | verified | api | `decision_overwrite` parks durably -- the record outlives the call and `criteria_for` reports on it -- and records `enter_pending_verification` as its selected action, since `NO_ACTION` is illegal when actions were permitted. Status is `PENDING`, not `REJECTED`: a parked proposal awaits evidence rather than being refused |
 | FX019 | Every ledger SESSION SEAL's Merkle tree is anchored under `refs/seals/entry-<N>` -- reachable, pushed, gc-safe, verifiable from the remote | `scripts/anchor_seal.py`, `scripts/verify_seals.py`, `.github/workflows/seal-anchors.yml` | `docs/CONFIGURATION.md` (Seal anchors); `docs/plan-sprint2n-seal-anchors.md` LD1-LD6 | `reference/tests/test_seal_anchors.py` | verified | cli | Loop 15 repair, outstanding since Loop 8. 15 seals (#8, #11-#24) anchored as parentless commits; 12 tests. The anchor verifies before creating and **never overwrites** a ref pointing elsewhere. The verifier iterates SESSION SEAL entries -- a seal with an unparseable Merkle line **fails**, never drops out -- and **fails on an empty namespace** rather than passing vacuously; strays are reported. CI fetches `refs/seals/*` explicitly. New seals are anchored at substantiate |
 | FX020 | No test module under `reference/tests/` uses a package-relative import, so a test loads under every CI discover style (`discover -t reference`, `reference.tests.X`, and `discover` without `-t`) | `reference/tests/test_test_import_convention.py` (`relative_imports`) | `docs/plan-sprint3b-visibility-test-discover.md` LD3, LD5, audit C1; `docs/research-brief-sprint3b-visibility-test-discover-2026-09-06.md` | `reference/tests/test_test_import_convention.py` | verified | test-infrastructure | `relative_imports(path)` returns the relative `ImportFrom` statements of a module (proven on synthetic modules); every `reference/tests/test_*.py` yields none. Fails when the visibility test's line 20 is reverted to the relative form |
+| FX021 | An exactly-approved medium DashClaw correction parks under ADR-037 4b-2 with `require_review` / `review_requires_qualified_evidence`, the seam forwards no evidence, and the CI runner records and asserts the park instead of a commit | `reference/run_dashclaw_external_verdict.py` (correction and stale-replay blocks); `.github/workflows/dashclaw-external-verdict.yml` (invariants); `reference/agentmem_ref/dashclaw_external_verdict.py` `commit_bound_mutation` (unchanged, legacy route) | `docs/plan-sprint3c-dashclaw-park-and-report.md` LD1-LD5, audit C1; `docs/research-brief-sprint3c-dashclaw-park-and-report-2026-09-06.md`; `docs/programs/runtime-evidence/dashclaw-external-verdict.md` | `reference/tests/test_dashclaw_correction_parks.py` | verified | governance | `commit_proposal` receives no evidence from the seam and the correction parks (`committed=False`, `refusal=None`, decision `require_review`); forwarding the producer's two `artifact_bound` digests commits at medium with `discharge_authority == delegated_policy`, which is why the seam must not. Runner exit 1 on the pre-fix state, exit 0 after |
 
 ---
 

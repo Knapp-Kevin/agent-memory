@@ -236,6 +236,75 @@ LD7 was restated with "the console command never imports `receipts`" after readi
 
 ---
 
+### Failure #7: A conversion was recorded as complete at the producer while the seam CI exercises stayed on the legacy route
+
+**Date**: 2026-09-06
+**Iteration**: research (Loop 18, Sprint 3c)
+**Verdict ID**: PR #386 CI job 101516307796 (`provider-proof`: `assert report["correction"]["committed"] is True` -> AssertionError)
+**Category**: SPEC_DRIFT
+
+#### What Was Attempted
+
+Sprint 2l (4b-1) gave `dashclaw_external_verdict` an `evidence_for` producer, tested at high risk to discharge under `evaluate_with_qualified_evidence` with a verified binding and an attestation. Sprint 2m (4b-2, Entry #24) then listed the module among the three that "present real evidence" and cross, and flipped `require_review` to fail closed.
+
+#### Why It Failed
+
+- No caller ever routed the producer's evidence: `commit_bound_mutation` still sets `review_satisfied=True` and calls `commit_proposal` without `evidence=`. After the flip that route parks. The seam neither forwards nor reports why it parked.
+- The CI runner `run_dashclaw_external_verdict.py` and the workflow's inline invariant step both assert the approved correction commits, so a failed assertion produces no evidence file at all. The workflow is path-triggered and had not run since the flip.
+- Forwarding the producer's evidence would not have been the fix: at medium risk both items are `artifact_bound` digests and would discharge as `delegated_policy` on binding and authority material alone -- the circularity the 4b-2 ruling rejected.
+
+#### Pattern to Avoid
+
+**Anti-Pattern**: declaring a module "converted" on the strength of a producer-level test while the compositional path that reaches the governed mutation is untouched; asserting outcomes in a CI runner rather than recording them, so the evidence disappears exactly when it matters.
+
+**Correct Pattern**: DoD 20 applies per path, not per module -- enumerate the seams that reach `commit_proposal` and show each forwards or demonstrably parks. Runners record the outcome and assert on the record, and the workflow's inline invariants are derived from the runner's, not duplicated by hand.
+
+#### Resolution
+
+| Status | Action Taken |
+|--------|--------------|
+| FIXED | Plan `docs/plan-sprint3c-dashclaw-park-and-report.md` (audit VETO #30, PASS #31 with C1): runner, workflow invariants and runtime-evidence document assert the park; `test_dashclaw_correction_parks.py` names the laundering path and proves the seam does not take it. Sealed at Entry #32. |
+
+#### Related Entries
+- Ledger Entry: #29 (RESEARCH BRIEF)
+- Ledger Entry: #24 (the classification this drift corrects)
+
+---
+
+### Failure #8: Sprint 3c plan iteration 1 VETOed on an unpassable test, an unreachable fixture state, a false unit-coverage claim, and an unaddressed assertion
+
+**Date**: 2026-09-06
+**Iteration**: 1 (audit attempt 1 of 5)
+**Verdict ID**: AUDIT_REPORT_3c_attempt1 2026-09-06T13:50 VETO (V1-V4)
+**Category**: SPEC_DRIFT
+
+#### What Was Attempted
+
+The plan specified the laundering-path test from the ladder's prose ("discharges as `delegated_policy`") without running it, named `review_discharge` for what `discharge_authority` carries, said "a fresh adapter" for a mutation whose `state_snapshot` presupposes a seeded state, stated from memory which test asserts `stale_authorization`, and enumerated the runner assertions to change from the lines that mention `committed` rather than from a run.
+
+#### Why It Failed
+
+- Every pre-audit lint passed: citations were all true. Truth of citations is not passability of tests.
+- The author's empirical check ran after the plan was written and confirmed V1 independently; the Option B reviewer found V2-V4 by reading the adapter's stale check, grepping the claimed test, and reading the runner past line 338.
+
+#### Pattern to Avoid
+
+**Anti-Pattern**: specifying a test's exact assertion from doctrine prose or a dataclass field name without executing the path; naming which test covers a behaviour from recollection; scoping "which assertions change" by keyword instead of by running the runner and reading every failure.
+
+**Correct Pattern**: run the candidate assertion before locking it (the field name is in the output); grep the claimed coverage; run the runner with assertions stripped and enumerate every assertion whose input changed.
+
+#### Resolution
+
+| Status | Action Taken |
+|--------|--------------|
+| FIXED | Plan iteration 2 amended V1-V4 and A1-A3 with every assertion executed before locking; audit attempt 2 (Entry #31) PASSED on independent re-review with zero grounds. |
+
+#### Related Entries
+- Ledger Entry: #30 (GATE TRIBUNAL, VETO)
+- Audit Report: `.agent/staging/AUDIT_REPORT_3c_attempt1.md`
+
+---
+
 ## Pattern Library (Extracted Lessons)
 
 ### Section 4 Razor Violations
@@ -258,6 +327,7 @@ LD7 was restated with "the console command never imports `receipts`" after readi
 | Present-tense capability claims in governance DNA | Forward objectives in their own section | Failure #1 |
 | Grep-shaped "no reference" claims | Read all consumer directories | Failure #2 |
 | Import-form claims reasoned from module names, unrun | Run the candidate under every CI invocation style | Failure #6 |
+| Module declared converted on producer-level tests | DoD 20 per path: every seam forwards or demonstrably parks | Failure #7 |
 
 ---
 
@@ -270,11 +340,11 @@ LD7 was restated with "the console command never imports `receipts`" after readi
 | GHOST_PATH | 0 | - |
 | HALLUCINATION | 2 | 2026-09-01 |
 | ORPHAN | 0 | - |
-| SPEC_DRIFT | 5 | 2026-09-06 |
+| SPEC_DRIFT | 7 | 2026-09-06 |
 | CHAIN_BREAK | 0 | - |
 
-**Total Failures Recorded**: 6
-**Failures Resolved**: 4 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28)
+**Total Failures Recorded**: 8
+**Failures Resolved**: 6 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28; Failure #8 grounds closed by iteration 2; Failure #7 fixed at Entry #32)
 **Patterns Extracted**: 5
 
 ---

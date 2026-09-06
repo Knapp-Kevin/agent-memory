@@ -12,6 +12,7 @@ on:
       - "reference/tests/test_dashclaw_project_authority.py"
       - "reference/tests/test_dashclaw_target_scope_recovery.py"
       - "reference/tests/test_dashclaw_cloudflare_packaging.py"
+      - "reference/tests/test_dashclaw_correction_parks.py"
       - "examples/cloudflare-dashclaw-provider/**"
       - "docs/programs/runtime-evidence/dashclaw-external-verdict.md"
       - "docs/programs/runtime-evidence/dashclaw-live-cloudflare-conformance-plan.md"
@@ -62,7 +63,8 @@ jobs:
             reference/tests/test_dashclaw_external_verdict.py \
             reference/tests/test_dashclaw_project_authority.py \
             reference/tests/test_dashclaw_target_scope_recovery.py \
-            reference/tests/test_dashclaw_cloudflare_packaging.py
+            reference/tests/test_dashclaw_cloudflare_packaging.py \
+            reference/tests/test_dashclaw_correction_parks.py
 
       - name: Verify portable Cloudflare provider source preparation
         run: python examples/cloudflare-dashclaw-provider/prepare.py --check
@@ -104,10 +106,16 @@ jobs:
           assert report["correction"]["unapproved_refusal"] == "approval_required"
           assert report["correction"]["wrong_identity_refusal"] == "approval_identity_mismatch"
           assert report["correction"]["self_approval_refusal"] == "self_approval_forbidden"
-          assert report["correction"]["committed"] is True
-          assert report["correction"]["current_value"] == "release branch main"
-          assert report["correction"]["old_value_event_invalid"] is True
-          assert report["stale_replay"] == {"committed": False, "refusal": "stale_authorization"}
+          assert report["correction"]["committed"] is False
+          assert report["correction"]["refusal"] is None
+          assert report["correction"]["decision_outcome"] == "require_review"
+          assert "review_requires_qualified_evidence" in report["correction"]["decision_reasons"]
+          assert report["correction"]["receipt_decision_outcome"] == "require_review"
+          assert report["correction"]["state_version"] == 1
+          assert report["correction"]["current_value"] == "release branch release"
+          assert report["correction"]["old_value_event_invalid"] is False
+          assert report["stale_replay"] == {"committed": False, "refusal": None, "decision_outcome": "require_review"}
+          assert report["stale_authorization_reachable"] is False
           assert report["scope_attack"]["provider_decision"] == "deny"
           assert report["scope_attack"]["committed"] is False
           assert report["scope_attack"]["substrate_untouched"] is True
