@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/calibration-results.schema.json",
+  "title": "Agent Memory Calibration Results",
+  "description": "Input record for scripts/generate_calibration_report.py. Captures labeled calibration cases and run metadata; the generator derives the required measurements defined in docs/09-calibration-protocol.md.",
+  "type": "object",
+  "required": [
+    "implementation",
+    "version",
+    "doctrine_version",
+    "estimator_version",
+    "calibration_version",
+    "threshold",
+    "durability_dimensions_tested",
+    "scope_of_validity",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "implementation": { "type": "string" },
+    "version": { "type": "string" },
+    "doctrine_version": { "type": "string" },
+    "estimator_version": { "type": "string" },
+    "calibration_version": { "type": "string" },
+    "sigma_is_probabilistic": {
+      "type": "boolean",
+      "description": "True only when sigma carries a documented probabilistic interpretation. Enables the optional probabilistic metrics section."
+    },
+    "threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+    "review_band": {
+      "type": "object",
+      "required": ["lower", "upper"],
+      "properties": {
+        "lower": { "type": "number", "minimum": 0, "maximum": 1 },
+        "upper": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "durability_dimensions_tested": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "scope_of_validity": { "type": ["string", "object"] },
+    "known_exemptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "probabilistic_metrics": {
+      "type": "object",
+      "description": "Only meaningful when sigma_is_probabilistic is true; passed through to the report verbatim.",
+      "properties": {
+        "calibration_error": { "type": "number", "minimum": 0 },
+        "reliability_bins": { "type": "array", "items": { "type": "object" } },
+        "proper_scoring_rule": {
+          "type": "object",
+          "required": ["name", "value"],
+          "properties": {
+            "name": { "type": "string" },
+            "value": { "type": "number" }
+          },
+          "additionalProperties": false
+        },
+        "uncertainty_band": { "type": ["string", "object"] }
+      },
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["case_id", "class", "sigma", "observed_outcome"],
+        "properties": {
+          "case_id": { "type": "string" },
+          "class": { "enum": ["persist", "evaporate", "trap"] },
+          "sigma": { "type": "number", "minimum": 0, "maximum": 1 },
+          "observed_outcome": {
+            "enum": ["retained", "evaporated", "crystallized", "abstained", "review"]
+          },
+          "boundary_stable": {
+            "type": "boolean",
+            "description": "Present only when the case was perturbation-tested for decision-boundary stability."
+          },
+          "estimator_disagreement": {
+            "type": "boolean",
+            "description": "Present only when multiple estimators contributed to this case."
+          },
+          "out_of_scope": {
+            "type": "boolean",
+            "description": "True when the case fell outside the calibration's declared scope of validity."
+          },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

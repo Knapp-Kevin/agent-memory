@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/precedent-candidate-retrieval.schema.json",
+  "title": "Agent Memory Precedent Candidate Retrieval Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_ref", "status", "estimator", "input_projection", "candidates", "executed_at", "authority_effect", "can_authorize_execution", "can_change_permitted_actions", "can_create_grant_or_policy"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "run_ref": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "enum": ["completed", "unavailable", "unsupported"]},
+    "estimator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["estimator_id", "estimator_version", "configuration_ref", "threshold_ref", "score_semantics", "calibration_posture", "threshold"],
+      "properties": {
+        "estimator_id": {"type": "string", "minLength": 1},
+        "estimator_version": {"type": "string", "minLength": 1},
+        "configuration_ref": {"type": "string", "minLength": 1},
+        "threshold_ref": {"type": "string", "minLength": 1},
+        "score_semantics": {"type": "string", "minLength": 1},
+        "calibration_posture": {"type": "string", "minLength": 1},
+        "threshold": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "input_projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "privacy_minimized"],
+      "properties": {
+        "identity": {"type": "string", "minLength": 1},
+        "privacy_minimized": {"type": "boolean"}
+      }
+    },
+    "candidates": {"type": "array", "items": {"$ref": "#/$defs/candidate"}},
+    "failure": {"$ref": "#/$defs/failure"},
+    "executed_at": {"type": "string", "format": "date-time"},
+    "authority_effect": {"const": "none"},
+    "can_authorize_execution": {"const": false},
+    "can_change_permitted_actions": {"const": false},
+    "can_create_grant_or_policy": {"const": false}
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "completed"}}, "required": ["status"]}, "then": {"not": {"required": ["failure"]}}},
+    {"if": {"properties": {"status": {"enum": ["unavailable", "unsupported"]}}, "required": ["status"]}, "then": {"required": ["failure"]}}
+  ],
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_precedent_ref", "candidate_projection_identity", "score", "score_semantics", "above_threshold", "evidence_class", "historical_rationale_treatment", "authority_effect", "can_authorize_execution", "can_change_permitted_actions", "can_create_grant_or_policy", "rank"],
+      "properties": {
+        "candidate_precedent_ref": {"type": "string", "minLength": 1},
+        "candidate_projection_identity": {"type": "string", "minLength": 1},
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "score_semantics": {"type": "string", "minLength": 1},
+        "above_threshold": {"type": "boolean"},
+        "evidence_class": {"type": "string", "minLength": 1},
+        "historical_rationale_treatment": {"const": "data_not_instruction"},
+        "authority_effect": {"const": "none"},
+        "can_authorize_execution": {"const": false},
+        "can_change_permitted_actions": {"const": false},
+        "can_create_grant_or_policy": {"const": false},
+        "rank": {"type": "integer", "minimum": 1}
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "message", "fail_open"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["estimator_unavailable", "unsupported_estimator_version"]},
+        "message": {"type": "string", "minLength": 1},
+        "fail_open": {"const": false}
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/temporal-external-witness.schema.json",
+  "title": "Agent Memory Temporal External Witness Evidence",
+  "description": "Verified host-supplied evidence about existence, inclusion, consistency, freshness, or another bounded witness claim for an exact temporal subject.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "witness_profile", "subject_kind", "subject_reference_profile", "subject_ref", "claim_kind", "verification_status", "witnessed_at", "proof_ref", "interpretation"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "witness_profile": {"type": "string", "minLength": 1},
+    "subject_kind": {"type": "string", "enum": ["temporal_commitment", "signer_attestation"]},
+    "subject_reference_profile": {"type": "string", "minLength": 1},
+    "subject_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "claim_kind": {"type": "string", "enum": ["existence_by_time", "inclusion", "consistency", "freshness", "other"]},
+    "verification_status": {"type": "string", "enum": ["verified", "invalid", "unknown"]},
+    "witnessed_at": {"type": ["string", "null"]},
+    "proof_ref": {"type": ["string", "null"]},
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_effect", "event_occurrence_time_proven", "currentness", "execution_evidence"],
+      "properties": {
+        "authority_effect": {"const": "none"},
+        "event_occurrence_time_proven": {"const": false},
+        "currentness": {"const": "not_established"},
+        "execution_evidence": {"const": "not_established"}
+      }
+    }
+  }
+}

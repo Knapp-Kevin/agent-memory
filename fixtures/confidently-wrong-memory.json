@@ -1,0 +1,88 @@
+{
+  "fixture_id": "confidently-wrong-memory",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "A memory is strongly reinforced but later shown to be incorrect.",
+  "expected_behavior": {
+    "candidate": true,
+    "certification_status": "fail",
+    "crystallized": false,
+    "final_state": "disputed",
+    "reason": "High saturation can propose review, but certification must prevent false permanence."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:confidently-wrong-memory",
+    "content_ref": "fixture://confidently-wrong/raw",
+    "type": "fact",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-trap-class",
+      "timestamp": "2026-07-06T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:repeated-agent-claim",
+        "kind": "agent_claim",
+        "ref": "fixture://confidently-wrong/claim",
+        "confidence": 0.9
+      },
+      {
+        "id": "evidence:contradiction",
+        "kind": "contradictory_verification",
+        "ref": "fixture://confidently-wrong/contradiction",
+        "confidence": 1
+      }
+    ],
+    "saturation": {
+      "sigma": 0.96,
+      "calibrated": true,
+      "threshold": 0.95,
+      "durability_dimensions": [
+        "access",
+        "repetition",
+        "agent_confidence"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_external_verification",
+      "risk_class": "high",
+      "policy_refs": [
+        "ADR-002",
+        "ADR-003",
+        "ADR-004"
+      ]
+    },
+    "certification": {
+      "status": "fail",
+      "ref": "fixture://confidently-wrong/certification-failure",
+      "scope": "fixture"
+    },
+    "decay_profile": {
+      "lambda_base": 0.1,
+      "lambda_eff": 0.2,
+      "pressure": 2
+    },
+    "ledger_ref": "fixture://ledger/confidently-wrong-memory",
+    "created_at": "2026-07-06T00:00:00Z"
+  },
+  "interaction_history": [
+    {
+      "event": "agent_claim",
+      "count": 20
+    },
+    {
+      "event": "read",
+      "count": 50
+    },
+    {
+      "event": "contradiction",
+      "count": 1
+    },
+    {
+      "event": "certification",
+      "result": "fail"
+    }
+  ]
+}

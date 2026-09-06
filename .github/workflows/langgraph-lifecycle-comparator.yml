@@ -1,0 +1,57 @@
+name: LangGraph Lifecycle Comparator
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  langgraph-lifecycle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install pinned LangGraph comparator
+        run: |
+          python -m venv /tmp/agent-memory-langgraph-v01
+          /tmp/agent-memory-langgraph-v01/bin/python -m pip install --disable-pip-version-check \
+            langgraph==1.2.11 \
+            langgraph-checkpoint==4.2.0 \
+            jsonschema==4.26.0 \
+            rfc8785==0.1.4
+
+      - name: Verify pinned package versions
+        run: |
+          /tmp/agent-memory-langgraph-v01/bin/python - <<'PY'
+          from importlib.metadata import version
+          actual = version("langgraph")
+          checkpoint = version("langgraph-checkpoint")
+          assert actual == "1.2.11", actual
+          assert checkpoint == "4.2.0", checkpoint
+          print(f"langgraph=={actual}")
+          print(f"langgraph-checkpoint=={checkpoint}")
+          PY
+
+      - name: Execute pinned LangGraph lifecycle comparator
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          PYTHONPATH=reference
+          /tmp/agent-memory-langgraph-v01/bin/python reference/run_langgraph_lifecycle_comparator.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output langgraph-lifecycle-comparator.json
+
+      - name: Upload LangGraph lifecycle evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: langgraph-lifecycle-comparator-evidence
+          path: langgraph-lifecycle-comparator.json
+          if-no-files-found: error

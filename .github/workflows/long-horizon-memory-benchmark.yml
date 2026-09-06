@@ -1,0 +1,97 @@
+name: Long Horizon Memory Benchmark
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  local-representations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: |
+          python -m pip install --disable-pip-version-check -r reference/requirements.txt
+          python -m pip install --disable-pip-version-check numpy==2.2.6
+      - env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          PYTHONPATH=reference python reference/run_long_horizon_memory_benchmark.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output long-horizon-memory.json
+      - run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('long-horizon-memory.json'))
+          assert r['benchmark_version']=='2.0.0'
+          assert len(r['representations'])==4
+          for row in r['representations']:
+              assert 'adaptation' in row
+              assert 'stale_influence_rate' in row
+              assert row['current_only']['stage_2']['final_success_rate'] >= 0
+          print([(x['representation'],x['adaptation']) for x in r['representations']])
+          PY
+      - uses: actions/upload-artifact@v7
+        with:
+          name: long-horizon-memory-local
+          path: long-horizon-memory.json
+          if-no-files-found: error
+
+  vjepa2-1-frozen-representation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Fetch pinned V-JEPA source
+        run: |
+          git init /tmp/vjepa2
+          git -C /tmp/vjepa2 remote add origin https://github.com/facebookresearch/vjepa2.git
+          git -C /tmp/vjepa2 fetch --depth=1 origin 45d025f636dfc58fc2426905fc4a1ab755b1c3e5
+          git -C /tmp/vjepa2 checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/vjepa2 rev-parse HEAD)" = "45d025f636dfc58fc2426905fc4a1ab755b1c3e5"
+      - name: Install isolated comparator environment
+        run: |
+          python -m venv /tmp/vjepa-long
+          /tmp/vjepa-long/bin/python -m pip install --disable-pip-version-check -r reference/requirements.txt
+          /tmp/vjepa-long/bin/python -m pip install --disable-pip-version-check --index-url https://download.pytorch.org/whl/cpu torch==2.7.1 torchvision==0.22.1
+          /tmp/vjepa-long/bin/python -m pip install --disable-pip-version-check numpy==2.2.6 timm==1.0.19 einops==0.8.1
+      - name: Fetch pinned checkpoint
+        run: |
+          curl --fail --location --retry 3 https://dl.fbaipublicfiles.com/vjepa2/vjepa2_1_vitb_dist_vitG_384.pt --output /tmp/vjepa2_1_vitb_dist_vitG_384.pt
+          echo "848a77c33cc9e6649ed2119c9bea1e2c569bcdab9539ff3e7c02ccc2959ddf4d  /tmp/vjepa2_1_vitb_dist_vitG_384.pt" | sha256sum --check
+      - name: Run frozen V-JEPA representation on V2 workload
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          PYTHONPATH=reference /tmp/vjepa-long/bin/python - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          from agentmem_ref.long_horizon_dataset import STAGES, make_dataset
+          from agentmem_ref.long_horizon_benchmark import benchmark_external_features
+          sys.path.insert(0,'reference')
+          from run_vjepa2_operational_comparator import _load_encoder,_features,_sha256,VJEPA_SOURCE_COMMIT,VJEPA_MODEL
+          checkpoint=Path('/tmp/vjepa2_1_vitb_dist_vitG_384.pt')
+          assert _sha256(checkpoint)=='848a77c33cc9e6649ed2119c9bea1e2c569bcdab9539ff3e7c02ccc2959ddf4d'
+          data=make_dataset()
+          model,adaptation=_load_encoder(Path('/tmp/vjepa2'),checkpoint)
+          train=data.train_videos.reshape(len(data.train_videos)*STAGES,*data.train_videos.shape[2:])
+          test=data.test_videos.reshape(len(data.test_videos)*STAGES,*data.test_videos.shape[2:])
+          train_f,_=_features(model,train); test_f,_=_features(model,test)
+          train_f=train_f.reshape(len(data.train_videos),STAGES,-1); test_f=test_f.reshape(len(data.test_videos),STAGES,-1)
+          result=benchmark_external_features('vjepa2_1_frozen_representation',train_f,test_f,data)
+          report={'benchmark_version':'2.0.0','agent_memory_commit':os.environ['AGENT_MEMORY_COMMIT'],'peer':{'source_commit':VJEPA_SOURCE_COMMIT,'model':VJEPA_MODEL,'checkpoint_sha256':_sha256(checkpoint)},'frozen_encoder':True,'checkpoint_adaptation':adaptation,'representation_result':result,'external_source_revocation_is_not_checkpoint_forgetting':True}
+          open('long-horizon-vjepa2.json','w').write(json.dumps(report,indent=2,sort_keys=True)+'\n')
+          assert result['current_only']['stage_2']['final_success_rate'] >= 0
+          PY
+      - uses: actions/upload-artifact@v7
+        with:
+          name: long-horizon-memory-vjepa2
+          path: long-horizon-vjepa2.json
+          if-no-files-found: error

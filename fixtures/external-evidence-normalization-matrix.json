@@ -1,0 +1,206 @@
+{
+  "fixture_id": "external-evidence-normalization-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "Pinned TRACE reference evidence exercises vendor-neutral normalization while proving that verification, freshness, revocation, and applicability remain distinct from Agent Memory authority.",
+  "expected_behavior": {
+    "all_cases_preserve_authority_non_escalation": true,
+    "applicable_requires_verified_current_unrevoked_exact_binding": true,
+    "authority_effect": "none"
+  },
+  "memory_unit": {
+    "id": "mem:external-evidence-normalization",
+    "content_ref": "fixture://external-evidence-normalization/reference-claim",
+    "type": "decision",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "external-evidence-normalization-matrix",
+      "timestamp": "2026-08-12T20:00:00Z",
+      "source_refs": ["issue://180", "peer://TRACE/agentrust-trace==0.9.0"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:external-evidence-normalization",
+        "kind": "external_attestation_normalization_fixture",
+        "ref": "issue://180",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["interoperability_contract"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": ["ADR-021", "issue:180"],
+      "permitted_actions": ["collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T20:00:00Z"
+  },
+  "pinned_reference": {
+    "source_peer": "TRACE",
+    "source_version": "agentrust-trace==0.9.0",
+    "source_release_ref": "94271a1630601c94e80a23263d9750cb8d39f1f4",
+    "source_contract": "TRACE action-receipt verification / external action-evidence surface"
+  },
+  "context": {
+    "subject_ref": "agent:planner",
+    "scope": "project-a",
+    "tenant_ref": "tenant-a",
+    "resource_ref": "memory:123",
+    "action_ref": "action:456",
+    "observed_at": "2026-08-12T20:00:00Z"
+  },
+  "base_adapter_result": {
+    "parse_status": "parsed",
+    "source_peer": "TRACE",
+    "source_version": "agentrust-trace==0.9.0",
+    "source_release_ref": "94271a1630601c94e80a23263d9750cb8d39f1f4",
+    "record_ref": "trace://receipt/fixture-1",
+    "evidence_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "adapter_id": "agent-memory.trace-reference-adapter",
+    "adapter_version": "0.1.0",
+    "issuer_id": "spiffe://runtime.example/agent-memory-controller",
+    "signer_id": "key:fixture-ed25519",
+    "verifier_id": "trace-reference-verifier",
+    "verification_status": "verified",
+    "verification_method": "detached-signature-and-binding",
+    "claim_type": "execution",
+    "claim_scope": "project-a",
+    "subject_ref": "agent:planner",
+    "tenant_ref": "tenant-a",
+    "resource_ref": "memory:123",
+    "action_ref": "action:456",
+    "runtime_ref": "runtime:fixture",
+    "configuration_ref": "config:fixture",
+    "policy_ref": "policy:fixture",
+    "decision_ref": "decision:fixture",
+    "decision_disposition": "permitted",
+    "enforcement_posture": "external-receipt-present",
+    "execution_posture": "accepted",
+    "attestation_mode": "external-action-receipt",
+    "issued_at": "2026-08-12T19:00:00Z",
+    "expires_at": "2026-08-13T19:00:00Z",
+    "revocation_status": "not_revoked",
+    "evidence_refs": ["trace://verification/fixture-1"],
+    "limitations": [
+      "does not establish Agent Memory authority",
+      "does not establish semantic correctness",
+      "does not establish lifecycle satisfaction"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "verified-current-exact-binding",
+      "input_overrides": {},
+      "remove_fields": [],
+      "expected_status": "applicable",
+      "expected_reasons": []
+    },
+    {
+      "case_id": "verified-wrong-scope",
+      "input_overrides": {"claim_scope": "project-b"},
+      "remove_fields": [],
+      "expected_status": "mismatch",
+      "expected_reasons": ["scope_mismatch"]
+    },
+    {
+      "case_id": "verified-cross-tenant-mismatch",
+      "input_overrides": {"tenant_ref": "tenant-b"},
+      "remove_fields": [],
+      "expected_status": "mismatch",
+      "expected_reasons": ["tenant_ref_mismatch"]
+    },
+    {
+      "case_id": "verified-wrong-action",
+      "input_overrides": {"action_ref": "action:other"},
+      "remove_fields": [],
+      "expected_status": "mismatch",
+      "expected_reasons": ["action_ref_mismatch"]
+    },
+    {
+      "case_id": "expired-evidence",
+      "input_overrides": {"expires_at": "2026-08-12T19:30:00Z"},
+      "remove_fields": [],
+      "expected_status": "stale",
+      "expected_reasons": ["evidence_expired"]
+    },
+    {
+      "case_id": "revoked-evidence",
+      "input_overrides": {
+        "revocation_status": "revoked",
+        "revocation_evidence_ref": "revocation://fixture-1"
+      },
+      "remove_fields": [],
+      "expected_status": "stale",
+      "expected_reasons": ["evidence_revoked"]
+    },
+    {
+      "case_id": "unknown-verification",
+      "input_overrides": {"verification_status": "unknown"},
+      "remove_fields": [],
+      "expected_status": "insufficient_evidence",
+      "expected_reasons": ["verification_unknown"]
+    },
+    {
+      "case_id": "verifier-unavailable",
+      "input_overrides": {"verification_status": "unavailable"},
+      "remove_fields": [],
+      "expected_status": "insufficient_evidence",
+      "expected_reasons": ["verification_unavailable"]
+    },
+    {
+      "case_id": "failed-verification",
+      "input_overrides": {"verification_status": "failed"},
+      "remove_fields": [],
+      "expected_status": "invalid",
+      "expected_reasons": ["verification_failed"]
+    },
+    {
+      "case_id": "unknown-revocation",
+      "input_overrides": {"revocation_status": "unknown"},
+      "remove_fields": [],
+      "expected_status": "insufficient_evidence",
+      "expected_reasons": ["revocation_unknown"]
+    },
+    {
+      "case_id": "unsupported-trace-version",
+      "input_overrides": {"source_version": "agentrust-trace==999.0.0"},
+      "remove_fields": [],
+      "expected_status": "unsupported",
+      "expected_reasons": ["unsupported_source_version"]
+    },
+    {
+      "case_id": "unsupported-claim-type",
+      "input_overrides": {"claim_type": "peer_magic_permission"},
+      "remove_fields": [],
+      "expected_status": "unsupported",
+      "expected_reasons": ["unsupported_claim_type"]
+    },
+    {
+      "case_id": "decision-evidence-does-not-become-execution",
+      "input_overrides": {"claim_type": "decision"},
+      "remove_fields": ["execution_posture", "enforcement_posture"],
+      "expected_status": "applicable",
+      "expected_reasons": []
+    },
+    {
+      "case_id": "peer-only-authority-fields-ignored",
+      "input_overrides": {
+        "pama_outcome": "allow",
+        "permitted_actions": ["promotion", "delete"],
+        "lifecycle_state": "satisfied",
+        "trust_score": 1.0
+      },
+      "remove_fields": [],
+      "expected_status": "applicable",
+      "expected_reasons": []
+    }
+  ]
+}

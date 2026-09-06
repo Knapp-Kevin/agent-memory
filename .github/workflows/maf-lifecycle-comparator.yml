@@ -1,0 +1,53 @@
+name: MAF Lifecycle Comparator
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  maf-lifecycle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install pinned Microsoft Agent Framework comparator
+        run: |
+          python -m venv /tmp/agent-memory-maf-v01
+          /tmp/agent-memory-maf-v01/bin/python -m pip install --disable-pip-version-check \
+            agent-framework-core==1.13.0 \
+            jsonschema==4.26.0 \
+            rfc8785==0.1.4
+
+      - name: Verify pinned package version
+        run: |
+          /tmp/agent-memory-maf-v01/bin/python - <<'PY'
+          from importlib.metadata import version
+          actual = version("agent-framework-core")
+          assert actual == "1.13.0", actual
+          print(f"agent-framework-core=={actual}")
+          PY
+
+      - name: Execute pinned MAF lifecycle comparator
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          PYTHONPATH=reference
+          /tmp/agent-memory-maf-v01/bin/python reference/run_maf_lifecycle_comparator.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output maf-lifecycle-comparator.json
+
+      - name: Upload MAF lifecycle evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: maf-lifecycle-comparator-evidence
+          path: maf-lifecycle-comparator.json
+          if-no-files-found: error

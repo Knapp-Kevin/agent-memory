@@ -1,0 +1,91 @@
+{
+  "fixture_id": "valuable-persistent-memory",
+  "fixture_version": "1.0.0",
+  "class": "persist",
+  "description": "A corroborated, cross-referenced project decision should become a crystallization candidate and pass certification.",
+  "expected_behavior": {
+    "candidate": true,
+    "certification_status": "pass",
+    "crystallized": true,
+    "reason": "The memory has identity, provenance, corroboration, cross-reference, authority, and certification."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:valuable-persistent-memory",
+    "content_ref": "fixture://valuable-persistent-memory/raw",
+    "type": "decision",
+    "state": "crystallized",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-persist-class",
+      "timestamp": "2026-07-06T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:decision-record",
+        "kind": "decision_record",
+        "ref": "fixture://valuable-persistent-memory/decision",
+        "confidence": 1
+      },
+      {
+        "id": "evidence:cross-reference",
+        "kind": "cross_reference",
+        "ref": "fixture://valuable-persistent-memory/references",
+        "confidence": 0.9
+      }
+    ],
+    "saturation": {
+      "sigma": 0.98,
+      "calibrated": true,
+      "threshold": 0.95,
+      "durability_dimensions": [
+        "corroboration",
+        "cross_reference",
+        "approval",
+        "meaningful_reuse"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "medium",
+      "policy_refs": [
+        "ADR-003",
+        "ADR-004"
+      ]
+    },
+    "certification": {
+      "status": "pass",
+      "ref": "fixture://valuable-persistent-memory/certification",
+      "scope": "project-decision"
+    },
+    "decay_profile": {
+      "lambda_base": 0.001,
+      "lambda_eff": 0,
+      "pressure": 0
+    },
+    "ledger_ref": "fixture://ledger/valuable-persistent-memory",
+    "created_at": "2026-07-06T00:00:00Z"
+  },
+  "interaction_history": [
+    {
+      "event": "observed",
+      "count": 1
+    },
+    {
+      "event": "corroborated",
+      "count": 3
+    },
+    {
+      "event": "cross_referenced",
+      "count": 5
+    },
+    {
+      "event": "approved",
+      "count": 1
+    },
+    {
+      "event": "certified",
+      "result": "pass"
+    }
+  ]
+}

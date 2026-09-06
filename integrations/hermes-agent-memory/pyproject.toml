@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-memory-hermes"
+version = "0.1.0"
+description = "Agent Memory observe/govern integration for Hermes Agent"
+requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+authors = [{name = "MythologIQ Labs LLC"}]
+dependencies = []
+
+[project.scripts]
+agent-memory-hermes = "agent_memory_hermes.cli:main"
+
+[project.entry-points."hermes_agent.plugins"]
+agent-memory = "agent_memory_hermes.safe_plugin:register"
+
+[project.entry-points."hermes_agent.memory_providers"]
+agent-memory = "agent_memory_hermes.provider:register_memory"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

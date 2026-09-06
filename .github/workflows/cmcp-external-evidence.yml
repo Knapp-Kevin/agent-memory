@@ -1,0 +1,67 @@
+name: cMCP External Evidence Comparator
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  cmcp-external-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install core reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute dependency-free adapter regressions
+        env:
+          PYTHONPATH: reference
+        run: python -m unittest tests.test_cmcp_external_evidence
+
+      - name: Install exact released cMCP verifier environment
+        run: |
+          python -m venv /tmp/agent-memory-cmcp-inbound
+          /tmp/agent-memory-cmcp-inbound/bin/python -m pip install --disable-pip-version-check \
+            cmcp-runtime==0.4.0 \
+            agentrust-trace==0.9.0 \
+            agent-manifest==0.11.2 \
+            rfc8785==0.1.4 \
+            jsonschema==4.26.0
+          /tmp/agent-memory-cmcp-inbound/bin/python - <<'PY'
+          import importlib.metadata
+          expected = {
+              "cmcp-runtime": "0.4.0",
+              "agentrust-trace": "0.9.0",
+              "agent-manifest": "0.11.2",
+          }
+          for package, version in expected.items():
+              actual = importlib.metadata.version(package)
+              assert actual == version, (package, actual, version)
+              print(f"{package}=={actual}")
+          PY
+
+      - name: Execute real released cMCP inbound comparator
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          PYTHONPATH=reference
+          /tmp/agent-memory-cmcp-inbound/bin/python
+          reference/run_cmcp_external_evidence_comparator.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output cmcp-external-evidence.json
+
+      - name: Upload cMCP inbound evidence artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: cmcp-external-evidence-comparator
+          path: cmcp-external-evidence.json
+          if-no-files-found: error

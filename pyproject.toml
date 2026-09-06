@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-memory-reference"
+version = "0.2.0"
+description = "Reference runtime and diagnostic CLI for the Agent Memory project"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+dependencies = [
+  "jsonschema>=4.20,<5",
+  "cryptography>=50,<51",
+  "rfc8785>=0.1,<0.2",
+]
+
+[project.optional-dependencies]
+comparators = [
+  "agent-manifest==0.11.2",
+  "agentrust-trace==0.9.0",
+]
+
+[project.scripts]
+agent-memory = "agentmem_ref.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "reference"}
+
+[tool.setuptools.packages.find]
+where = ["reference"]
+include = ["agentmem_ref*"]
+
+[tool.setuptools.package-data]
+agentmem_ref = ["_schemas/*.json"]
+
+[tool.setuptools.data-files]
+"agent_memory_reference/schemas" = [
+  "schemas/runtime-configuration.schema.json",
+  "schemas/provider-probes.schema.json",
+]

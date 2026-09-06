@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Adversarial cases for policy-projection compatibility under #256.",
+  "projection": {
+    "projection_ref": "projection:policy-context:alpha",
+    "projection_profile": "governance-context-projection",
+    "projection_version": "0.1.0",
+    "projection_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_memory_refs": ["memory:approval:1", "memory:authority-state:1"],
+    "source_domain_schema_ref": "domain-schema:v2",
+    "source_domain_schema_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "source_currentness": {
+    "evaluation_ref": "currentness:alpha",
+    "status": "current",
+    "evidence_refs": ["evidence:currentness:alpha"]
+  },
+  "base_target": {
+    "consumer_kind": "dogwood",
+    "consumer_version_or_source_pin": "c6237c88099b3f492ecc5fcee42df06a19224b97",
+    "action_schema_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "event_schema_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "policy_ref": "policy:dogwood:approval-window",
+    "policy_digest_or_version": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "semantic_mapping_status": "compatible",
+    "policy_validation_status": "valid",
+    "required_temporal_horizon_seconds": 3600,
+    "target_temporal_horizon_seconds": 86400,
+    "projected_context_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "evaluated_context_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "isolation": {
+      "required": true,
+      "strategy": "universal_symmetric_pin",
+      "validated": true,
+      "evidence_refs": ["evidence:dogwood:pins:universal"]
+    },
+    "evidence_refs": ["evidence:dogwood:public-pin"]
+  },
+  "cases": [
+    {"id": "fully-current", "overrides": {}, "expected_status": "current", "expected_reason": null},
+    {"id": "schema-migration", "overrides": {"semantic_mapping_status": "migration_required"}, "expected_status": "migration_required", "expected_reason": "semantic_mapping_migration_required"},
+    {"id": "source-revalidation", "source_currentness_status": "revalidation_required", "overrides": {}, "expected_status": "incompatible", "expected_reason": "source_currentness_revalidation_required"},
+    {"id": "source-unknown", "source_currentness_status": "unknown", "overrides": {}, "expected_status": "unknown", "expected_reason": "source_currentness_unknown"},
+    {"id": "partial-pin", "overrides": {"isolation": {"required": true, "strategy": "universal_symmetric_pin", "validated": false, "evidence_refs": ["evidence:dogwood:pins:partial"]}}, "expected_status": "unknown", "expected_reason": "target_isolation_not_validated"},
+    {"id": "no-isolation", "overrides": {"isolation": {"required": true, "strategy": "none", "validated": false, "evidence_refs": []}}, "expected_status": "incompatible", "expected_reason": "target_isolation_absent"},
+    {"id": "temporal-window-too-short", "overrides": {"required_temporal_horizon_seconds": 2592000, "target_temporal_horizon_seconds": 86400}, "expected_status": "incompatible", "expected_reason": "target_temporal_horizon_insufficient"},
+    {"id": "policy-revalidation", "overrides": {"policy_validation_status": "revalidation_required"}, "expected_status": "migration_required", "expected_reason": "target_policy_revalidation_required"},
+    {"id": "policy-invalid", "overrides": {"policy_validation_status": "invalid"}, "expected_status": "incompatible", "expected_reason": "target_policy_invalid"},
+    {"id": "dogwood-event-schema-unknown", "overrides": {"event_schema_digest": null}, "expected_status": "unknown", "expected_reason": "dogwood_event_schema_identity_missing"},
+    {"id": "cedarling-shadowed-context", "overrides": {"consumer_kind": "cedarling", "consumer_version_or_source_pin": "cedarling:2.3.0", "event_schema_digest": null, "projected_context_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111", "evaluated_context_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222", "isolation": {"required": false, "strategy": "not_required", "validated": true, "evidence_refs": ["evidence:isolation:not-required"]}}, "expected_status": "incompatible", "expected_reason": "evaluated_context_differs_from_projected_context"},
+    {"id": "missing-policy-identity", "overrides": {"policy_ref": null, "policy_digest_or_version": null}, "expected_status": "unknown", "expected_reason": "target_policy_identity_missing"},
+    {"id": "compatible-without-target-evidence", "overrides": {"evidence_refs": []}, "expected_status": "unknown", "expected_reason": "target_compatibility_evidence_missing"},
+    {"id": "validated-isolation-without-evidence", "overrides": {"isolation": {"required": true, "strategy": "universal_symmetric_pin", "validated": true, "evidence_refs": []}}, "expected_status": "unknown", "expected_reason": "target_isolation_evidence_missing"},
+    {"id": "cedar-policy-validation-not-applicable", "overrides": {"consumer_kind": "cedar", "consumer_version_or_source_pin": "cedar:4.12.0", "event_schema_digest": null, "policy_validation_status": "not_applicable", "required_temporal_horizon_seconds": null, "target_temporal_horizon_seconds": null, "isolation": {"required": false, "strategy": "not_required", "validated": true, "evidence_refs": ["evidence:isolation:not-required"]}}, "expected_status": "incompatible", "expected_reason": "target_policy_validation_not_applicable"}
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/reusable-grant-evaluation.schema.json",
+  "title": "Reusable Grant Evaluation",
+  "type": "object",
+  "required": ["schema_version","grant_id","proposal_id","projection_id","operation","scope_refs","status","satisfies_reusable_approval","approval_ref","reasons","source_class","counts_as_independent_human_adjudication","can_widen_pama","can_widen_scope","can_create_autonomy_policy"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "grant_id": {"type": "string", "pattern": "^reusable-grant:sha256:[0-9a-f]{64}$"},
+    "proposal_id": {"type": "string", "pattern": "^grant-proposal:sha256:[0-9a-f]{64}$"},
+    "projection_id": {"type": "string", "minLength": 1},
+    "operation": {"type": "string", "minLength": 1},
+    "scope_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "status": {"enum": ["current","not_applicable","stale","revoked","invalid"]},
+    "satisfies_reusable_approval": {"type": "boolean"},
+    "approval_ref": {"type": "string", "pattern": "^reusable-grant:sha256:[0-9a-f]{64}$"},
+    "reasons": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "source_class": {"const": "ratified_reusable_grant"},
+    "counts_as_independent_human_adjudication": {"const": false},
+    "can_widen_pama": {"const": false},
+    "can_widen_scope": {"const": false},
+    "can_create_autonomy_policy": {"const": false}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,169 @@
+{
+  "fixture_id": "governance-precedent-material-mismatch",
+  "fixture_version": "1.0.0",
+  "class": "governance_projection",
+  "description": "A prior approved feature-branch push is superficially similar to a current force-push to main, but the governance projection preserves the material differences instead of laundering prior approval into permission.",
+  "expected_behavior": {
+    "projection_valid": true,
+    "precedent_relationship": "material_mismatch",
+    "negative_precedent_preserved": true,
+    "final_permission_encoded": false,
+    "reason": "Prior approval is historical context only. Protected-target, force, and stale-CI differences make the earlier positive precedent materially non-equivalent."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:governance-precedent-force-main-warning",
+    "content_ref": "fixture://governance-precedent-material-mismatch/decision-episode",
+    "type": "decision",
+    "state": "crystallized",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-governance-decision-episode",
+      "timestamp": "2026-08-12T15:10:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:prior-denial-force-main",
+        "kind": "human_adjudication",
+        "ref": "fixture://denial/force-main/1",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.84,
+      "calibrated": false,
+      "durability_dimensions": [
+        "decision_continuity",
+        "negative_precedent"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "block",
+      "risk_class": "high",
+      "policy_refs": [
+        "fixture:policy:protected-branch-v3"
+      ]
+    },
+    "certification": {
+      "status": "pass",
+      "scope": "fixture:repo:protected-branch"
+    },
+    "decay_profile": {
+      "lambda_base": 0.01,
+      "lambda_eff": 0.01,
+      "pressure": 1
+    },
+    "ledger_ref": "fixture://ledger/governance-precedent-force-main-warning",
+    "created_at": "2026-08-12T15:10:00Z"
+  },
+  "governance_projection": {
+    "schema_version": "0.1.0",
+    "projection_id": "projection:fixture:material-mismatch",
+    "purpose": "governance_decision_context",
+    "current_context_ref": "fixture://current-action/force-main/2",
+    "source_memory_refs": [
+      "fixture:uor:governance-precedent-feature-push",
+      "fixture:uor:governance-precedent-force-main-warning"
+    ],
+    "scope": {
+      "domain_refs": [
+        "fixture:tenant:alpha",
+        "fixture:repo:alpha"
+      ],
+      "relationship": "same",
+      "purpose_ref": "fixture:purpose:publish-rebased-main"
+    },
+    "precedents": [
+      {
+        "memory_ref": "fixture:uor:governance-precedent-feature-push",
+        "polarity": "supportive",
+        "relationship": "material_mismatch",
+        "rationale_ref": "fixture://rationale/feature-push/1",
+        "rationale_summary": "The earlier approval depended on an unprotected feature branch, no force flag, and current CI.",
+        "material_conditions": [
+          {
+            "name": "protected_target",
+            "precedent_value": false,
+            "current_value": true,
+            "comparison": "mismatch",
+            "evidence_refs": ["fixture://evidence/current-target-main"]
+          },
+          {
+            "name": "force",
+            "precedent_value": false,
+            "current_value": true,
+            "comparison": "mismatch",
+            "evidence_refs": ["fixture://evidence/current-force-flag"]
+          },
+          {
+            "name": "ci_current",
+            "precedent_value": true,
+            "current_value": false,
+            "comparison": "mismatch",
+            "evidence_refs": ["fixture://evidence/current-ci-stale"]
+          }
+        ],
+        "outcome_refs": [
+          "fixture://outcome/feature-push/1/success"
+        ],
+        "validity": {
+          "status": "current",
+          "policy_version_ref": "fixture:policy:repo-write-v3"
+        },
+        "provenance": {
+          "source_type": "human_adjudication",
+          "source_ref": "fixture://approval/feature-push/1",
+          "authority_ref": "fixture:principal:repo-owner",
+          "independent_adjudication": true
+        }
+      },
+      {
+        "memory_ref": "fixture:uor:governance-precedent-force-main-warning",
+        "polarity": "cautionary",
+        "relationship": "material_match",
+        "rationale_ref": "fixture://rationale/force-main/1",
+        "rationale_summary": "A prior force-push to a protected branch was denied because overwrite semantics and branch criticality made the action materially higher consequence.",
+        "material_conditions": [
+          {
+            "name": "protected_target",
+            "precedent_value": true,
+            "current_value": true,
+            "comparison": "match"
+          },
+          {
+            "name": "force",
+            "precedent_value": true,
+            "current_value": true,
+            "comparison": "match"
+          }
+        ],
+        "outcome_refs": [
+          "fixture://outcome/force-main/1/denied"
+        ],
+        "validity": {
+          "status": "current",
+          "policy_version_ref": "fixture:policy:protected-branch-v3"
+        },
+        "provenance": {
+          "source_type": "human_adjudication",
+          "source_ref": "fixture://denial/force-main/1",
+          "authority_ref": "fixture:principal:repo-owner",
+          "independent_adjudication": true
+        }
+      }
+    ],
+    "negative_precedent_refs": [
+      "fixture:uor:governance-precedent-force-main-warning"
+    ],
+    "derivation": {
+      "mode": "deterministic_condition_match",
+      "reconstructable": true,
+      "source_snapshot_ref": "fixture://snapshot/governance-precedent-material-mismatch"
+    },
+    "sensitivity": {
+      "privacy_minimized": true,
+      "labels": ["repository_metadata"]
+    },
+    "generated_at": "2026-08-12T15:15:00Z"
+  }
+}

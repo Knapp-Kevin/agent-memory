@@ -1,0 +1,16 @@
+{
+  "name": "@mythologiq/agent-memory-runtime",
+  "version": "0.1.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "check": "node --check src/index.mjs && node --check test/runtime-adapter.test.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

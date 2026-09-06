@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="960" viewBox="0 0 540 960" role="img" aria-labelledby="title desc">
+  <title id="title">Temporal change, correction, supersession, dispute, and staleness</title>
+  <desc id="desc">A vertical Agent Memory timeline distinguishing historically true state that is later superseded, wrong or incomplete state that is corrected, currently uncertain state that is disputed, and old but historically valid state that is stale for current-state recall. Historical records remain preserved and causal inference does not rewrite the event log.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L8,3 z" fill="#57606a"/></marker>
+  </defs>
+  <rect x="1" y="1" width="538" height="958" rx="18" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="28" y="42" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="700">Temporal change is not one kind of replacement</text>
+  <text x="28" y="68" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">Preserve what was true, what was wrong, what is uncertain, and what is merely old.</text>
+
+  <text x="28" y="108" fill="#0969da" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700">01  SUPERSESSION</text>
+  <rect x="28" y="124" width="484" height="132" rx="12" fill="#f6f8fa" stroke="#0969da"/>
+  <text x="48" y="154" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="700">Historically true → newer state applies later</text>
+  <text x="48" y="180" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">T1: endpoint = A</text>
+  <text x="48" y="204" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">T2: endpoint = B</text>
+  <text x="48" y="230" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">A remains historical state; B becomes current. Supersession != correction.</text>
+
+  <line x1="270" y1="256" x2="270" y2="282" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="28" y="314" fill="#8250df" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700">02  CORRECTION</text>
+  <rect x="28" y="330" width="484" height="132" rx="12" fill="#f8f5ff" stroke="#8250df"/>
+  <text x="48" y="360" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="700">Wrong or materially incomplete → corrected</text>
+  <text x="48" y="386" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">Prior record was inaccurate within its claimed scope/time.</text>
+  <text x="48" y="412" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">New record preserves correction history and provenance.</text>
+  <text x="48" y="438" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">Correction changes the claim; it does not silently erase the historical record.</text>
+
+  <line x1="270" y1="462" x2="270" y2="488" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="28" y="520" fill="#cf222e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700">03  DISPUTE</text>
+  <rect x="28" y="536" width="484" height="132" rx="12" fill="#fff5f5" stroke="#cf222e"/>
+  <text x="48" y="566" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="700">Currently uncertain → disputed</text>
+  <text x="48" y="592" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">Conflicting evidence does not automatically select a winner.</text>
+  <text x="48" y="618" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">Review, verification, or more evidence may be required.</text>
+  <text x="48" y="644" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">Disputed state must not be silently treated as canonical truth.</text>
+
+  <line x1="270" y1="668" x2="270" y2="694" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="28" y="726" fill="#1a7f37" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700">04  STALENESS</text>
+  <rect x="28" y="742" width="484" height="132" rx="12" fill="#f3fff5" stroke="#1a7f37"/>
+  <text x="48" y="772" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="700">Old but historically valid → stale for current-state recall</text>
+  <text x="48" y="798" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">Age or changed conditions can reduce current relevance.</text>
+  <text x="48" y="824" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">Historical queries may still legitimately return the older state.</text>
+  <text x="48" y="850" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">Staleness != falsity. Historically true != currently true.</text>
+
+  <rect x="28" y="898" width="484" height="38" rx="9" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="270" y="922" text-anchor="middle" fill="#24292f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">Chronology may be exact. Causal attribution remains uncertain unless independently established.</text>
+</svg>

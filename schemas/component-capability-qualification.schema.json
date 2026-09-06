@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/component-capability-qualification.schema.json",
+  "title": "Agent Memory Component Capability Qualification",
+  "description": "Evidence record for behavior actually proven by an exact component/capability/adapter/profile/runtime identity. Qualification is evidence, never memory authority. Version 1.2.0 binds Capability Contract v3 behavior and operational posture into applicability while preserving historical 1.1.0 records.",
+  "type": "object",
+  "required": ["schema_version", "subject", "runtime", "source_rights", "evidence", "result"],
+  "properties": {
+    "schema_version": {"enum": ["1.1.0", "1.2.0"]},
+    "subject": {"$ref": "#/$defs/subject"},
+    "runtime": {"$ref": "#/$defs/runtime"},
+    "source_rights": {"$ref": "#/$defs/sourceRights"},
+    "evidence": {"$ref": "#/$defs/evidence"},
+    "result": {"$ref": "#/$defs/result"},
+    "qualified_contract": {"$ref": "#/$defs/qualifiedContract"}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {"if": {"properties": {"schema_version": {"const": "1.2.0"}}, "required": ["schema_version"]}, "then": {"required": ["qualified_contract"]}},
+    {"if": {"properties": {"schema_version": {"const": "1.1.0"}}, "required": ["schema_version"]}, "then": {"not": {"required": ["qualified_contract"]}}}
+  ],
+  "$defs": {
+    "nonEmpty": {"type": "string", "minLength": 1},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "maturity": {"enum": ["declared", "implemented", "runtime_wired", "evidence_proven", "reference_qualified"]},
+    "subject": {
+      "type": "object",
+      "required": ["component_id", "component_version", "implementation_ref", "capability_id", "capability_version", "adapter_id", "adapter_version", "qualification_profile_id", "qualification_profile_version"],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/nonEmpty"},
+        "component_version": {"$ref": "#/$defs/nonEmpty"},
+        "implementation_ref": {"$ref": "#/$defs/nonEmpty"},
+        "capability_id": {"$ref": "#/$defs/nonEmpty"},
+        "capability_version": {"$ref": "#/$defs/nonEmpty"},
+        "adapter_id": {"$ref": "#/$defs/nonEmpty"},
+        "adapter_version": {"$ref": "#/$defs/nonEmpty"},
+        "qualification_profile_id": {"$ref": "#/$defs/nonEmpty"},
+        "qualification_profile_version": {"$ref": "#/$defs/nonEmpty"}
+      },
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["configuration_digest", "fixture_id", "fixture_digest"],
+      "properties": {
+        "configuration_digest": {"$ref": "#/$defs/digest"},
+        "fixture_id": {"$ref": "#/$defs/nonEmpty"},
+        "fixture_digest": {"$ref": "#/$defs/digest"},
+        "dependency_refs": {"type": "array", "items": {"$ref": "#/$defs/nonEmpty"}, "uniqueItems": true},
+        "runtime_refs": {"type": "array", "items": {"$ref": "#/$defs/nonEmpty"}, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    },
+    "sourceRights": {
+      "type": "object",
+      "required": ["license_id", "license_ref", "use_posture"],
+      "properties": {
+        "license_id": {"$ref": "#/$defs/nonEmpty"},
+        "license_ref": {"$ref": "#/$defs/nonEmpty"},
+        "use_posture": {"enum": ["runtime_allowed", "comparator_only", "disallowed"]}
+      },
+      "additionalProperties": false
+    },
+    "behaviorContract": {
+      "type": "object",
+      "required": ["operation_support", "currentness_model", "invalidation_model", "correction_model", "deletion_model", "residue_model", "migration_rebuild_model", "structural_mutation_requirement"],
+      "properties": {
+        "operation_support": {
+          "type": "object",
+          "required": ["write", "read", "recall_candidate"],
+          "properties": {
+            "write": {"type": "boolean"},
+            "read": {"type": "boolean"},
+            "recall_candidate": {"type": "boolean"}
+          },
+          "additionalProperties": false
+        },
+        "currentness_model": {"enum": ["not_applicable", "canonical_version", "basis_versioned", "provider_revalidated", "external_asserted"]},
+        "invalidation_model": {"enum": ["not_applicable", "version_relation", "explicit_signal", "provider_revalidation"]},
+        "correction_model": {"enum": ["not_applicable", "canonical_supersession", "invalidate_derived", "candidate_only", "provider_revalidation"]},
+        "deletion_model": {"enum": ["not_applicable", "canonical_delete", "derived_residue_then_purge", "candidate_drop", "provider_revalidation"]},
+        "residue_model": {"enum": ["not_applicable", "none_expected", "scan_required", "derived_residual", "provider_managed"]},
+        "migration_rebuild_model": {"enum": ["not_applicable", "rebuild_from_canonical", "explicit_migration", "requires_requalification", "unsupported"]},
+        "structural_mutation_requirement": {"enum": ["none", "proposal_only", "pama_required", "external_authorization_required"]}
+      },
+      "additionalProperties": false
+    },
+    "operationalContract": {
+      "type": "object",
+      "required": ["write_atomicity", "concurrency_control", "idempotency", "restart_recovery", "reconciliation"],
+      "properties": {
+        "write_atomicity": {"enum": ["none", "process_local", "single_record_atomic", "transactional_multi_record"]},
+        "concurrency_control": {"enum": ["none", "process_local", "optimistic_revision", "pessimistic_lock", "serializable"]},
+        "idempotency": {"enum": ["none", "process_local", "durable_keyed"]},
+        "restart_recovery": {"enum": ["none", "process_local_only", "reconstructable", "checkpoint_replay"]},
+        "reconciliation": {"enum": ["none", "process_local_only", "deterministic_readback", "authoritative_rebuild"]}
+      },
+      "additionalProperties": false
+    },
+    "qualifiedContract": {
+      "type": "object",
+      "required": ["component_profile_version", "state_posture", "scope_posture", "failure_posture", "authority_effect", "behavior_contract"],
+      "properties": {
+        "component_profile_version": {"$ref": "#/$defs/nonEmpty"},
+        "state_posture": {"$ref": "#/$defs/nonEmpty"},
+        "scope_posture": {"$ref": "#/$defs/nonEmpty"},
+        "failure_posture": {"$ref": "#/$defs/nonEmpty"},
+        "authority_effect": {"enum": ["none", "proposal_only"]},
+        "behavior_contract": {"$ref": "#/$defs/behaviorContract"},
+        "operational_contract": {"$ref": "#/$defs/operationalContract"}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {"if": {"properties": {"component_profile_version": {"const": "component-capability-v3"}}, "required": ["component_profile_version"]}, "then": {"required": ["operational_contract"]}}
+      ]
+    },
+    "check": {
+      "type": "object",
+      "required": ["check_id", "passed"],
+      "properties": {
+        "check_id": {"$ref": "#/$defs/nonEmpty"},
+        "passed": {"type": "boolean"},
+        "evidence_ref": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "adapterResult": {
+      "type": "object",
+      "required": [
+        "operation",
+        "runtime_identity",
+        "input_refs",
+        "raw_provider_refs",
+        "normalized_refs",
+        "currentness",
+        "failure_result",
+        "trace_ref",
+        "authority_effect"
+      ],
+      "properties": {
+        "operation": {"$ref": "#/$defs/nonEmpty"},
+        "runtime_identity": {"$ref": "#/$defs/nonEmpty"},
+        "input_refs": {"type": "array", "items": {"$ref": "#/$defs/nonEmpty"}},
+        "raw_provider_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonEmpty"}},
+        "normalized_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonEmpty"}},
+        "currentness": {"$ref": "#/$defs/nonEmpty"},
+        "failure_result": {"$ref": "#/$defs/nonEmpty"},
+        "trace_ref": {"$ref": "#/$defs/nonEmpty"},
+        "authority_effect": {"const": "none"}
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["operations", "raw_provider_refs", "normalized_refs", "adapter_results", "checks", "artifact_digests"],
+      "properties": {
+        "operations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonEmpty"}, "uniqueItems": true},
+        "raw_provider_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonEmpty"}},
+        "normalized_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonEmpty"}},
+        "adapter_results": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/adapterResult"}},
+        "checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}},
+        "artifact_digests": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/digest"}, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    },
+    "result": {
+      "type": "object",
+      "required": ["maturity_before", "profile_maturity_ceiling", "earned_maturity", "applicability_digest", "qualification_current", "authority_effect", "limitations"],
+      "properties": {
+        "maturity_before": {"$ref": "#/$defs/maturity"},
+        "profile_maturity_ceiling": {"$ref": "#/$defs/maturity"},
+        "earned_maturity": {"$ref": "#/$defs/maturity"},
+        "applicability_digest": {"$ref": "#/$defs/digest"},
+        "qualification_current": {"type": "boolean"},
+        "authority_effect": {"const": "none"},
+        "limitations": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,180 @@
+name: Hindsight v0.9.0 Qualification
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/hindsight-v090-qualification.yml"
+      - "reference/agentmem_ref/hindsight_qualification.py"
+      - "reference/run_hindsight_v090_fixture.py"
+      - "reference/run_hindsight_v090_qualification.py"
+      - "reference/tests/test_hindsight_qualification.py"
+      - "reference/fixtures/component-capabilities/hindsight-v0.9.0.json"
+      - "reference/agentmem_ref/qualification.py"
+      - "schemas/component-capability-profile.schema.json"
+      - "schemas/component-capability-qualification.schema.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify-hindsight-v090:
+    name: qualify-hindsight-v090
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      PYTHONPATH: reference
+      AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      HINDSIGHT_QUALIFICATION_HOME: /tmp/hindsight-qualification-home
+      HF_HOME: /tmp/hindsight-qualification-hf
+      TRANSFORMERS_CACHE: /tmp/hindsight-qualification-hf
+    steps:
+      - name: Checkout Agent Memory exact head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.AGENT_MEMORY_COMMIT }}
+
+      - name: Verify Agent Memory exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$AGENT_MEMORY_COMMIT"
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install Agent Memory validation dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Verify exact Hindsight v0.9.0 source and MIT license
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/hindsight-source
+          git init -q /tmp/hindsight-source
+          git -C /tmp/hindsight-source remote add origin https://github.com/vectorize-io/hindsight.git
+          git -C /tmp/hindsight-source fetch -q --depth 1 origin refs/tags/v0.9.0
+          git -C /tmp/hindsight-source checkout -q FETCH_HEAD
+          ACTUAL_COMMIT="$(git -C /tmp/hindsight-source rev-parse HEAD)"
+          EXPECTED_COMMIT="b12646f49ec512136b9f709e608524ffed969668"
+          test "$ACTUAL_COMMIT" = "$EXPECTED_COMMIT"
+          grep -q "MIT License" /tmp/hindsight-source/LICENSE
+          grep -q 'version = "0.9.0"' /tmp/hindsight-source/hindsight-embed/pyproject.toml
+          grep -q 'version = "0.9.0"' /tmp/hindsight-source/hindsight-api/pyproject.toml
+          grep -q '"chunks"' /tmp/hindsight-source/hindsight-api-slim/hindsight_api/config.py
+          grep -q 'ENV_RETAIN_EXTRACTION_MODE = "HINDSIGHT_API_RETAIN_EXTRACTION_MODE"' /tmp/hindsight-source/hindsight-api-slim/hindsight_api/config.py
+          printf '%s\n' "$ACTUAL_COMMIT" > /tmp/hindsight-source-commit.txt
+
+      - name: Install exact Hindsight embedded runtime
+        run: |
+          python -m pip install --disable-pip-version-check \
+            "hindsight-embed==0.9.0" \
+            "hindsight-api==0.9.0"
+          python - <<'PY'
+          from importlib import metadata
+          expected = {
+              "hindsight-embed": "0.9.0",
+              "hindsight-api": "0.9.0",
+              "hindsight-api-slim": "0.9.0",
+          }
+          for package, wanted in expected.items():
+              actual = metadata.version(package)
+              if actual != wanted:
+                  raise SystemExit(f"unexpected {package} version: {actual}")
+              print(f"{package}={actual}")
+          PY
+
+      - name: Execute focused Agent Memory qualification tests
+        run: |
+          python -m unittest \
+            reference/tests/test_hindsight_qualification.py \
+            reference/tests/test_component_qualification_v12.py
+
+      - name: Execute exact Hindsight document lifecycle fixture
+        shell: bash
+        env:
+          HOME: /tmp/hindsight-qualification-home
+        run: |
+          set -euo pipefail
+          rm -rf "$HOME" /tmp/hindsight-qualification-hf
+          mkdir -p "$HOME" /tmp/hindsight-qualification-hf artifacts/hindsight-v090
+          python reference/run_hindsight_v090_fixture.py \
+            --source-commit "$(cat /tmp/hindsight-source-commit.txt)" \
+            --license-path /tmp/hindsight-source/LICENSE \
+            --output artifacts/hindsight-v090/raw-provider-evidence.json
+
+      - name: Emit Capability Qualification v1.2 evidence
+        run: |
+          python reference/run_hindsight_v090_qualification.py \
+            --agent-memory-commit "$AGENT_MEMORY_COMMIT" \
+            --raw-evidence artifacts/hindsight-v090/raw-provider-evidence.json \
+            --component-profile reference/fixtures/component-capabilities/hindsight-v0.9.0.json \
+            --output artifacts/hindsight-v090/qualification.json
+
+      - name: Validate qualification schema and exact current declaration
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import jsonschema
+          from agentmem_ref.hindsight_qualification import load_component_profile
+          from agentmem_ref.qualification import QualifiedCapabilityContract
+
+          root = Path('.')
+          report = json.loads((root / 'artifacts/hindsight-v090/qualification.json').read_text())
+          if not report.get('eligible'):
+              raise SystemExit('Hindsight qualification is explicitly ineligible')
+          qualification = report.get('qualification')
+          if not qualification:
+              raise SystemExit('eligible Hindsight result did not emit a qualification record')
+          schema = json.loads((root / 'schemas/component-capability-qualification.schema.json').read_text())
+          jsonschema.Draft202012Validator(schema).validate(qualification)
+          if qualification['schema_version'] != '1.2.0':
+              raise SystemExit('Hindsight must emit qualification schema v1.2.0')
+          if qualification['result']['authority_effect'] != 'none':
+              raise SystemExit('provider qualification cannot grant authority')
+          if qualification['source_rights']['use_posture'] != 'runtime_allowed':
+              raise SystemExit('MIT-qualified runtime must preserve runtime_allowed source-rights posture')
+          component = load_component_profile(root / 'reference/fixtures/component-capabilities/hindsight-v0.9.0.json')
+          contract = QualifiedCapabilityContract.from_component(
+              component,
+              capability_id='resource_artifact_memory',
+              capability_version='1.0',
+          )
+          if qualification['qualified_contract'] != contract.to_dict():
+              raise SystemExit('serialized Hindsight qualification contract drifted from current declaration')
+          PY
+
+      - name: Publish Hindsight qualification summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Hindsight v0.9.0 qualification"
+            echo
+            if [ -f artifacts/hindsight-v090/qualification.json ]; then
+              python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('artifacts/hindsight-v090/qualification.json').read_text())
+          print(f"- eligible: `{str(value.get('eligible')).lower()}`")
+          print(f"- authority effect: `{value.get('authority_effect')}`")
+          for observation in value.get('observations', []):
+              marker = 'PASS' if observation.get('passed') else 'FAIL'
+              print(f"- {marker}: `{observation.get('check_id')}`")
+          PY
+            else
+              echo "- qualification report was not emitted"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload raw and normalized qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: hindsight-v090-qualification-${{ env.AGENT_MEMORY_COMMIT }}
+          path: artifacts/hindsight-v090
+          if-no-files-found: warn

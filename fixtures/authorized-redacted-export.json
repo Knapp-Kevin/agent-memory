@@ -1,0 +1,77 @@
+{
+  "fixture_id": "authorized-redacted-export",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A privacy-minimized redacted representation is exported to an external destination only after the scope-expansion decision receives external approval. Redaction participates in representation safety but does not authorize the crossing.",
+  "expected_behavior": {
+    "privacy_minimized": true,
+    "external_review_required": true,
+    "external_review_satisfied": true,
+    "export_committed": true,
+    "redaction_is_authority": false
+  },
+  "governed_uncertainty": {
+    "requested_action": "export",
+    "permitted_actions": [
+      "export",
+      "collect_more_evidence",
+      "defer"
+    ],
+    "prohibited_actions": [],
+    "selected_action": "export",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "redaction_not_equal_authority",
+      "destination_scope_expansion_governed",
+      "external_approval_bound_to_export",
+      "representation_metadata_preserved"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:authorized-redacted-export",
+    "type": "summary",
+    "state": "crystallized",
+    "scope": {
+      "owner_principal": "user:alice",
+      "origin_actor": "agent:planner",
+      "tenant": "tenant-a",
+      "purpose": "security-review",
+      "isolation_domain_refs": ["domain:project-a"],
+      "allowed_destinations": ["domain:external-partner"]
+    },
+    "provenance": {
+      "origin": "synthetic redacted export",
+      "observer": "boundary-crossing-evaluator",
+      "method": "approved redaction plus governed scope expansion",
+      "timestamp": "2026-08-12T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:redaction-shape",
+        "kind": "redaction",
+        "ref": "redaction:approved-shape",
+        "confidence": 1.0
+      },
+      {
+        "id": "evidence:data-owner-approval",
+        "kind": "approval",
+        "ref": "approval:data-owner",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.8,
+      "calibrated": true,
+      "durability_dimensions": ["authorized_export"]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "medium",
+      "authority_refs": ["approval:data-owner"],
+      "permitted_actions": ["export", "collect_more_evidence", "defer"],
+      "prohibited_actions": [],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-12T00:00:00Z"
+  }
+}

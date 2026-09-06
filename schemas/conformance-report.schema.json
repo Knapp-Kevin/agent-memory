@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/conformance-report.schema.json",
+  "title": "Agent Memory Conformance Report",
+  "type": "object",
+  "required": [
+    "implementation",
+    "version",
+    "doctrine_version",
+    "conformance_level",
+    "fixtures_run",
+    "fixtures_passed",
+    "fixtures_failed"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "implementation": { "type": "string" },
+    "version": { "type": "string" },
+    "doctrine_version": { "type": "string" },
+    "policy_version": { "type": "string" },
+    "estimator_versions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "calibration_versions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "conformance_level": { "type": "integer", "minimum": 0, "maximum": 6 },
+    "fixtures_run": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "fixtures_passed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "fixtures_failed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "trials_run": { "type": "integer", "minimum": 0 },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+        "sample_size": { "type": "integer", "minimum": 0 },
+        "persist_retention_rate": { "$ref": "#/$defs/rate" },
+        "false_permanence_rate": { "$ref": "#/$defs/rate" },
+        "false_evaporation_rate": { "$ref": "#/$defs/rate" },
+        "evaporation_rate_for_true_ephemeral": { "$ref": "#/$defs/rate" },
+        "trap_class_failure_rate": { "$ref": "#/$defs/rate" },
+        "calibration_error": { "type": "number", "minimum": 0 },
+        "boundary_instability_rate": { "$ref": "#/$defs/rate" },
+        "abstention_rate": { "$ref": "#/$defs/rate" },
+        "estimator_disagreement_rate": { "$ref": "#/$defs/rate" },
+        "out_of_scope_rate": { "$ref": "#/$defs/rate" },
+        "unsafe_recall_rate": { "$ref": "#/$defs/rate" },
+        "cross_scope_admission_rate": { "$ref": "#/$defs/rate" },
+        "blocked_action_escape_rate": { "$ref": "#/$defs/rate" },
+        "stochastic_action_set_violation_rate": { "$ref": "#/$defs/rate" },
+        "deletion_residue_rate": { "$ref": "#/$defs/rate" },
+        "replay_reconstruction_success_rate": { "$ref": "#/$defs/rate" },
+        "correction_propagation_rate": { "$ref": "#/$defs/rate" }
+      },
+      "additionalProperties": false
+    },
+    "metric_extensions": {
+      "type": "object",
+      "description": "Implementation-specific metrics not yet standardized by doctrine.",
+      "additionalProperties": true
+    },
+    "forbidden_hit_coverage": {
+      "type": "array",
+      "description": "Explicit negative lifecycle assertions. Each row states which pipeline stages were expected to remain unreachable for a forbidden memory/action class rather than inferring safety from a positive recall result.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assertion_id",
+          "forbidden_class",
+          "source_lifecycle_state",
+          "source_evidence",
+          "candidate_discovered",
+          "admitted",
+          "context_surfaced",
+          "downstream_influence",
+          "expected_refusal",
+          "passed"
+        ],
+        "properties": {
+          "assertion_id": { "type": "string", "minLength": 1 },
+          "forbidden_class": { "type": "string", "minLength": 1 },
+          "source_lifecycle_state": { "type": "string", "minLength": 1 },
+          "source_evidence": { "type": "string", "minLength": 1 },
+          "candidate_discovered": { "type": "boolean" },
+          "admitted": { "type": "boolean" },
+          "context_surfaced": { "type": "boolean" },
+          "downstream_influence": { "type": "boolean" },
+          "expected_refusal": { "type": "string", "minLength": 1 },
+          "passed": { "type": "boolean" }
+        }
+      }
+    },
+    "durability_dimensions_tested": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "consequence_classes_tested": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "scope_of_validity": {
+      "type": ["string", "object"]
+    },
+    "known_exemptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "known_failures": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence_bundle_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Prevent Atlas findings from reopening existing Agent Memory work merely because terminology differs.",
+  "dispositions": [
+    "covered",
+    "covered_semantics_differ",
+    "fixture_hardening",
+    "implementation_gap",
+    "research_gap",
+    "not_relevant"
+  ],
+  "entries": [
+    {
+      "finding_family": "rejected-value re-entry / correction resurrection",
+      "agent_memory_owners": ["#147", "#148"],
+      "default_disposition": "fixture_hardening",
+      "note": "A different tombstone representation is not automatically a new logical requirement."
+    },
+    {
+      "finding_family": "forbidden retrieval / must-not-surface / downstream influence",
+      "agent_memory_owners": ["#148"],
+      "default_disposition": "fixture_hardening",
+      "note": "Negative retrieval and influence assertions already have a canonical owner."
+    },
+    {
+      "finding_family": "repetition is not corroboration / self-reinforcing evidence",
+      "agent_memory_owners": ["#149", "#227"],
+      "default_disposition": "covered",
+      "note": "New examples may strengthen adversarial fixtures without creating new doctrine."
+    },
+    {
+      "finding_family": "conflict resolution beyond detection",
+      "agent_memory_owners": ["#12", "docs/17-conflict-resolution-engine.md"],
+      "default_disposition": "covered_semantics_differ",
+      "note": "Compare outcome semantics before claiming a missing conflict primitive."
+    },
+    {
+      "finding_family": "architecture families / representation portability",
+      "agent_memory_owners": ["#67", "#224", "#275", "#276"],
+      "default_disposition": "covered",
+      "note": "Reopen only on a recurring failure not expressible by current lifecycle/currentness/isolation contracts."
+    },
+    {
+      "finding_family": "benchmark or evaluator integrity",
+      "agent_memory_owners": ["#138"],
+      "default_disposition": "covered_semantics_differ",
+      "note": "A new benchmark matters when it exercises a distinct failure boundary, not because it has a new leaderboard."
+    },
+    {
+      "finding_family": "memory poisoning / hostile durable state",
+      "agent_memory_owners": ["#173"],
+      "default_disposition": "fixture_hardening",
+      "note": "Promote only distinct propagation, admission, or recovery failures."
+    },
+    {
+      "finding_family": "component qualification / adapter portability / fallback",
+      "agent_memory_owners": ["#280", "#292", "#293", "#298", "#300"],
+      "default_disposition": "covered_semantics_differ",
+      "note": "External product success is comparator evidence until exact capability/profile qualification is earned."
+    },
+    {
+      "finding_family": "scope / tenant / project isolation",
+      "agent_memory_owners": ["docs/18-actor-scope-and-tenancy.md", "#280", "#282"],
+      "default_disposition": "covered_semantics_differ",
+      "note": "Read-path scope alone is weaker than Agent Memory's read/write/derivation/rebuild obligations."
+    },
+    {
+      "finding_family": "source trust / epistemic status",
+      "agent_memory_owners": ["docs/16-source-trust-and-reputation.md", "#146"],
+      "default_disposition": "covered_semantics_differ",
+      "note": "A discrete trust enum is not required merely because another rubric checks for one. Trust remains evidence, not authority."
+    },
+    {
+      "finding_family": "bi-temporal validity / correction history",
+      "agent_memory_owners": ["docs/05-memory-state-and-time.md", "docs/17-conflict-resolution-engine.md"],
+      "default_disposition": "covered_semantics_differ",
+      "note": "Physical temporal representation may vary while logical currentness obligations remain."
+    },
+    {
+      "finding_family": "deletion residue / rebuild resurrection / forgetting completeness",
+      "agent_memory_owners": ["docs/07-retention-deletion-and-forgetting.md", "#148", "#282"],
+      "default_disposition": "fixture_hardening",
+      "note": "Provider-local deletion is not transitive Agent Memory forgetting completeness."
+    },
+    {
+      "finding_family": "restart-safe governance state",
+      "agent_memory_owners": ["#282"],
+      "default_disposition": "implementation_gap",
+      "note": "Process recovery must reconstruct currentness, scope, deletion, component/profile and pending-obligation state."
+    },
+    {
+      "finding_family": "write-to-readable lag / deferred projection currentness / quiescence",
+      "agent_memory_owners": ["#308", "#282"],
+      "default_disposition": "implementation_gap",
+      "note": "This survived the current Atlas dedup pass as a real operational measurement/readiness gap."
+    },
+    {
+      "finding_family": "procedural or skill memory",
+      "agent_memory_owners": ["ADR-034", "#295"],
+      "default_disposition": "covered_semantics_differ",
+      "note": "Retained procedure, recall activation, action authority, and execution evidence remain separate."
+    },
+    {
+      "finding_family": "cost / latency / structural work characterization",
+      "agent_memory_owners": ["#46", "docs/programs/runtime-evidence/systems-economic-characterization.md", "#308"],
+      "default_disposition": "covered_semantics_differ",
+      "note": "P9 owns structural work/cost; #308 adds visibility-phase and quiescence timing rather than duplicating P9."
+    }
+  ]
+}

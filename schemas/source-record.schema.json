@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/source-record.schema.json",
+  "title": "Agent Memory Source Record",
+  "type": "object",
+  "required": [
+    "source_id",
+    "title",
+    "source_type",
+    "access",
+    "rights_status",
+    "reuse_mode",
+    "reuse_basis",
+    "material_reused",
+    "verified_at"
+  ],
+  "properties": {
+    "source_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "source_type": {"type": "string", "minLength": 1},
+    "public_url": {"type": ["string", "null"], "format": "uri"},
+    "repository": {"type": ["string", "null"]},
+    "access": {
+      "type": "string",
+      "enum": ["public", "private", "public_successor", "no_public_locator"]
+    },
+    "copyright_owner_or_originator": {"type": ["string", "null"]},
+    "license_spdx": {"type": ["string", "null"]},
+    "license_url": {"type": ["string", "null"], "format": "uri"},
+    "rights_status": {
+      "type": "string",
+      "enum": [
+        "verified_open_license",
+        "author_originated",
+        "permission_verified",
+        "private_internal",
+        "unknown",
+        "citation_only"
+      ]
+    },
+    "reuse_mode": {
+      "type": "string",
+      "enum": [
+        "citation_only",
+        "independent_synthesis",
+        "author_originated",
+        "licensed_reuse",
+        "permission_granted"
+      ]
+    },
+    "reuse_basis": {"type": "string"},
+    "material_reused": {"type": "string"},
+    "attribution_required": {"type": "boolean"},
+    "notice_required": {"type": "boolean"},
+    "modification_notice_required": {"type": "boolean"},
+    "provenance_note": {"type": "string"},
+    "limitations": {"type": "string"},
+    "verified_at": {"type": "string", "format": "date"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "reuse_mode": {"enum": ["licensed_reuse", "permission_granted"]}
+        },
+        "required": ["reuse_mode"]
+      },
+      "then": {
+        "properties": {
+          "reuse_basis": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"rights_status": {"const": "unknown"}},
+        "required": ["rights_status"]
+      },
+      "then": {
+        "properties": {
+          "reuse_mode": {"enum": ["citation_only", "independent_synthesis"]}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"access": {"const": "private"}},
+        "required": ["access"]
+      },
+      "then": {
+        "properties": {"public_url": {"type": "null"}}
+      }
+    }
+  ],
+  "additionalProperties": false
+}

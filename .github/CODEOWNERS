@@ -1,0 +1,21 @@
+# Canonical maintainer review
+* @Knapp-Kevin
+
+# Doctrine and native PAMA
+/docs/ @Knapp-Kevin
+/docs/pama/ @Knapp-Kevin
+/docs/adr/ @Knapp-Kevin
+
+# Machine-readable contracts and evidence
+/schemas/ @Knapp-Kevin
+/fixtures/ @Knapp-Kevin
+/sources/ @Knapp-Kevin
+/scripts/ @Knapp-Kevin
+
+# Repository governance and public-facing surfaces
+/README.md @Knapp-Kevin
+/CONTRIBUTING.md @Knapp-Kevin
+/GOVERNANCE.md @Knapp-Kevin
+/SECURITY.md @Knapp-Kevin
+/LICENSE @Knapp-Kevin
+/NOTICE @Knapp-Kevin

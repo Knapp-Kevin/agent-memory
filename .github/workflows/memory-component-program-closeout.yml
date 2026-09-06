@@ -1,0 +1,80 @@
+name: Memory Component Program Closeout
+
+on:
+  pull_request:
+    paths:
+      - 'docs/programs/memory-modules/README.md'
+      - 'docs/programs/memory-modules/program-closeout.json'
+      - 'wiki-src/Mutable-Memory-Fabric.md'
+      - 'scripts/validate_memory_component_program_closeout.py'
+      - '.github/workflows/memory-component-program-closeout.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/programs/memory-modules/README.md'
+      - 'docs/programs/memory-modules/program-closeout.json'
+      - 'wiki-src/Mutable-Memory-Fabric.md'
+      - 'scripts/validate_memory_component_program_closeout.py'
+      - '.github/workflows/memory-component-program-closeout.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-closeout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Validate #274 acceptance crosswalk and living docs
+        run: python scripts/validate_memory_component_program_closeout.py
+
+      - name: Record exact-head closeout evidence
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p /tmp/memory-component-program-closeout
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          files = [
+              Path('docs/programs/memory-modules/program-closeout.json'),
+              Path('docs/programs/memory-modules/README.md'),
+              Path('wiki-src/Mutable-Memory-Fabric.md'),
+              Path('reference/fixtures/component-capabilities/evolveai.example.json'),
+              Path('reference/fixtures/component-capabilities/codegenome.example.json'),
+          ]
+          digests = {}
+          for path in files:
+              digests[str(path)] = 'sha256:' + hashlib.sha256(path.read_bytes()).hexdigest()
+          report = {
+              'schema_version': '1.0.0',
+              'agent_memory_commit': os.environ['HEAD_SHA'],
+              'program_issue': '#274',
+              'validated': True,
+              'digests': digests,
+              'authority_effect': 'none',
+          }
+          Path('/tmp/memory-component-program-closeout/closeout-evidence.json').write_text(
+              json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          PY
+          cat /tmp/memory-component-program-closeout/closeout-evidence.json
+
+      - name: Upload exact-head closeout evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: memory-component-program-closeout-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/memory-component-program-closeout/closeout-evidence.json
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="2390" viewBox="0 0 540 2390" role="img" aria-labelledby="title desc">
+  <title id="title">Agent Memory lifecycle state map</title>
+  <desc id="desc">A narrow, mobile-first map of the canonical Agent Memory lifecycle. It shows ordinary strengthening and promotion, weakening and demotion, dispute and correction, reconciliation, pruning, and the rule that a transition proposal does not mutate state until governance validates and commits it. Not every memory traverses every state, crystallized is not eternal, and pruned does not necessarily mean deleted.</desc>
+<style>
+:root{--bg:#0d1117;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--purple:#a371f7;--green:#3fb950;--red:#f85149;--amber:#d29922;--line:#6e7681;--neutral:#161b22;--purpleBox:#171321;--amberBox:#211a0b;--redBox:#211416;--greenBox:#0f1d14;}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--text)}
+.frame{fill:var(--bg);stroke:var(--border)} .neutral{fill:var(--neutral);stroke:var(--border)}
+.node{fill:var(--neutral);stroke-width:1.3} .purpleBox{fill:var(--purpleBox);stroke:var(--purple);stroke-width:1.2}
+.amberBox{fill:var(--amberBox);stroke:var(--amber);stroke-width:1.2} .redBox{fill:var(--redBox);stroke:var(--red);stroke-width:1.2} .greenBox{fill:var(--greenBox);stroke:var(--green);stroke-width:1.2}
+.title{font-size:26px;font-weight:700} .sub{font-size:15px;fill:var(--muted)} .eyebrow{font-size:14px;font-weight:700;letter-spacing:1px}
+.state{font-size:19px;font-weight:700} .sectionTitle{font-size:17px;font-weight:700} .body{font-size:14.2px} .bodyStrong{font-size:14.2px;font-weight:700}
+.small{font-size:13.8px} .tiny{font-size:13.2px} .edge{font-size:13px;font-weight:700} .foot{font-size:13.5px;font-weight:600} .muted{fill:var(--muted)}
+.blueText{fill:var(--blue)} .purpleText{fill:var(--purple)} .greenText{fill:var(--green)} .redText{fill:var(--red)} .amberText{fill:var(--amber)}
+.redTextStrong{fill:var(--red);font-weight:700} .amberTextStrong{fill:var(--amber);font-weight:700}
+.blueStroke{stroke:var(--blue)} .purpleStroke{stroke:var(--purple)} .blueStrokeLine{stroke:var(--blue)} .purpleStrokeLine{stroke:var(--purple)}
+.amberStrokeLine{stroke:var(--amber)} .redStrokeLine{stroke:var(--red)} .greenStrokeLine{stroke:var(--green)} .arrowLine{stroke:var(--line)}
+.line{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round} .arrow{fill:var(--line)} .blue{fill:var(--blue)} .amber{fill:var(--amber)} .red{fill:var(--red)} .green{fill:var(--green)}
+</style>
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" class="arrow"/></marker>
+    <marker id="ab" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" class="blue"/></marker>
+    <marker id="aa" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" class="amber"/></marker>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" class="red"/></marker>
+    <marker id="ag" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" class="green"/></marker>
+  </defs>
+  <rect x="1" y="1" width="538" height="2388" rx="18" class="frame"/>
+  <text x="28" y="44" class="title">Agent Memory lifecycle state map</text>
+  <text x="28" y="70" class="sub">Canonical states and governed transitions</text>
+  <rect x="28" y="92" width="484" height="92" rx="10" class="neutral"/>
+  <text x="46" y="118" class="eyebrow blueText">READING RULE</text>
+  <text x="46" y="143" class="bodyStrong">Not every memory traverses every state.</text>
+  <text x="46" y="165" class="body muted">Arrows are possible committed transitions only after validation.</text>
+  <text x="28" y="222" class="eyebrow blueText">01  FORM &amp; STRENGTHEN</text>
+  <rect x="46" y="240" width="448" height="78" rx="10" class="node blueStroke"/>
+  <text x="66" y="268" class="state">Transient</text>
+  <text x="66" y="291" class="body muted">Immediate context; may expire, be ignored,</text>
+  <text x="66" y="309" class="body muted">or promote to Observed</text>
+  <line x1="270" y1="318" x2="270" y2="340" class="line blueStrokeLine" marker-end="url(#ab)"/>
+  <rect x="46" y="346" width="448" height="78" rx="10" class="node blueStroke"/>
+  <text x="66" y="374" class="state">Observed</text>
+  <text x="66" y="397" class="body muted">Recorded artifact or relation</text>
+  <text x="66" y="415" class="body muted">with observer, time, source, and method</text>
+  <line x1="270" y1="424" x2="270" y2="446" class="line blueStrokeLine" marker-end="url(#ab)"/>
+  <rect x="46" y="452" width="448" height="78" rx="10" class="node blueStroke"/>
+  <text x="66" y="480" class="state">Linked</text>
+  <text x="66" y="503" class="body muted">Graph relations connect the memory</text>
+  <text x="66" y="521" class="body muted">to other memory units</text>
+  <line x1="270" y1="530" x2="270" y2="552" class="line blueStrokeLine" marker-end="url(#ab)"/>
+  <rect x="46" y="558" width="448" height="78" rx="10" class="node blueStroke"/>
+  <text x="66" y="586" class="state">Reinforced</text>
+  <text x="66" y="609" class="body muted">Additional support through meaningful use,</text>
+  <text x="66" y="627" class="body muted">corroboration, cross-reference, or verification</text>
+  <line x1="270" y1="636" x2="270" y2="688" class="line blueStrokeLine" marker-end="url(#ab)"/>
+  <text x="28" y="672" class="eyebrow purpleText">02  DURABILITY PATH</text>
+  <rect x="46" y="694" width="448" height="82" rx="10" class="node purpleStroke"/>
+  <text x="66" y="723" class="state">Candidate</text>
+  <text x="66" y="748" class="body muted">Considered for durable treatment.</text>
+  <text x="66" y="766" class="body muted">Candidate status is not approval.</text>
+  <line x1="270" y1="776" x2="270" y2="798" class="line purpleStrokeLine" marker-end="url(#ab)"/>
+  <rect x="46" y="804" width="448" height="82" rx="10" class="node purpleStroke"/>
+  <text x="66" y="833" class="state">Pending Verification</text>
+  <text x="66" y="858" class="body muted">Waiting on certification, approval, confirmation,</text>
+  <text x="66" y="876" class="body muted">policy review, test evidence, or safe uncertainty resolution.</text>
+  <line x1="270" y1="886" x2="270" y2="908" class="line purpleStrokeLine" marker-end="url(#ab)"/>
+  <rect x="46" y="914" width="448" height="82" rx="10" class="node purpleStroke"/>
+  <text x="66" y="943" class="state">Crystallized</text>
+  <text x="66" y="968" class="body muted">Passed required gates within a defined scope.</text>
+  <text x="66" y="986" class="body muted">Durable under current evidence and policy; not eternal.</text>
+  <line x1="270" y1="996" x2="270" y2="1018" class="line purpleStrokeLine" marker-end="url(#ab)"/>
+  <rect x="46" y="1024" width="448" height="82" rx="10" class="node purpleStroke"/>
+  <text x="66" y="1053" class="state">Operationally Reused</text>
+  <text x="66" y="1078" class="body muted">Used by agents or workflows after crystallization</text>
+  <text x="66" y="1096" class="body muted">or high-confidence routing; provenance remains referenced.</text>
+  <text x="28" y="1152" class="eyebrow amberText">03  WEAKEN, CHALLENGE &amp; CORRECT</text>
+  <line x1="270" y1="1106" x2="270" y2="1170" class="line arrowLine" marker-end="url(#a)"/>
+  <rect x="34" y="1170" width="472" height="120" rx="10" class="amberBox"/>
+  <text x="270" y="1198" text-anchor="middle" class="sectionTitle">Governed demotion</text>
+  <text x="270" y="1223" text-anchor="middle" class="small muted">Triggers include expiry, contradiction, scope or policy change,</text>
+  <text x="270" y="1243" text-anchor="middle" class="small muted">source/dependency invalidation, user correction, or invalidated</text>
+  <text x="270" y="1263" text-anchor="middle" class="small muted">estimator basis.</text>
+  <text x="270" y="1281" text-anchor="middle" class="tiny amberTextStrong">Permitted targets include Stale, Disputed, or Corrected; never direct deletion.</text>
+  <text x="270" y="1320" text-anchor="middle" class="edge amberTextStrong">weakening / demotion</text>
+  <line x1="270" y1="1290" x2="270" y2="1330" class="line amberStrokeLine" marker-end="url(#aa)"/>
+  <rect x="58" y="1330" width="424" height="84" rx="10" class="amberBox"/>
+  <text x="78" y="1360" class="state">Stale</text>
+  <text x="78" y="1385" class="body muted">Still available; relevance or correctness may be degrading.</text>
+  <text x="270" y="1450" text-anchor="middle" class="edge redTextStrong">contradiction / failed verification / conflict</text>
+  <path d="M34 1230H18V1505H52" class="line redStrokeLine" marker-end="url(#ar)"/>
+  <rect x="58" y="1466" width="424" height="102" rx="10" class="redBox"/>
+  <text x="78" y="1496" class="state">Disputed</text>
+  <text x="78" y="1521" class="small muted">Challenged by contradiction, failed verification, conflict,</text>
+  <text x="78" y="1541" class="small muted">user correction, or policy change.</text>
+  <text x="78" y="1560" class="tiny redTextStrong">Disputed memory must not be silently used as canonical truth.</text>
+  <line x1="270" y1="1568" x2="270" y2="1590" class="line redStrokeLine" marker-end="url(#ar)"/>
+  <rect x="58" y="1596" width="424" height="86" rx="10" class="redBox"/>
+  <text x="78" y="1626" class="state">Corrected</text>
+  <text x="78" y="1651" class="body muted">Replacement or amendment preserves the old record</text>
+  <text x="78" y="1670" class="body muted">and its dispute path.</text>
+  <line x1="270" y1="1682" x2="270" y2="1704" class="line greenStrokeLine" marker-end="url(#ag)"/>
+  <rect x="58" y="1710" width="424" height="86" rx="10" class="greenBox"/>
+  <text x="78" y="1740" class="state">Reconciled</text>
+  <text x="78" y="1765" class="body muted">Correction is incorporated into the active graph</text>
+  <text x="78" y="1784" class="body muted">or runtime state.</text>
+  <rect x="34" y="1822" width="472" height="94" rx="10" class="neutral"/>
+  <text x="52" y="1849" class="bodyStrong">Reconciliation may:</text>
+  <text x="52" y="1874" class="small muted">restore durable state · downgrade operational state · split scope</text>
+  <text x="52" y="1895" class="small muted">· prune an obsolete version</text>
+  <text x="28" y="1960" class="eyebrow greenText">04  PRUNE / FORGET UNDER POLICY</text>
+  <line x1="270" y1="1916" x2="270" y2="1980" class="line greenStrokeLine" marker-end="url(#ag)"/>
+  <rect x="46" y="1980" width="448" height="108" rx="10" class="greenBox"/>
+  <text x="66" y="2011" class="state">Pruned</text>
+  <text x="66" y="2037" class="body muted">Removed from active recall or durable lifecycle consideration.</text>
+  <text x="66" y="2058" class="body muted">May mean archived, tombstoned, summarized, or inaccessible</text>
+  <text x="66" y="2077" class="bodyStrong muted">to normal retrieval. Pruned does not necessarily mean deleted.</text>
+  <text x="28" y="2140" class="eyebrow purpleText">TRANSITION GOVERNANCE</text>
+  <rect x="28" y="2158" width="484" height="180" rx="12" class="purpleBox"/>
+  <text x="48" y="2189" class="state">Proposal != commit</text>
+  <text x="48" y="2216" class="body muted">A probabilistic, learned, heuristic, or model-directed</text>
+  <text x="48" y="2236" class="body muted">component may propose a state change. The proposal does not</text>
+  <text x="48" y="2256" class="body muted">mutate lifecycle state.</text>
+  <text x="48" y="2282" class="body muted">Validation checks legality, scope, authority, policy, and uncertainty.</text>
+  <text x="48" y="2306" class="body muted">Only a permitted transition may commit and emit an audit receipt.</text>
+  <text x="48" y="2328" class="bodyStrong redText">More confidence cannot make a blocked transition allowed.</text>
+  <text x="28" y="2370" class="foot muted">Canonical doctrine:</text>
+  <text x="164" y="2370" class="foot blueText">docs/02-lifecycle-state-machine.md</text>
+</svg>

@@ -1,0 +1,69 @@
+{
+  "component_id": "synthetic-frontier-store",
+  "component_version": "1.0.0",
+  "profile_version": "component-capability-v3",
+  "enabled": true,
+  "failure_posture": "fail_closed",
+  "runtime_ref": "reference.synthetic.frontier",
+  "provenance_refs": ["issue:#343"],
+  "capabilities": [
+    {
+      "capability_id": "epistemic_belief_memory",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "enforces_agent_memory_scope",
+      "failure_posture": "fail_closed",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": ["issue:#343"],
+      "limitations": ["synthetic contract proof only"],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": true},
+        "currentness_model": "basis_versioned",
+        "invalidation_model": "version_relation",
+        "correction_model": "invalidate_derived",
+        "deletion_model": "derived_residue_then_purge",
+        "residue_model": "scan_required",
+        "migration_rebuild_model": "rebuild_from_canonical",
+        "structural_mutation_requirement": "pama_required"
+      },
+      "operational_contract": {
+        "write_atomicity": "single_record_atomic",
+        "concurrency_control": "optimistic_revision",
+        "idempotency": "durable_keyed",
+        "restart_recovery": "reconstructable",
+        "reconciliation": "deterministic_readback"
+      }
+    },
+    {
+      "capability_id": "predictive_counterfactual_memory",
+      "capability_version": "1.0",
+      "maturity": "declared",
+      "state_posture": "derived",
+      "scope_posture": "enforces_agent_memory_scope",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": ["issue:#343"],
+      "limitations": ["prediction and simulation remain distinct from observed history"],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": true},
+        "currentness_model": "basis_versioned",
+        "invalidation_model": "version_relation",
+        "correction_model": "invalidate_derived",
+        "deletion_model": "derived_residue_then_purge",
+        "residue_model": "scan_required",
+        "migration_rebuild_model": "rebuild_from_canonical",
+        "structural_mutation_requirement": "pama_required"
+      },
+      "operational_contract": {
+        "write_atomicity": "single_record_atomic",
+        "concurrency_control": "optimistic_revision",
+        "idempotency": "durable_keyed",
+        "restart_recovery": "reconstructable",
+        "reconciliation": "deterministic_readback"
+      }
+    }
+  ]
+}

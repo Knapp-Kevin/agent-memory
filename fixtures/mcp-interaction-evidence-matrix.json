@@ -1,0 +1,190 @@
+{
+  "fixture_id": "mcp-interaction-evidence-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "MCP tool/resource interactions remain protocol evidence only. Transport success, server identity, request IDs, successful tool results, and resource contents cannot create Agent Memory authority, execution proof, durable admission, or lifecycle satisfaction.",
+  "expected_behavior": {
+    "mcp_success_widens_denied_authority": false,
+    "resource_read_auto_admits_memory": false,
+    "cross_scope_correlation": false,
+    "raw_payload_required": false,
+    "request_id_is_authority": false,
+    "server_identity_is_authority": false,
+    "missing_trace_implies_non_execution": false,
+    "adapter_removal_invalidates_canonical_memory": false
+  },
+  "memory_unit": {
+    "id": "mem:mcp-interaction-evidence",
+    "content_ref": "fixture://mcp-interaction-evidence/reference",
+    "type": "evidence",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "mcp-interaction-evidence-matrix",
+      "timestamp": "2026-08-12T22:20:00Z",
+      "source_refs": [
+        "issue://190",
+        "github://modelcontextprotocol/modelcontextprotocol/5f5440bb26a62e2cf3440b92da5a667efa03b267"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:mcp-v01",
+        "kind": "protocol_interaction_fixture",
+        "ref": "issue://190",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["protocol_interaction", "identity_binding", "scope_isolation"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": ["issue:190", "issue:175"],
+      "permitted_actions": ["collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T22:20:00Z"
+  },
+  "pinned_reference": {
+    "protocol": "Model Context Protocol",
+    "revision": "2026-07-28",
+    "commit": "5f5440bb26a62e2cf3440b92da5a667efa03b267",
+    "repository": "modelcontextprotocol/modelcontextprotocol"
+  },
+  "expected_context": {
+    "action_ref": "action:mcp:memory-update",
+    "input_identity": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "scope_ref": "scope:tenant-a/project-a",
+    "tenant_ref": "tenant-a",
+    "project_ref": "project-a"
+  },
+  "base_adapter_result": {
+    "protocol_revision": "2026-07-28",
+    "protocol_source_commit": "5f5440bb26a62e2cf3440b92da5a667efa03b267",
+    "protocol_source_ref": "github://modelcontextprotocol/modelcontextprotocol/5f5440bb26a62e2cf3440b92da5a667efa03b267/docs/specification/2026-07-28",
+    "interaction_kind": "tool_call",
+    "method": "tools/call",
+    "client_ref": "mcp-client:local-agent",
+    "server_ref": "mcp-server:memory-tools-a",
+    "session_ref": "mcp-session:alpha",
+    "transport_ref": "mcp-transport:stdio:alpha",
+    "request_id": 7,
+    "target_ref": "mcp-tool:mcp-server:memory-tools-a:memory.update",
+    "memory_effect": "durable_mutation",
+    "request_status": "observed",
+    "result_status": "complete",
+    "result_classification": "success",
+    "governance_status": "available",
+    "effective_decision": "allow",
+    "action_ref": "action:mcp:memory-update",
+    "input_identity": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "scope_ref": "scope:tenant-a/project-a",
+    "tenant_ref": "tenant-a",
+    "project_ref": "project-a",
+    "pama_decision_ref": "decision:pama:mcp-1",
+    "composition_ref": "decision-composition:mcp-1",
+    "execution_witness_ref": "execution-witness:mcp-1",
+    "trace_correlation_ref": "runtime-trace-correlation:mcp-1",
+    "request_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "result_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "observed_at": "2026-08-12T22:21:00Z",
+    "evidence_refs": ["evidence:mcp-request-7", "evidence:mcp-result-7"]
+  },
+  "cases": [
+    {
+      "case_id": "tool-success-exact-binding",
+      "overrides": {},
+      "remove": [],
+      "expected_binding": "exact",
+      "expected_alignment": "within_governance"
+    },
+    {
+      "case_id": "successful-result-after-deny",
+      "overrides": {"effective_decision": "deny"},
+      "remove": [],
+      "expected_binding": "exact",
+      "expected_alignment": "result_observed_under_deny"
+    },
+    {
+      "case_id": "resource-read-is-not-memory-admission",
+      "overrides": {
+        "interaction_kind": "resource_read",
+        "method": "resources/read",
+        "target_ref": "mcp-resource:sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "memory_effect": "memory_candidate",
+        "governance_status": "not_required",
+        "request_id": "resource-2"
+      },
+      "remove": [
+        "effective_decision",
+        "action_ref",
+        "input_identity",
+        "scope_ref",
+        "tenant_ref",
+        "project_ref",
+        "pama_decision_ref",
+        "composition_ref",
+        "execution_witness_ref",
+        "trace_correlation_ref"
+      ],
+      "expected_binding": "not_evaluated",
+      "expected_alignment": "not_applicable"
+    },
+    {
+      "case_id": "wrong-agent-memory-input-identity",
+      "overrides": {
+        "input_identity": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      "remove": [],
+      "expected_binding": "mismatch",
+      "expected_alignment": "binding_mismatch"
+    },
+    {
+      "case_id": "cross-tenant-same-tool-and-request-id",
+      "overrides": {
+        "scope_ref": "scope:tenant-b/project-b",
+        "tenant_ref": "tenant-b",
+        "project_ref": "project-b"
+      },
+      "remove": [],
+      "expected_binding": "mismatch",
+      "expected_alignment": "binding_mismatch"
+    },
+    {
+      "case_id": "server-unavailable-governance-unavailable",
+      "overrides": {
+        "governance_status": "unavailable",
+        "result_status": "unavailable",
+        "result_classification": "unavailable"
+      },
+      "remove": ["effective_decision", "result_digest", "execution_witness_ref", "trace_correlation_ref"],
+      "expected_binding": "exact",
+      "expected_alignment": "blocked_governance_unavailable"
+    },
+    {
+      "case_id": "peer-supplied-authority-fields-ignored",
+      "overrides": {
+        "pama_outcome": "allow",
+        "lifecycle_state": "canonical",
+        "permitted_actions": ["everything"],
+        "memory_authority": "owner"
+      },
+      "remove": [],
+      "expected_binding": "exact",
+      "expected_alignment": "within_governance"
+    },
+    {
+      "case_id": "missing-trace-is-explicit-gap-not-non-execution",
+      "overrides": {},
+      "remove": ["trace_correlation_ref", "execution_witness_ref"],
+      "expected_binding": "exact",
+      "expected_alignment": "within_governance"
+    }
+  ]
+}

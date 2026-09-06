@@ -1,0 +1,22 @@
+name: Maintenance Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+      - run: python scripts/validate_schemas.py
+      - env:
+          PYTHONPATH: reference
+        run: python -m unittest tests.test_maintenance_run_state tests.test_maintenance_run_binding_positive tests.test_autonomous_maintenance
