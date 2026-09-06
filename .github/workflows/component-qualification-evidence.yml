@@ -1,0 +1,260 @@
+name: Component Qualification Evidence
+
+on:
+  pull_request:
+    paths:
+      - "schemas/component-capability-qualification.schema.json"
+      - "reference/agentmem_ref/contracts/qualification.py"
+      - "reference/agentmem_ref/contracts/component_fallback.py"
+      - "reference/agentmem_ref/contracts/component_failure_probe.py"
+      - "reference/agentmem_ref/crg/code_graph_qualification.py"
+      - "reference/run_component_failure_probe.py"
+      - "reference/run_component_qualification.py"
+      - "reference/tests/test_component_qualification.py"
+      - "reference/tests/test_component_fallback.py"
+      - "reference/tests/test_component_failure_probe.py"
+      - "reference/tests/test_code_graph_qualification.py"
+      - "reference/fixtures/component-qualification/**"
+      - ".github/workflows/component-qualification-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CODEGENOME_COMMIT: 43a6b7147ec78ec5c616723fa1dd30f342174860
+  GRAPHIFY_RELEASE: v0.9.43
+  GRAPHIFY_COMMIT: 7281f27eac568f77f50910f59f84543458f5dfd1
+
+jobs:
+  qualify-code-graph:
+    runs-on: ubuntu-latest
+    env:
+      AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      FIXTURE_ROOT: ${{ github.workspace }}/reference/fixtures/component-qualification
+      RAW_ROOT: /tmp/component-qualification-raw
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Agent Memory reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Run qualification, failure, fallback, and normalizer tests
+        env:
+          PYTHONPATH: reference
+        run: |
+          python -m unittest \
+            reference/tests/test_component_qualification.py \
+            reference/tests/test_component_fallback.py \
+            reference/tests/test_component_failure_probe.py \
+            reference/tests/test_code_graph_qualification.py
+
+      - name: Prepare evidence directory
+        run: mkdir -p "$RAW_ROOT/codegenome" "$RAW_ROOT/graphify"
+
+      - name: Fetch exact CodeGenome source
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/MythologIQ-Labs-LLC/CodeGenome.git /tmp/codegenome
+          git -C /tmp/codegenome fetch --depth=1 origin "$CODEGENOME_COMMIT"
+          git -C /tmp/codegenome checkout --detach "$CODEGENOME_COMMIT"
+          test "$(git -C /tmp/codegenome rev-parse HEAD)" = "$CODEGENOME_COMMIT"
+          cp /tmp/codegenome/LICENSE "$RAW_ROOT/codegenome/LICENSE"
+
+      - name: Verify CodeGenome source rights and build CLI
+        working-directory: /tmp/codegenome
+        run: |
+          grep -qi "MIT License" LICENSE
+          cargo build -p codegenome-cli
+
+      - name: Execute CodeGenome v1 full build and queries
+        run: |
+          /tmp/codegenome/target/debug/codegenome index \
+            --source-dir "$FIXTURE_ROOT/v1" \
+            --store-dir /tmp/codegenome-v1 \
+            > "$RAW_ROOT/codegenome/v1-index.txt"
+
+          /tmp/codegenome/target/debug/codegenome query \
+            --store-dir /tmp/codegenome-v1 --file main.rs --line 6 \
+            --direction downstream --json \
+            > "$RAW_ROOT/codegenome/v1-main-downstream.json"
+          /tmp/codegenome/target/debug/codegenome query \
+            --store-dir /tmp/codegenome-v1 --file main.rs --line 6 \
+            --direction upstream --json \
+            > "$RAW_ROOT/codegenome/v1-main-upstream.json"
+          /tmp/codegenome/target/debug/codegenome query \
+            --store-dir /tmp/codegenome-v1 --file decoy.rs --line 6 \
+            --direction downstream --json \
+            > "$RAW_ROOT/codegenome/v1-decoy-downstream.json"
+
+      - name: Execute CodeGenome v2 full rebuild and queries
+        run: |
+          /tmp/codegenome/target/debug/codegenome index \
+            --source-dir "$FIXTURE_ROOT/v2" \
+            --store-dir /tmp/codegenome-v2 \
+            > "$RAW_ROOT/codegenome/v2-index.txt"
+
+          /tmp/codegenome/target/debug/codegenome query \
+            --store-dir /tmp/codegenome-v2 --file main.rs --line 6 \
+            --direction downstream --json \
+            > "$RAW_ROOT/codegenome/v2-main-downstream.json"
+          /tmp/codegenome/target/debug/codegenome query \
+            --store-dir /tmp/codegenome-v2 --file main.rs --line 6 \
+            --direction upstream --json \
+            > "$RAW_ROOT/codegenome/v2-main-upstream.json"
+          /tmp/codegenome/target/debug/codegenome query \
+            --store-dir /tmp/codegenome-v2 --file decoy.rs --line 6 \
+            --direction downstream --json \
+            > "$RAW_ROOT/codegenome/v2-decoy-downstream.json"
+
+      - name: Reproduce CodeGenome provider unavailable
+        env:
+          PYTHONPATH: reference
+        run: |
+          binary=/tmp/codegenome/target/debug/codegenome
+          mv "$binary" "$binary.available"
+          set +e
+          python reference/run_component_failure_probe.py \
+            --provider codegenome \
+            --executable "$binary" \
+            --raw-output "$RAW_ROOT/codegenome/unavailable-raw.json" \
+            --normalized-output "$RAW_ROOT/codegenome/unavailable-normalized.json" \
+            --trace-ref "qualification:codegenome:provider-unavailable"
+          status=$?
+          set -e
+          mv "$binary.available" "$binary"
+          exit "$status"
+
+      - name: Fetch exact Graphify release source
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/Graphify-Labs/graphify.git /tmp/graphify
+          git -C /tmp/graphify fetch --depth=1 origin "$GRAPHIFY_COMMIT"
+          git -C /tmp/graphify checkout --detach "$GRAPHIFY_COMMIT"
+          test "$(git -C /tmp/graphify rev-parse HEAD)" = "$GRAPHIFY_COMMIT"
+          grep -q 'version = "0.9.43"' /tmp/graphify/pyproject.toml
+          grep -q 'license = "Apache-2.0"' /tmp/graphify/pyproject.toml
+          grep -q "Apache License" /tmp/graphify/LICENSE
+          cp /tmp/graphify/LICENSE "$RAW_ROOT/graphify/LICENSE"
+          cp /tmp/graphify/NOTICE "$RAW_ROOT/graphify/NOTICE"
+
+      - name: Install exact Graphify runtime
+        run: |
+          python -m venv /tmp/graphify-venv
+          /tmp/graphify-venv/bin/python -m pip install --disable-pip-version-check --upgrade pip
+          /tmp/graphify-venv/bin/python -m pip install --disable-pip-version-check -e /tmp/graphify
+
+      - name: Execute Graphify v1 and v2 full builds
+        run: |
+          /tmp/graphify-venv/bin/graphify extract "$FIXTURE_ROOT/v1" \
+            --code-only --out /tmp/graphify-v1
+          /tmp/graphify-venv/bin/graphify extract "$FIXTURE_ROOT/v2" \
+            --code-only --out /tmp/graphify-v2
+          cp /tmp/graphify-v1/graphify-out/graph.json "$RAW_ROOT/graphify/v1-graph.json"
+          cp /tmp/graphify-v2/graphify-out/graph.json "$RAW_ROOT/graphify/v2-graph.json"
+
+      - name: Reproduce Graphify provider unavailable
+        env:
+          PYTHONPATH: reference
+        run: |
+          binary=/tmp/graphify-venv/bin/graphify
+          mv "$binary" "$binary.available"
+          set +e
+          python reference/run_component_failure_probe.py \
+            --provider graphify \
+            --executable "$binary" \
+            --raw-output "$RAW_ROOT/graphify/unavailable-raw.json" \
+            --normalized-output "$RAW_ROOT/graphify/unavailable-normalized.json" \
+            --trace-ref "qualification:graphify:provider-unavailable"
+          status=$?
+          set -e
+          mv "$binary.available" "$binary"
+          exit "$status"
+
+      - name: Emit exact-head qualification and fallback report
+        env:
+          PYTHONPATH: reference
+        run: |
+          python reference/run_component_qualification.py \
+            --agent-memory-commit "$AGENT_MEMORY_COMMIT" \
+            --fixture-root "$FIXTURE_ROOT" \
+            --codegenome-v1-main-downstream "$RAW_ROOT/codegenome/v1-main-downstream.json" \
+            --codegenome-v1-main-upstream "$RAW_ROOT/codegenome/v1-main-upstream.json" \
+            --codegenome-v1-decoy-downstream "$RAW_ROOT/codegenome/v1-decoy-downstream.json" \
+            --codegenome-v2-main-downstream "$RAW_ROOT/codegenome/v2-main-downstream.json" \
+            --codegenome-v2-main-upstream "$RAW_ROOT/codegenome/v2-main-upstream.json" \
+            --codegenome-v2-decoy-downstream "$RAW_ROOT/codegenome/v2-decoy-downstream.json" \
+            --codegenome-unavailable-raw "$RAW_ROOT/codegenome/unavailable-raw.json" \
+            --codegenome-unavailable-normalized "$RAW_ROOT/codegenome/unavailable-normalized.json" \
+            --graphify-v1 "$RAW_ROOT/graphify/v1-graph.json" \
+            --graphify-v2 "$RAW_ROOT/graphify/v2-graph.json" \
+            --graphify-unavailable-raw "$RAW_ROOT/graphify/unavailable-raw.json" \
+            --graphify-unavailable-normalized "$RAW_ROOT/graphify/unavailable-normalized.json" \
+            --output "$RAW_ROOT/component-qualification-report.json"
+
+      - name: Verify schema, currentness, failure, fallback, maturity, and authority boundaries
+        env:
+          PYTHONPATH: reference
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import jsonschema
+
+          root = Path(os.environ["RAW_ROOT"])
+          report = json.loads((root / "component-qualification-report.json").read_text())
+          schema = json.loads(Path("schemas/component-capability-qualification.schema.json").read_text())
+          validator = jsonschema.Draft202012Validator(schema)
+          assert report["schema_version"] == "1.1.0"
+          assert report["profile"] == {"id": "code-graph-traversal-currentness", "version": "1.1.0"}
+          assert report["matched_result"]["both_passed"] is True
+          assert report["matched_result"]["winner"] is None
+          assert report["matched_result"]["authority_effect"] == "none"
+          assert report["matched_result"]["unrelated_capabilities_promoted"] == []
+          for provider in ("codegenome", "graphify"):
+              qualification = report["providers"][provider]["qualification"]
+              validator.validate(qualification)
+              assert qualification["schema_version"] == "1.1.0"
+              assert qualification["result"]["earned_maturity"] == "evidence_proven"
+              assert qualification["result"]["authority_effect"] == "none"
+              assert qualification["result"]["qualification_current"] is True
+              assert qualification["source_rights"]["use_posture"] == "runtime_allowed"
+              adapter_results = qualification["evidence"]["adapter_results"]
+              assert [item["failure_result"] for item in adapter_results] == ["none", "provider_unavailable"]
+              assert adapter_results[1]["currentness"] == "unavailable"
+              assert adapter_results[1]["authority_effect"] == "none"
+              assert report["providers"][provider]["checks"]["provider_unavailable_explicit"] is True
+          assert report["providers"]["codegenome"]["checks"]["full_rebuild_currentness"] is True
+          assert report["providers"]["graphify"]["checks"]["full_rebuild_currentness"] is True
+
+          fallback = report["failure_fallback"]
+          assert fallback["authority_effect"] == "none"
+          assert fallback["primary_failure"]["failure_result"] == "provider_unavailable"
+          assert fallback["no_fallback_configured"]["status"] == "unavailable"
+          assert fallback["no_fallback_configured"]["reason"] == "fallback_not_configured"
+          assert fallback["explicit_graphify"]["status"] == "fallback_selected"
+          assert fallback["explicit_graphify"]["selected_component_id"] == "graphify"
+          assert fallback["explicit_graphify"]["authority_effect"] == "none"
+          assert fallback["weaker_graphify_refused"]["status"] == "unavailable"
+          assert "weaker_maturity" in fallback["weaker_graphify_refused"]["rejected_candidates"][0]["reasons"]
+          PY
+
+      - name: Display normalized report
+        if: always()
+        run: cat "$RAW_ROOT/component-qualification-report.json" || true
+
+      - name: Upload raw, failure, fallback, and normalized qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: component-qualification-${{ env.AGENT_MEMORY_COMMIT }}
+          path: /tmp/component-qualification-raw
+          if-no-files-found: error

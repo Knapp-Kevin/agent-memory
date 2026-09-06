@@ -1,0 +1,88 @@
+{
+  "fixture_id": "certified-durable-memory",
+  "fixture_version": "1.0.0",
+  "class": "persist",
+  "description": "A verified memory with scoped certification should become crystallized and exact-address retrievable.",
+  "expected_behavior": {
+    "candidate": true,
+    "certification_status": "pass",
+    "crystallized": true,
+    "exact_lookup": true,
+    "reason": "Identity, provenance, saturation, authority, and certification all pass."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:certified-durable-memory",
+    "content_ref": "fixture://certified-durable-memory/raw",
+    "type": "policy",
+    "state": "crystallized",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-certified-class",
+      "timestamp": "2026-07-06T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:policy-source",
+        "kind": "policy_source",
+        "ref": "fixture://certified-durable-memory/source",
+        "confidence": 1
+      },
+      {
+        "id": "evidence:approval-record",
+        "kind": "approval",
+        "ref": "fixture://certified-durable-memory/approval",
+        "confidence": 1
+      }
+    ],
+    "saturation": {
+      "sigma": 1,
+      "calibrated": true,
+      "threshold": 0.95,
+      "durability_dimensions": [
+        "verification",
+        "approval",
+        "policy_scope",
+        "cross_reference"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "high",
+      "policy_refs": [
+        "ADR-003",
+        "ADR-004"
+      ]
+    },
+    "certification": {
+      "status": "pass",
+      "ref": "fixture://certified-durable-memory/certificate",
+      "scope": "policy"
+    },
+    "decay_profile": {
+      "lambda_base": 0.001,
+      "lambda_eff": 0,
+      "pressure": 0
+    },
+    "ledger_ref": "fixture://ledger/certified-durable-memory",
+    "created_at": "2026-07-06T00:00:00Z"
+  },
+  "interaction_history": [
+    {
+      "event": "observed",
+      "count": 1
+    },
+    {
+      "event": "verified",
+      "count": 1
+    },
+    {
+      "event": "approved",
+      "count": 1
+    },
+    {
+      "event": "crystallized",
+      "count": 1
+    }
+  ]
+}

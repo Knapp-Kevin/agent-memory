@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agent-memory://research/atlas/claim-verification-record/1.0.0",
+  "title": "Agent Memory Atlas Claim Verification Record",
+  "description": "Source-neutral research claim record. Source identity is provenance, not evidentiary privilege.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "claim_id",
+    "atlas_snapshot",
+    "report_slug",
+    "claim_class",
+    "claim_text_bounded",
+    "atlas_evidence_refs",
+    "atlas_evidence_type",
+    "upstream_repo",
+    "atlas_pin",
+    "current_upstream_pin",
+    "primary_source_verified",
+    "verification_result",
+    "agent_memory_surface",
+    "novelty",
+    "risk_if_ignored",
+    "candidate_action",
+    "related_issue_or_adr",
+    "research_status",
+    "triage"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "claim_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]*$" },
+    "atlas_snapshot": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
+    "report_slug": { "type": "string", "minLength": 1 },
+    "claim_class": { "type": "string", "minLength": 1 },
+    "claim_text_bounded": { "type": "string", "minLength": 1 },
+    "atlas_evidence_refs": { "$ref": "#/$defs/stringArray" },
+    "atlas_evidence_type": {
+      "type": "string",
+      "enum": ["prose", "source_reading", "runtime_observation", "conformance", "benchmark", "production", "mixed", "unknown"]
+    },
+    "upstream_repo": { "type": ["string", "null"] },
+    "atlas_pin": { "type": ["string", "null"] },
+    "current_upstream_pin": { "type": ["string", "null"] },
+    "primary_source_verified": {
+      "type": "string",
+      "enum": ["yes", "no", "partial", "stale"]
+    },
+    "verification_result": {
+      "type": "string",
+      "enum": ["supports", "contradicts", "narrows", "unresolved", "not_relevant"]
+    },
+    "agent_memory_surface": { "$ref": "#/$defs/stringArray" },
+    "novelty": { "type": "string", "enum": ["none", "low", "medium", "high"] },
+    "risk_if_ignored": { "type": "string", "minLength": 1 },
+    "candidate_action": { "type": "string", "minLength": 1 },
+    "related_issue_or_adr": { "$ref": "#/$defs/stringArray" },
+    "research_status": {
+      "type": "string",
+      "enum": ["captured", "deduplicated", "verification_pending", "verified", "rejected", "promoted", "closed_no_action"]
+    },
+    "triage": {
+      "type": "object",
+      "required": ["failure_severity", "transferability", "verifiability", "execution_cost", "component_value", "research_priority"],
+      "properties": {
+        "failure_severity": { "type": "string", "enum": ["low", "moderate", "high", "catastrophic"] },
+        "transferability": { "type": "string", "enum": ["category_local", "architecture_local", "representation_neutral"] },
+        "verifiability": { "type": "string", "enum": ["prose_only", "source_checkable", "executable", "benchmarked"] },
+        "execution_cost": { "type": "string", "enum": ["trivial", "low", "medium", "high"] },
+        "component_value": { "type": "string", "enum": ["none", "reference", "comparator", "qualification_candidate"] },
+        "research_priority": { "type": "string", "enum": ["skip", "reference", "verify", "deep_review"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

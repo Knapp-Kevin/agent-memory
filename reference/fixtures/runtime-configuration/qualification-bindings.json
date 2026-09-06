@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "source": {
+    "issue": 300,
+    "qualification_schema_version": "1.1.0",
+    "source_artifact": "component-qualification-1db939deb903a6685830cfdcb43db0993e2f650f",
+    "source_artifact_digest": "sha256:d82afbdb3ace6590af1b1f538ff15457b6062c3e4b5b9dd6ec8f68e5aaca53ad",
+    "note": "Normalized runtime-validation fixture derived from independently inspected #300 evidence; the source qualification artifact remains the evidence authority."
+  },
+  "bindings": [
+    {
+      "component_id": "codegenome",
+      "component_version": "43a6b7147ec78ec5c616723fa1dd30f342174860",
+      "capability_id": "code_graph_traversal",
+      "capability_version": "1.0",
+      "adapter_id": "codegenome-cli",
+      "adapter_version": "1.0.0",
+      "qualification_profile_id": "code-graph-traversal-currentness",
+      "qualification_profile_version": "1.1.0",
+      "applicability_digest": "sha256:915a093171623702ea39df6e37a5588b7fdf2fb7bd88f81f7d3d41445a41af2e",
+      "qualification_current": true,
+      "earned_maturity": "evidence_proven",
+      "source_rights_use_posture": "runtime_allowed",
+      "record_ref": "artifact://component-qualification-1db939deb903a6685830cfdcb43db0993e2f650f#providers.codegenome.qualification"
+    },
+    {
+      "component_id": "graphify",
+      "component_version": "v0.9.43",
+      "capability_id": "code_graph_traversal",
+      "capability_version": "1.0",
+      "adapter_id": "graphify-cli",
+      "adapter_version": "1.0.0",
+      "qualification_profile_id": "code-graph-traversal-currentness",
+      "qualification_profile_version": "1.1.0",
+      "applicability_digest": "sha256:5d7a051b579cc3bb914d664c2aff859426b48020d27c171fee6fe4930da14906",
+      "qualification_current": true,
+      "earned_maturity": "evidence_proven",
+      "source_rights_use_posture": "runtime_allowed",
+      "record_ref": "artifact://component-qualification-1db939deb903a6685830cfdcb43db0993e2f650f#providers.graphify.qualification"
+    }
+  ]
+}

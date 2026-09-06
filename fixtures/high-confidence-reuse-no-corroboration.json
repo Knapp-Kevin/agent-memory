@@ -1,0 +1,66 @@
+{
+  "fixture_id": "high-confidence-reuse-no-corroboration",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "A high-confidence inference that is retrieved and reused repeatedly must not gain independent corroboration or certification without new evidence.",
+  "expected_behavior": {
+    "candidate": true,
+    "crystallized": false,
+    "trap_class_check": "pass",
+    "reason": "Estimator confidence and operational reuse remain separate from corroboration and certification."
+  },
+  "memory_unit": {
+    "id": "fixture:epistemic:high-confidence-reuse",
+    "content_ref": "fixture://high-confidence-reuse/claim",
+    "type": "semantic",
+    "acquisition_mode": "inferred",
+    "state": "operationally_reused",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-high-confidence-reuse-trap",
+      "timestamp": "2026-08-12T00:00:00Z",
+      "source_refs": ["fixture://source/inference-a"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:inference-a",
+        "kind": "agent_generated_inference",
+        "ref": "fixture://source/inference-a",
+        "confidence": 0.99,
+        "confidence_kind": "estimator_confidence",
+        "estimator": {"id": "fixture-estimator", "version": "1.0.0"}
+      }
+    ],
+    "saturation": {
+      "sigma": 0.97,
+      "calibrated": true,
+      "threshold": 0.8,
+      "durability_dimensions": ["retrieval", "reuse"]
+    },
+    "authority": {
+      "pama_outcome": "require_external_verification",
+      "risk_class": "medium",
+      "policy_refs": ["ADR-002", "ADR-003", "ADR-009"],
+      "permitted_actions": ["retain_candidate", "request_independent_evidence"],
+      "prohibited_actions": ["crystallize"],
+      "selection_mode": "deterministic"
+    },
+    "certification": {"status": "none", "scope": "fixture"},
+    "created_at": "2026-08-12T00:00:00Z"
+  },
+  "epistemic_promotion": {
+    "lineage": [
+      {"evidence_id": "evidence:inference-a", "origin_refs": ["origin:inference-a"], "derived_from": []}
+    ],
+    "retrieval_count": 250,
+    "downstream_use_count": 100,
+    "corroboration_threshold": 2,
+    "certification_gate_passed": false,
+    "expected": {
+      "independent_origin_count": 1,
+      "corroboration_threshold_met": false,
+      "certification_status": "none"
+    }
+  }
+}

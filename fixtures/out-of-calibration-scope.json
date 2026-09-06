@@ -1,0 +1,69 @@
+{
+  "fixture_id": "out-of-calibration-scope",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "An estimator is applied outside the domain in which its calibration was validated.",
+  "expected_behavior": {
+    "old_calibration_silently_reused": false,
+    "high_consequence_promotion_allowed": false,
+    "recalibration_or_review_required": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "promote_using_out_of_scope_score",
+    "permitted_actions": [
+      "require_review",
+      "require_recalibration",
+      "store_ephemeral"
+    ],
+    "prohibited_actions": [
+      "promote_using_out_of_scope_score"
+    ],
+    "selected_action": "require_recalibration",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "calibration_scope_is_binding_metadata",
+      "out_of_scope_score_not_treated_as_validated",
+      "high_consequence_action_not_authorized"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:out-of-calibration-scope",
+    "type": "preference",
+    "state": "candidate",
+    "provenance": {
+      "origin": "synthetic calibration fixture",
+      "observer": "preference-estimator",
+      "method": "estimator applied to unseen domain",
+      "timestamp": "2026-08-10T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:out-of-domain-score",
+        "kind": "model_inference",
+        "ref": "fixture://estimator-v5-domain-mismatch",
+        "confidence": 0.96
+      }
+    ],
+    "saturation": {
+      "sigma": 0.9,
+      "calibrated": false,
+      "durability_dimensions": [
+        "project_preference"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "high",
+      "permitted_actions": [
+        "require_review",
+        "require_recalibration",
+        "store_ephemeral"
+      ],
+      "prohibited_actions": [
+        "promote_using_out_of_scope_score"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-10T00:00:00Z"
+  }
+}

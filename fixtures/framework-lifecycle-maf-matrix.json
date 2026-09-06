@@ -1,0 +1,105 @@
+{
+  "fixture_id": "framework-lifecycle-maf-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "Framework lifecycle cases prove that Microsoft Agent Framework checkpoint persistence, retry, and resume can correlate with governed Agent Memory state without becoming memory admission, authority, or rollback power.",
+  "expected_behavior": {
+    "framework_persistence_auto_admissions": 0,
+    "duplicate_mutations_on_retry": 0,
+    "stale_checkpoint_rollbacks": 0,
+    "cross_scope_bindings": 0,
+    "trace_absence_authority_changes": 0,
+    "iteration_count_used_as_lineage_authority": false
+  },
+  "memory_unit": {
+    "id": "mem:framework-lifecycle-maf",
+    "content_ref": "fixture://framework-lifecycle-maf/reference-lifecycle",
+    "type": "decision",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "framework-lifecycle-maf-matrix",
+      "timestamp": "2026-08-12T21:40:00Z",
+      "source_refs": ["issue://189", "issue://169", "github://microsoft/agent-framework/python-1.13.0"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:framework-lifecycle-maf",
+        "kind": "framework_lifecycle_fixture",
+        "ref": "issue://189",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["runtime_lifecycle", "checkpoint_lineage", "idempotency"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": ["issue:189", "issue:169"],
+      "permitted_actions": ["collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T21:40:00Z"
+  },
+  "pinned_reference": {
+    "framework": "Microsoft Agent Framework",
+    "package": "agent-framework-core==1.13.0",
+    "tag": "python-1.13.0",
+    "commit": "e39a8a2e79c8c8987a0b9082d3ccb8665734b897",
+    "checkpoint_format_version": "1.0",
+    "license": "MIT"
+  },
+  "expected_context": {
+    "action_ref": "action:maf:mutation-1",
+    "input_identity": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "scope_ref": "scope:tenant-a/project-a",
+    "tenant_ref": "tenant-a",
+    "project_ref": "project-a"
+  },
+  "checkpoint_lineage": {
+    "checkpoint-1": null,
+    "checkpoint-2": "checkpoint-1"
+  },
+  "cases": [
+    {
+      "case_id": "same-iteration-later-lineage-is-current",
+      "resume_checkpoint": "checkpoint-2",
+      "latest_checkpoint": "checkpoint-2",
+      "iteration_count": 1,
+      "expected_relation": "current"
+    },
+    {
+      "case_id": "same-iteration-ancestor-is-stale",
+      "resume_checkpoint": "checkpoint-1",
+      "latest_checkpoint": "checkpoint-2",
+      "iteration_count": 1,
+      "expected_relation": "stale"
+    },
+    {
+      "case_id": "unknown-checkpoint-is-not-current",
+      "resume_checkpoint": "checkpoint-unknown",
+      "latest_checkpoint": "checkpoint-2",
+      "iteration_count": 999,
+      "expected_relation": "unknown"
+    }
+  ],
+  "persistence_classifications": [
+    "execution_state",
+    "evidence",
+    "memory_candidate",
+    "explicit_non_memory"
+  ],
+  "negative_paths": [
+    "retry_reuses_committed_receipt",
+    "denied_mutation_remains_denied",
+    "stale_checkpoint_cannot_rollback_current_memory",
+    "framework_persistence_does_not_auto_admit_memory",
+    "tenant_scope_mismatch_is_not_exact",
+    "trace_unavailable_does_not_remove_governance_receipt"
+  ]
+}

@@ -1,0 +1,85 @@
+name: Runtime Composition Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute targeted runtime composition tests
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_runtime_composition.py'
+
+      - name: Execute full reference regression suite
+        run: python -m unittest discover -s reference/tests -t reference
+
+      - name: Emit exact-head runtime composition evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_runtime_composition.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output runtime-composition-evidence.json
+
+      - name: Validate emitted composition evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("runtime-composition-evidence.json").read_text())
+          if len(report["agent_memory_commit"]) != 40:
+              raise SystemExit("composition evidence is not exact-head bound")
+          invariants = report["structural_invariants"]
+          non_boolean = [name for name, value in invariants.items() if type(value) is not bool]
+          if non_boolean:
+              raise SystemExit(f"composition invariants are not JSON booleans: {non_boolean}")
+          failed = [name for name, passed in invariants.items() if not passed]
+          if failed:
+              raise SystemExit(f"runtime composition invariants failed: {failed}")
+          if report["authority_effect"] != "none":
+              raise SystemExit("runtime composition must not create authority")
+          capabilities = {item["capability_id"] for item in report["resolved_routes"]}
+          required = {"semantic_fact_memory", "exact_identity_retrieval", "rebuild_projection"}
+          if not required.issubset(capabilities):
+              raise SystemExit(f"missing composed capabilities: {sorted(required - capabilities)}")
+          print(f"validated {len(invariants)} boolean runtime composition invariants")
+          PY
+
+      - name: Upload runtime composition evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: runtime-composition-evidence
+          path: runtime-composition-evidence.json
+          if-no-files-found: error
+
+      - name: Publish composition summary
+        if: always()
+        run: |
+          {
+            echo "## Configured multi-capability composition"
+            echo ""
+            echo "The reference runtime composes governed canonical semantic memory, governed retrieval, and a materially distinct derived projection component."
+            echo ""
+            echo "Correction makes the projection stale without auto-rebuild; disable/removal/rebuild preserve canonical identity; deletion makes remaining derived state residual rather than current."
+            echo ""
+            echo '```'
+            echo "python -m unittest discover -s reference/tests -t reference -p 'test_runtime_composition.py'"
+            echo "python reference/run_runtime_composition.py --agent-memory-commit <exact-40-hex-commit> --output runtime-composition-evidence.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

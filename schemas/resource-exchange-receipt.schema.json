@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/resource-exchange-receipt.schema.json",
+  "title": "Agent Memory Federated Resource Exchange Receipt",
+  "description": "Non-authoritative evidence that one logical resource was copied between two independently qualified resource-memory providers with exact target readback equality. Cross-domain authority remains represented by the canonical ADR-022 boundary-crossing receipt.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "exchange_id",
+    "snapshot_digest",
+    "logical_resource_id",
+    "representation_kind",
+    "content_digest",
+    "source_domain_refs",
+    "destination_domain_refs",
+    "provenance_refs",
+    "source_provider",
+    "target_provider",
+    "source_qualification_digest",
+    "target_qualification_digest",
+    "requirement_digest",
+    "target_readback_digest",
+    "source_retained",
+    "destructive_cutover",
+    "crossing_receipt_ref",
+    "outcome",
+    "authority_effect"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "exchange_id": { "type": "string", "pattern": "^resource-exchange:[0-9a-f]{64}$" },
+    "snapshot_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "logical_resource_id": { "type": "string", "minLength": 1 },
+    "representation_kind": { "type": "string", "minLength": 1 },
+    "content_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "source_domain_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "destination_domain_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "provenance_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "source_provider": { "$ref": "#/$defs/providerBinding" },
+    "target_provider": { "$ref": "#/$defs/providerBinding" },
+    "source_qualification_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "target_qualification_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "requirement_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "target_readback_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "source_retained": { "const": true },
+    "destructive_cutover": { "const": false },
+    "crossing_receipt_ref": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "null" }
+      ]
+    },
+    "outcome": { "const": "copied_verified" },
+    "authority_effect": { "const": "none" }
+  },
+  "$defs": {
+    "providerBinding": {
+      "type": "object",
+      "required": ["component_id", "component_version", "native_resource_id"],
+      "properties": {
+        "component_id": { "type": "string", "minLength": 1 },
+        "component_version": { "type": "string", "minLength": 1 },
+        "native_resource_id": { "type": "string", "minLength": 1 },
+        "runtime_ref": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,84 @@
+name: Configuration-Bound Recovery
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute targeted configuration-bound recovery tests
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_configured_restart.py'
+
+      - name: Execute full reference regression suite
+        run: python -m unittest discover -s reference/tests -t reference
+
+      - name: Emit exact-head configuration-bound recovery evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_config_bound_recovery.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output config-bound-recovery.json
+
+      - name: Validate emitted recovery evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("config-bound-recovery.json").read_text())
+          if len(report["agent_memory_commit"]) != 40:
+              raise SystemExit("recovery evidence is not exact-head bound")
+          failed = [
+              name for name, passed in report["structural_invariants"].items()
+              if not passed
+          ]
+          if failed:
+              raise SystemExit(f"configuration-bound recovery invariants failed: {failed}")
+          exact = report["exact_recovery"]
+          fallback = report["fallback_recovery"]
+          if exact["authority_effect"] != "none" or fallback["authority_effect"] != "none":
+              raise SystemExit("recovery/fallback cannot create authority")
+          if report["base_durability_profile"] == report["config_bound_durability_profile"]:
+              raise SystemExit("outer configuration-bound profile must not silently mutate v1")
+          print(f"validated {len(report['structural_invariants'])} configuration-bound recovery invariants")
+          PY
+
+      - name: Upload configuration-bound recovery evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: config-bound-recovery
+          path: config-bound-recovery.json
+          if-no-files-found: error
+
+      - name: Publish recovery summary
+        if: always()
+        run: |
+          {
+            echo "## Configuration-bound restart recovery"
+            echo ""
+            echo "The outer profile binds a validated #280 configuration plan to the immutable reference_file_checkpoint_v1 generation and preserves #308 projection obligations across restart."
+            echo ""
+            echo "Configured fallback activates only with explicit #300 ProviderFailure evidence."
+            echo ""
+            echo '```'
+            echo "python -m unittest discover -s reference/tests -t reference -p 'test_configured_restart.py'"
+            echo "python reference/run_config_bound_recovery.py --agent-memory-commit <exact-40-hex-commit> --output config-bound-recovery.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

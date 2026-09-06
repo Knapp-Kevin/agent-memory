@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/derivation-evidence.schema.json",
+  "title": "Agent Memory Derivation Evidence",
+  "description": "Vendor-neutral evidence envelope for summaries and other transformations. Transformation provenance is evidence only and cannot manufacture memory authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "derivation_id",
+    "root_origin_refs",
+    "immediate_source_refs",
+    "source_trust",
+    "transformation",
+    "prior_derivation_refs",
+    "derivation_depth",
+    "scope",
+    "evidence_refs",
+    "binding",
+    "created_at",
+    "interpretation"
+  ],
+  "properties": {
+    "profile_version": { "const": "0.1.0" },
+    "derivation_id": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "root_origin_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "immediate_source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "source_trust": {
+      "type": "string",
+      "enum": ["untrusted", "unknown", "bounded_trusted", "trusted"]
+    },
+    "transformation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "transformer_ref", "transformer_version", "transformer_trust", "output_ref"],
+      "properties": {
+        "method": { "type": "string", "minLength": 1 },
+        "mode": { "type": "string", "enum": ["deterministic", "probabilistic"] },
+        "status": { "type": "string", "enum": ["complete", "partial", "failed"] },
+        "transformer_ref": { "type": "string", "minLength": 1 },
+        "transformer_version": { "type": "string", "minLength": 1 },
+        "transformer_trust": {
+          "type": "string",
+          "enum": ["untrusted", "unknown", "bounded_trusted", "trusted"]
+        },
+        "output_ref": { "type": "string", "minLength": 1 },
+        "output_type": { "type": "string", "minLength": 1 },
+        "output_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["output_type"] },
+          "then": { "required": ["output_digest"] }
+        },
+        {
+          "if": { "required": ["output_digest"] },
+          "then": { "required": ["output_type"] }
+        }
+      ]
+    },
+    "prior_derivation_refs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+      "uniqueItems": true
+    },
+    "derivation_depth": { "type": "integer", "minimum": 1 },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_ref", "tenant_ref", "project_ref"],
+      "properties": {
+        "scope_ref": { "type": "string", "minLength": 1 },
+        "tenant_ref": { "type": "string", "minLength": 1 },
+        "project_ref": { "type": "string", "minLength": 1 },
+        "relation": { "type": "string", "enum": ["preserved", "narrowed"] },
+        "basis_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "relation": { "const": "narrowed" } },
+            "required": ["relation"]
+          },
+          "then": {
+            "required": ["basis_refs"],
+            "properties": { "basis_refs": { "minItems": 1 } }
+          }
+        }
+      ]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signal_semantics", "estimator_ref", "estimator_version", "value"],
+      "properties": {
+        "signal_semantics": { "type": "string", "minLength": 1 },
+        "estimator_ref": { "type": "string", "minLength": 1 },
+        "estimator_version": { "type": "string", "minLength": 1 },
+        "value": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reasons"],
+      "properties": {
+        "status": { "type": "string", "enum": ["not_evaluated", "exact", "mismatch"] },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "created_at": { "type": "string", "minLength": 1 },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_effect",
+        "memory_admission",
+        "certification_claim",
+        "transformer_authority",
+        "confidence_authority",
+        "source_trust_authority",
+        "independent_corroboration",
+        "repetition_creates_independent_origin",
+        "root_origin_preserved"
+      ],
+      "properties": {
+        "authority_effect": { "const": "none" },
+        "memory_admission": { "const": "not_established" },
+        "certification_claim": { "const": "none" },
+        "transformer_authority": { "const": "none" },
+        "confidence_authority": { "const": "none" },
+        "source_trust_authority": { "const": "none" },
+        "independent_corroboration": { "const": "not_established" },
+        "repetition_creates_independent_origin": { "const": false },
+        "root_origin_preserved": { "const": true }
+      }
+    }
+  }
+}

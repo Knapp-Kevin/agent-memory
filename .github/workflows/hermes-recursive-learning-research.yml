@@ -1,0 +1,134 @@
+name: Hermes Recursive Learning Research
+
+on:
+  pull_request:
+    paths:
+      - 'docs/programs/hermes-research/**'
+      - 'scripts/validate_hermes_recursive_learning_research.py'
+      - '.github/workflows/hermes-recursive-learning-research.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/programs/hermes-research/**'
+      - 'scripts/validate_hermes_recursive_learning_research.py'
+      - '.github/workflows/hermes-recursive-learning-research.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-hermes-research:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Checkout exact Hermes source
+        uses: actions/checkout@v7
+        with:
+          repository: NousResearch/hermes-agent
+          ref: 165c889e5b4277b56dadd42949a4112c1e6175a6
+          path: _hermes
+          persist-credentials: false
+
+      - name: Verify exact Hermes source identity and license
+        run: |
+          test "$(git -C _hermes rev-parse HEAD)" = "165c889e5b4277b56dadd42949a4112c1e6175a6"
+          head -n 1 _hermes/LICENSE | grep -q 'MIT License'
+
+      - name: Validate Agent Memory research record
+        run: python scripts/validate_hermes_recursive_learning_research.py
+
+      - name: Verify normal tool mutation interception seam
+        run: |
+          grep -q 'resolve_pre_tool_block' _hermes/agent/tool_executor.py
+          grep -q 'pre_tool_block_checked=True' _hermes/agent/tool_executor.py
+          grep -q '_AGENT_LOOP_TOOLS' _hermes/model_tools.py
+          grep -q '"memory"' _hermes/model_tools.py
+
+      - name: Verify recursive background review path
+        run: |
+          grep -q 'skip_memory=True' _hermes/agent/background_review.py
+          grep -q 'review_agent._memory_store = agent._memory_store' _hermes/agent/background_review.py
+          grep -q '"memory", "skill_manage"' _hermes/agent/background_review.py
+          grep -q '_memory_write_origin = "background_review"' _hermes/agent/background_review.py
+
+      - name: Verify approval replay bypass paths
+        run: |
+          grep -q 'from tools.memory_tool import apply_memory_pending' _hermes/hermes_cli/write_approval_commands.py
+          grep -q 'result = apply_memory_pending(payload, memory_store)' _hermes/hermes_cli/write_approval_commands.py
+          grep -q 'def apply_memory_pending' _hermes/tools/memory_tool.py
+          grep -q 'return store.apply_batch' _hermes/tools/memory_tool.py
+          grep -q 'from tools.skill_manager_tool import apply_skill_pending' _hermes/hermes_cli/write_approval_commands.py
+          grep -q 'def apply_skill_pending' _hermes/tools/skill_manager_tool.py
+          grep -q '_skill_gate_bypass.set(True)' _hermes/tools/skill_manager_tool.py
+          grep -q 'return skill_manage(' _hermes/tools/skill_manager_tool.py
+
+      - name: Verify curator direct durable mutation path
+        run: |
+          grep -q 'def apply_automatic_transitions' _hermes/agent/curator.py
+          grep -q 'archive_skill(name)' _hermes/agent/curator.py
+          grep -q 'def archive_skill' _hermes/tools/skill_usage.py
+
+      - name: Verify Journey direct mutation paths
+        run: |
+          grep -q 'def delete_node' _hermes/agent/learning_mutations.py
+          grep -q 'def edit_node' _hermes/agent/learning_mutations.py
+          grep -q 'MemoryStore._write_file' _hermes/agent/learning_mutations.py
+          grep -q 'skill_usage.archive_skill' _hermes/agent/learning_mutations.py
+
+      - name: Verify external provider is a post-commit mirror
+        run: |
+          grep -q 'def notify_memory_tool_write' _hermes/agent/memory_manager.py
+          grep -q 'provider.on_memory_write' _hermes/agent/memory_manager.py
+          grep -q 'on_memory_write failed' _hermes/agent/memory_manager.py
+          grep -q 'Only ONE external plugin provider is allowed' _hermes/agent/memory_manager.py
+
+      - name: Record exact-head research evidence
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p /tmp/hermes-research
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          files = [
+              Path('docs/programs/hermes-research/hermes-mutation-surface.json'),
+              Path('docs/programs/hermes-research/README.md'),
+          ]
+          digests = {
+              str(path): 'sha256:' + hashlib.sha256(path.read_bytes()).hexdigest()
+              for path in files
+          }
+          record = json.loads(files[0].read_text())
+          evidence = {
+              'schema_version': '1.0.0',
+              'agent_memory_commit': os.environ['HEAD_SHA'],
+              'hermes_commit': '165c889e5b4277b56dadd42949a4112c1e6175a6',
+              'surface_count': len(record['surfaces']),
+              'strict_gap_count': len(record['integration_postures']['strict']['blocking_gaps']),
+              'research_conclusion': record['research_conclusion'],
+              'doctrine_disposition': record['doctrine_disposition'],
+              'authority_effect': record['authority_effect'],
+              'digests': digests,
+          }
+          assert evidence['surface_count'] == 12
+          assert evidence['strict_gap_count'] == 6
+          assert evidence['authority_effect'] == 'none'
+          Path('/tmp/hermes-research/hermes-research-evidence.json').write_text(
+              json.dumps(evidence, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          PY
+          cat /tmp/hermes-research/hermes-research-evidence.json
+
+      - name: Upload exact-head Hermes research evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: hermes-recursive-learning-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/hermes-research/hermes-research-evidence.json
+          if-no-files-found: error
+          retention-days: 30

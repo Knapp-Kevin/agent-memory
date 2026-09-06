@@ -1,0 +1,60 @@
+name: OPA Policy Comparator
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  opa-policy-comparator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Download and verify pinned OPA binary
+        env:
+          OPA_URL: https://github.com/open-policy-agent/opa/releases/download/v1.19.0/opa_linux_amd64
+          OPA_SHA256: 4ae5eeec241c9f5df7c5f566fe96e26336ce186f8c773c46ffdf10b48189a520
+        run: |
+          curl --fail --location --silent --show-error "$OPA_URL" --output /tmp/opa
+          echo "$OPA_SHA256  /tmp/opa" | sha256sum --check --strict
+          chmod +x /tmp/opa
+
+      - name: Verify pinned OPA version and policy syntax
+        run: |
+          /tmp/opa version
+          /tmp/opa version | grep -F "Version: 1.19.0"
+          /tmp/opa check reference/policies/opa_agent_memory_v01.rego
+
+      - name: Execute OPA adapter parser regressions
+        env:
+          PYTHONPATH: reference
+        run: python -m unittest tests.test_opa_policy_comparator
+
+      - name: Execute real OPA external-policy comparator
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          PYTHONPATH=reference
+          python reference/run_opa_policy_comparator.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --opa-binary /tmp/opa
+          --output opa-policy-comparator.json
+
+      - name: Upload OPA policy composition evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: opa-policy-comparator-evidence
+          path: opa-policy-comparator.json
+          if-no-files-found: error

@@ -1,0 +1,440 @@
+{
+  "component_id": "evolveai",
+  "component_version": "21161ce7b88dbffeb7ed59757b4d02d24a9c2acd",
+  "profile_version": "component-capability-v2",
+  "enabled": true,
+  "runtime_ref": "MythologIQ-Labs-LLC/EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd",
+  "failure_posture": "explicit_unavailable",
+  "provenance_refs": [
+    "repo://MythologIQ-Labs-LLC/EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd",
+    "issue://MythologIQ-Labs-LLC/agent-memory/292",
+    "issue://MythologIQ-Labs-LLC/EvolveAI/19",
+    "pr://MythologIQ-Labs-LLC/EvolveAI/21",
+    "qualification-profile://evolveai-public-facade-behavior@1.0.0"
+  ],
+  "capabilities": [
+    {
+      "capability_id": "transient_cache_storage",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/tiers/l1_cache.rs"
+      ],
+      "limitations": [
+        "ephemeral_l1_state_is_not_restart_persistent",
+        "not_independently_exercised_by_the_1_0_0_qualification_workload"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "vector_representation",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:vector_representation@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/representation/mock.rs",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/representation/ggcore.rs"
+      ],
+      "limitations": [
+        "qualification_exercises_MockEngine_only",
+        "GG_CORE_ONNX_engine_is_implemented_but_not_exercised_or_product_default_qualified"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "candidate_only",
+        "deletion_model": "candidate_drop",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "vector_candidate_retrieval",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:vector_candidate_retrieval@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/processor/query.rs"
+      ],
+      "limitations": [
+        "qualification_exercises_mock_derived_vectors_not_real_embedding_quality",
+        "candidate_ranking_does_not_create_recall_admission"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "candidate_only",
+        "deletion_model": "candidate_drop",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "temporal_graph",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:temporal_graph@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/tiers/l2_graph.rs"
+      ],
+      "limitations": [
+        "provider_graph_state_is_not_agent_memory_canonical_state"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "graph_traversal",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:graph_traversal@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/tiers/l2_graph.rs",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/processor/facade.rs"
+      ],
+      "limitations": [
+        "qualification_covers_direct_neighbor_association_only",
+        "graph_reachability_is_candidate_evidence_not_recall_permission"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "candidate_only",
+        "deletion_model": "candidate_drop",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "graph_augmented_context_assembly",
+      "capability_version": "1.0",
+      "maturity": "declared",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": false,
+      "evidence_refs": [
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:README.md"
+      ],
+      "limitations": [
+        "L2_graph_plus_vector_scan_is_not_end_to_end_GraphRAG_context_assembly",
+        "disabled_until_dedicated_context_assembly_qualification_exists"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "candidate_only",
+        "deletion_model": "candidate_drop",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "content_addressed_exact_retrieval",
+      "capability_version": "1.0",
+      "maturity": "reference_qualified",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:content_addressed_exact_retrieval@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/processor/query.rs"
+      ],
+      "limitations": [
+        "EvolveAI_content_address_is_provider_identity_not_universal_agent_memory_identity",
+        "explicit_Agent_Memory_scope_binding_is_required"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "tier_routing",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "proposal_only",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:tier_routing@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/tiers/router.rs"
+      ],
+      "limitations": [
+        "MTS_placement_is_provider_local_and_does_not_create_truth_or_agent_memory_authority",
+        "sensitivity_privilege_accuracy_compute_factors_are_not_epistemic_certification"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": false, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "not_applicable",
+        "deletion_model": "not_applicable",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "lifecycle_decay",
+      "capability_version": "1.0",
+      "maturity": "runtime_wired",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "proposal_only",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:lifecycle_decay@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/processor/metabolism.rs"
+      ],
+      "limitations": [
+        "qualification_proves_supported_invocation_path_not_all_decay_threshold_semantics",
+        "repeated_access_or_decay_weight_does_not_count_as_independent_corroboration"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "explicit_signal",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "lifecycle_orchestration",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "proposal_only",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:lifecycle_orchestration@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/lifecycle/orchestrator.rs",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/processor/facade.rs"
+      ],
+      "limitations": [
+        "provider_lifecycle_state_machine_does_not_create_agent_memory_mutation_or_action_authority"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "explicit_signal",
+        "correction_model": "not_applicable",
+        "deletion_model": "not_applicable",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "rem_synthesis_consolidation",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "proposal_only",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:rem_synthesis_consolidation@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/processor/facade.rs"
+      ],
+      "limitations": [
+        "current_REM_synthesis_path_runs_decay_promotion_and_consumes_traces",
+        "does_not_claim_semantic_consolidation_beyond_observed_runtime_behavior"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "explicit_signal",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "negative_failure_memory",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "proposal_only",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:negative_failure_memory@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/shadow/genome.rs",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/shadow/interceptor.rs"
+      ],
+      "limitations": [
+        "native_Shadow_Block_is_normalized_as_risk_candidate_evidence_only",
+        "similarity_or_trigger_count_never_becomes_agent_memory_PASS_BLOCK_or_action_authority"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "explicit_signal",
+        "correction_model": "candidate_only",
+        "deletion_model": "candidate_drop",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "persistent_snapshot_restart",
+      "capability_version": "1.0",
+      "maturity": "reference_qualified",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:persistent_snapshot_restart@evolveai-public-facade-behavior/1.0.0",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/processor/persist.rs"
+      ],
+      "limitations": [
+        "L1_is_intentionally_ephemeral_and_excluded_from_snapshot",
+        "qualification_covers_explicit_save_load_not_crash_consistency_beyond_provider_contract"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "audited_deletion",
+      "capability_version": "1.0",
+      "maturity": "reference_qualified",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:audited_deletion@evolveai-public-facade-behavior/1.0.0",
+        "fix:EvolveAI#19@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/tiers/l3_vault.rs"
+      ],
+      "limitations": [
+        "qualified_claim_is_native_L3_live_removal_plus_reconstructable_delete_history",
+        "does_not_prove_transitive_forgetting_or_erasure_of_external_derived_representations",
+        "explicit_Agent_Memory_scope_and_mutation_governance_remain_required"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "explicit_signal",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "l3_provenance_audit",
+      "capability_version": "1.0",
+      "maturity": "reference_qualified",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:evolveai:l3_provenance_audit@evolveai-public-facade-behavior/1.0.0",
+        "fix:EvolveAI#19@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd",
+        "source:EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd:crates/evolve-core/src/tiers/l3_vault.rs"
+      ],
+      "limitations": [
+        "qualification_is_specific_to_L3_hash_chain_mutation_history",
+        "audit_evidence_is_not_truth_certification_or_agent_memory_authority"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "explicit_signal",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    }
+  ]
+}

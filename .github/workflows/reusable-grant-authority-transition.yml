@@ -1,0 +1,77 @@
+name: Reusable Grant Authority Transition
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  reusable-grant-authority-transition:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Validate schemas
+        run: python scripts/validate_schemas.py
+
+      - name: Run focused authority-transition tests
+        env:
+          PYTHONPATH: reference
+        run: |
+          python -m unittest \
+            tests.test_reusable_grants \
+            tests.test_approval_evidence \
+            tests.test_precedent_applicability
+
+      - name: Generate exact-head reusable-grant evidence
+        env:
+          PYTHONPATH: reference
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python reference/run_reusable_grant_harness.py \
+            --agent-memory-commit "$AGENT_MEMORY_COMMIT" \
+            --output reusable-grant-authority-transition.json
+
+      - name: Inspect authority-transition invariants
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          report = json.load(open('reusable-grant-authority-transition.json', encoding='utf-8'))
+          metrics = report['metrics']
+          assert report['agent_memory_commit'] == os.environ['AGENT_MEMORY_COMMIT']
+          # ADR-037 step 4b-2 (ledger entry #24). A row was ADDED, not
+          # re-graded: the high-risk reusable-grant scenario now parks, because
+          # R5 requires human confirmation for *this* proposal and precedent-
+          # based authority cannot supply it. A medium-risk row carries the
+          # discharge that remains, so the tightening stays visible here rather
+          # than being tuned away.
+          assert metrics['scenario_count'] == 13
+          assert metrics['safe_review_discharges'] == 1
+          assert metrics['unsafe_grant_activations'] == 0
+          assert metrics['authority_transition_failures'] == 0
+          assert metrics['policy_derived_attribution_errors'] == 0
+          assert metrics['pama_widening_failures'] == 0
+          assert metrics['recursive_authority_inflation_failures'] == 0
+          assert metrics['failed_scenarios'] == 0
+          assert report['duplicate-history-guard']['passed'] is True
+          PY
+
+      - name: Upload authority-transition evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: reusable-grant-authority-transition-evidence
+          path: reusable-grant-authority-transition.json
+          if-no-files-found: error

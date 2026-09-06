@@ -1,0 +1,64 @@
+name: Precedent Candidate Retrieval
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+      - run: python scripts/validate_schemas.py
+      - name: Run focused precedent boundary tests
+        env:
+          PYTHONPATH: reference
+        run: >-
+          python -m unittest
+          tests.test_precedent_candidate_retrieval
+          tests.test_precedent_applicability
+      - name: Generate exact-head retrieval evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+          PYTHONPATH: reference
+        run: >-
+          python reference/run_precedent_candidate_retrieval.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output precedent-candidate-retrieval.json
+      - name: Inspect generated safety and usefulness evidence
+        run: |
+          python - <<'PY'
+          import json, os
+          report = json.load(open('precedent-candidate-retrieval.json', encoding='utf-8'))
+          assert report['scenario_count'] == 12
+          assert report['agent_memory_commit'] == os.environ.get('AGENT_MEMORY_COMMIT', report['agent_memory_commit'])
+          retrieval = report['metrics']['retrieval_usefulness']
+          safety = report['metrics']['governance_safety']
+          assert retrieval['candidate_recall_on_paraphrased_equivalent_cases'] == 1.0
+          assert retrieval['unsafe_near_match_candidate_rate'] > 0.0
+          assert safety['final_unsafe_equivalence_false_positives'] == 0
+          assert safety['material_difference_misses'] == 0
+          assert safety['negative_precedent_misses'] == 0
+          assert safety['cross_scope_leakage_failures'] == 0
+          assert safety['stale_precedent_reuse_failures'] == 0
+          assert safety['independent_human_attribution_errors'] == 0
+          assert safety['estimator_unavailable_fallback_success'] == 1.0
+          statuses = {row['case_id']: row['evidence']['status'] for row in report['scenarios']}
+          assert statuses['estimator-unavailable-fallback'] == 'unavailable'
+          assert statuses['unsupported-estimator-version-fallback'] == 'unsupported'
+          print(json.dumps(report['metrics'], indent=2, sort_keys=True))
+          PY
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: precedent-candidate-retrieval-evidence
+          path: precedent-candidate-retrieval.json
+          if-no-files-found: error

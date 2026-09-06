@@ -1,0 +1,47 @@
+name: Seal Anchors
+
+# Every META_LEDGER SESSION SEAL records the `git write-tree` oid of the staged
+# index at seal time. Those trees are anchored under refs/seals/entry-<N> so they
+# are reachable, pushed, and gc-safe -- and therefore verifiable from the remote.
+#
+# A default checkout does NOT fetch refs/seals/*. This job fetches the namespace
+# explicitly before verifying, because a verifier that sees no refs and reports
+# "nothing to check" has checked nothing (scripts/verify_seals.py fails in that
+# case rather than passing vacuously).
+
+on:
+  pull_request:
+    paths:
+      - "docs/META_LEDGER.md"
+      - "scripts/anchor_seal.py"
+      - "scripts/verify_seals.py"
+      - "reference/tests/test_seal_anchors.py"
+      - ".github/workflows/seal-anchors.yml"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Fetch the seal namespace
+        run: git fetch origin 'refs/seals/*:refs/seals/*'
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Verify every SESSION SEAL is anchored and matches
+        run: python scripts/verify_seals.py
+
+      - name: Seal-anchor tests
+        run: python -m unittest reference.tests.test_seal_anchors -v

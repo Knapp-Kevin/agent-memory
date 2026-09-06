@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/governance-context-projection.schema.json",
+  "title": "Agent Memory Governance Context Projection",
+  "description": "Vendor-neutral, derived governance context projected from canonical Agent Memory state. The projection carries evidence and precedent context, not a final consumer verdict, standing permission, or consumer-specific risk score.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "projection_id",
+    "purpose",
+    "current_context_ref",
+    "source_memory_refs",
+    "scope",
+    "precedents",
+    "derivation",
+    "generated_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^0\\.1\\.[0-9]+$"
+    },
+    "projection_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "type": "string",
+      "enum": ["governance_decision_context"]
+    },
+    "current_context_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_memory_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "scope": {
+      "type": "object",
+      "required": ["domain_refs", "relationship"],
+      "properties": {
+        "domain_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "relationship": {
+          "type": "string",
+          "enum": ["same", "crossing_authorized", "mismatch", "unknown"]
+        },
+        "purpose_ref": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "precedents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "memory_ref",
+          "polarity",
+          "relationship",
+          "material_conditions",
+          "validity",
+          "provenance"
+        ],
+        "properties": {
+          "memory_ref": { "type": "string", "minLength": 1 },
+          "polarity": {
+            "type": "string",
+            "enum": ["supportive", "cautionary", "contradictory", "neutral"]
+          },
+          "relationship": {
+            "type": "string",
+            "enum": ["exact", "material_match", "partial_match", "material_mismatch", "unknown"]
+          },
+          "rationale_ref": { "type": "string", "minLength": 1 },
+          "rationale_summary": { "type": "string", "maxLength": 1000 },
+          "material_conditions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["name", "precedent_value", "current_value", "comparison"],
+              "properties": {
+                "name": { "type": "string", "minLength": 1 },
+                "precedent_value": {},
+                "current_value": {},
+                "comparison": {
+                  "type": "string",
+                  "enum": ["match", "mismatch", "unknown", "not_compared"]
+                },
+                "evidence_refs": {
+                  "type": "array",
+                  "items": { "type": "string", "minLength": 1 },
+                  "uniqueItems": true
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "outcome_refs": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "uniqueItems": true
+          },
+          "validity": {
+            "type": "object",
+            "required": ["status"],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["current", "stale", "expired", "superseded", "revoked", "disputed", "historical"]
+              },
+              "valid_from": { "type": "string", "format": "date-time" },
+              "valid_until": { "type": "string", "format": "date-time" },
+              "policy_version_ref": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          },
+          "provenance": {
+            "type": "object",
+            "required": ["source_type", "source_ref"],
+            "properties": {
+              "source_type": {
+                "type": "string",
+                "enum": ["human_adjudication", "policy_outcome", "runtime_observation", "memory_inference", "external_evidence"]
+              },
+              "source_ref": { "type": "string", "minLength": 1 },
+              "authority_ref": { "type": "string", "minLength": 1 },
+              "independent_adjudication": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "negative_precedent_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "derivation": {
+      "type": "object",
+      "required": ["mode", "reconstructable", "source_snapshot_ref"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["exact_identity", "deterministic_condition_match", "rule_based_retrieval", "semantic_similarity", "hybrid"]
+        },
+        "reconstructable": { "const": true },
+        "source_snapshot_ref": { "type": "string", "minLength": 1 },
+        "estimator_ref": { "type": "string", "minLength": 1 },
+        "estimator_version": { "type": "string", "minLength": 1 },
+        "uncertainty_summary": {
+          "type": "object"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": { "enum": ["semantic_similarity", "hybrid"] }
+            },
+            "required": ["mode"]
+          },
+          "then": {
+            "required": ["estimator_ref", "estimator_version", "uncertainty_summary"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "sensitivity": {
+      "type": "object",
+      "properties": {
+        "privacy_minimized": { "type": "boolean" },
+        "labels": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "redaction_ref": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

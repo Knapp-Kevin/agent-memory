@@ -1,0 +1,79 @@
+{
+  "fixture_id": "pruning-with-audit-preservation",
+  "fixture_version": "1.0.0",
+  "class": "evaporate",
+  "description": "A stale memory is removed from active recall while preserving an audit tombstone.",
+  "expected_behavior": {
+    "active_recall": false,
+    "tombstone_created": true,
+    "source_evidence_retained": true,
+    "final_state": "pruned",
+    "reason": "Pruning should remove active recall without destroying accountability."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:pruning-with-audit-preservation",
+    "content_ref": "fixture://pruning-with-audit-preservation/raw",
+    "type": "trace",
+    "state": "pruned",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-pruning-class",
+      "timestamp": "2026-07-06T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:stale-trace",
+        "kind": "runtime_trace",
+        "ref": "fixture://pruning-with-audit-preservation/trace",
+        "confidence": 0.8
+      }
+    ],
+    "saturation": {
+      "sigma": 0.04,
+      "calibrated": true,
+      "threshold": 0.95,
+      "durability_dimensions": [
+        "staleness",
+        "low_reuse",
+        "retention_policy"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "low",
+      "policy_refs": [
+        "ADR-004"
+      ]
+    },
+    "certification": {
+      "status": "none",
+      "scope": "trace"
+    },
+    "decay_profile": {
+      "lambda_base": 0.1,
+      "lambda_eff": 0.1,
+      "pressure": 1
+    },
+    "ledger_ref": "fixture://ledger/pruning-with-audit-preservation",
+    "created_at": "2026-07-06T00:00:00Z"
+  },
+  "interaction_history": [
+    {
+      "event": "observed",
+      "count": 1
+    },
+    {
+      "event": "stale",
+      "count": 1
+    },
+    {
+      "event": "pruned",
+      "count": 1
+    },
+    {
+      "event": "tombstone_created",
+      "count": 1
+    }
+  ]
+}

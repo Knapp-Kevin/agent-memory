@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="1040" viewBox="0 0 540 1040" role="img" aria-labelledby="title desc">
+  <title id="title">Deletion completeness and derived-state propagation</title>
+  <desc id="desc">A vertical Agent Memory diagram showing canonical memory, governed derived memory, and projections, then separating correction propagation from deletion propagation. Correction makes dependent projections stale and routes rebuild or supersession through governance. Deletion traverses the transitive derivation closure, purges in-scope state, performs an independent residue sweep, and only satisfies the lifecycle when undeclared residue is zero. The P4 projection vocabulary shown is executed design evidence, not adopted doctrine.</desc>
+  <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L8,3 z" fill="#8b949e"/></marker></defs>
+  <rect x="1" y="1" width="538" height="1038" rx="18" fill="#0d1117" stroke="#30363d"/>
+  <text x="28" y="40" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="23" font-weight="700">A successful delete is not yet complete forgetting</text>
+  <text x="28" y="65" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">Canonical requirement plus executed P4 design evidence. Projection vocabulary is not ADR-adopted doctrine.</text>
+
+  <text x="28" y="105" fill="#79c0ff" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700">01  THREE STATE TIERS</text>
+  <rect x="28" y="120" width="484" height="68" rx="11" fill="#161b22" stroke="#388bfd"/>
+  <text x="270" y="146" text-anchor="middle" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="700">Canonical memory unit</text>
+  <text x="270" y="168" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">identity · lifecycle · authority · provenance</text>
+  <line x1="270" y1="188" x2="270" y2="210" stroke="#8b949e" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="28" y="218" width="484" height="68" rx="11" fill="#1c1628" stroke="#a371f7"/>
+  <text x="270" y="244" text-anchor="middle" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="700">Governed derived memory unit</text>
+  <text x="270" y="266" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">summary / semantic / procedural memory with derivation links</text>
+  <line x1="270" y1="286" x2="270" y2="308" stroke="#8b949e" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="28" y="316" width="484" height="86" rx="11" fill="#122019" stroke="#3fb950"/>
+  <text x="270" y="342" text-anchor="middle" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="700">Projection state</text>
+  <text x="270" y="366" text-anchor="middle" fill="#c9d1d9" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">embedding · index · cache · materialized view · summary projection</text>
+  <text x="270" y="388" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">not itself a memory unit; basis/dependency visibility is the residue problem</text>
+
+  <text x="28" y="448" fill="#d2a8ff" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700">02  CORRECTION PATH</text>
+  <rect x="28" y="463" width="484" height="112" rx="11" fill="#1c1628" stroke="#a371f7"/>
+  <text x="48" y="492" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="700">Source version changes → dependent projection becomes stale</text>
+  <text x="48" y="518" fill="#c9d1d9" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">stale = source changed; content may be out of date</text>
+  <text x="48" y="544" fill="#c9d1d9" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">rebuild/supersession is governed; estimator-mediated rebuild is a mutation</text>
+  <text x="48" y="564" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">Correction preserves history unless privacy/deletion policy requires otherwise.</text>
+
+  <text x="28" y="621" fill="#ff7b72" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700">03  DELETION PATH</text>
+  <rect x="28" y="636" width="484" height="58" rx="10" fill="#251719" stroke="#f85149"/>
+  <text x="270" y="661" text-anchor="middle" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="700">Source purged → traverse transitive derivation closure</text>
+  <text x="270" y="681" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">One-hop deletion is insufficient.</text>
+  <line x1="270" y1="694" x2="270" y2="716" stroke="#8b949e" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="28" y="724" width="484" height="58" rx="10" fill="#251719" stroke="#f85149"/>
+  <text x="270" y="749" text-anchor="middle" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="700">Purge in-scope dependents + report known residual copies</text>
+  <text x="270" y="769" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">Uncontrollable copies are declared, not quietly omitted.</text>
+  <line x1="270" y1="782" x2="270" y2="804" stroke="#8b949e" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="28" y="812" width="484" height="58" rx="10" fill="#161b22" stroke="#8b949e"/>
+  <text x="270" y="837" text-anchor="middle" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="700">Independent residue sweep</text>
+  <text x="270" y="857" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">Verification does not ask the purge process whether it succeeded.</text>
+
+  <path d="M270 870 V894 M270 894 H150 V914 M270 894 H390 V914" fill="none" stroke="#8b949e" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="28" y="922" width="230" height="76" rx="10" fill="#122019" stroke="#3fb950"/>
+  <text x="143" y="948" text-anchor="middle" fill="#7ee787" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">undeclared residue = 0</text>
+  <text x="143" y="971" text-anchor="middle" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">lifecycle outcome satisfied</text>
+  <text x="143" y="989" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="11">subject to declared scope/outcome</text>
+  <rect x="282" y="922" width="230" height="76" rx="10" fill="#251719" stroke="#f85149"/>
+  <text x="397" y="948" text-anchor="middle" fill="#ff7b72" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">surviving undeclared residue</text>
+  <text x="397" y="971" text-anchor="middle" fill="#f0f6fc" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13">lifecycle incomplete</text>
+  <text x="397" y="989" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="11">delete operation != forgetting completeness</text>
+
+  <text x="270" y="1023" text-anchor="middle" fill="#8b949e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12">stale = source changed · residual = source was tombstoned/purged</text>
+</svg>

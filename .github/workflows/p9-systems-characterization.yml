@@ -1,0 +1,58 @@
+name: P9 Systems Characterization
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  characterize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install P9 validation dependency
+        run: python -m pip install --disable-pip-version-check jsonschema==4.26.0
+
+      - name: Execute P9 characterization tests
+        run: python -m unittest reference.tests.test_systems_characterization
+
+      - name: Emit exact-head P9 characterization
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_systems_characterization.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --sizes 10,100,500
+          --repeats 5
+          --output systems-characterization.json
+
+      - name: Upload P9 characterization evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: p9-systems-economic-characterization
+          path: systems-characterization.json
+          if-no-files-found: error
+
+      - name: Publish P9 summary
+        if: always()
+        run: |
+          {
+            echo "## P9 systems/economic characterization"
+            echo ""
+            echo "Portable gates use structural work only. Runner timing is observational and non-gating."
+            echo ""
+            echo '```'
+            echo "python -m pip install jsonschema==4.26.0"
+            echo "python -m unittest reference.tests.test_systems_characterization"
+            echo "python reference/run_systems_characterization.py --agent-memory-commit <exact-40-hex-commit> --sizes 10,100,500 --repeats 5 --output systems-characterization.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

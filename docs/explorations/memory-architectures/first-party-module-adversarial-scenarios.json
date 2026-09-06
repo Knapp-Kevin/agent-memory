@@ -1,0 +1,173 @@
+{
+  "schema_version": "0.1.0",
+  "issue": 275,
+  "status": "exploratory",
+  "claim_boundary": "These scenarios define matched research questions. They are not conformance claims until executed against pinned implementations with reproducible evidence.",
+  "lanes": {
+    "adaptive_memory": {
+      "first_party": "MythologIQ-Labs-LLC/EvolveAI@7cd42412ceed2ab638249a1517b2a6dac46f1312",
+      "comparators": [
+        "vectorize-io/hindsight@41b292e5747c8e87040c65bc0e32429cb5e6ba21",
+        "MemTensor/MemOS@f4db521214c29337164ec788bafede7eab236c25"
+      ],
+      "scenarios": [
+        {
+          "id": "AM-01",
+          "name": "correction_after_derived_state",
+          "setup": "A source memory is retained and a higher-order summary, mental model, graph relation, or synthesized state is derived from it. The source is then corrected.",
+          "required_observations": [
+            "source identity/version before and after correction",
+            "derived state identity and source lineage",
+            "derived currentness after correction",
+            "whether stale derived state remains retrievable or influential",
+            "rebuild/supersession evidence"
+          ],
+          "unsafe_result": "The old derived state remains current merely because it is useful or highly ranked."
+        },
+        {
+          "id": "AM-02",
+          "name": "revoked_source_useful_derivation",
+          "setup": "A source contributes to a useful derived memory. The source is later revoked or scope-restricted while the derivation remains operationally useful.",
+          "required_observations": [
+            "revocation/currentness propagation",
+            "scope propagation",
+            "continued influence posture",
+            "re-evidence or rebuild path"
+          ],
+          "unsafe_result": "Utility or predictive quality erases revocation/currentness obligations."
+        },
+        {
+          "id": "AM-03",
+          "name": "access_feedback_reinforces_stale_memory",
+          "setup": "A stale or disputed memory is repeatedly accessed by the same agent or workflow.",
+          "required_observations": [
+            "retention/decay change caused by access",
+            "whether repeated access counts as independent support",
+            "lifecycle state after repeated access",
+            "authority effect"
+          ],
+          "unsafe_result": "Repeated self-access promotes epistemic status or durable authority."
+        },
+        {
+          "id": "AM-04",
+          "name": "cross_scope_high_relevance_recall",
+          "setup": "A memory from another user/project/domain is a stronger semantic match than in-scope memories.",
+          "required_observations": [
+            "candidate discovery result",
+            "scope/isolation decision",
+            "admission result",
+            "evidence for any authorized crossing"
+          ],
+          "unsafe_result": "Relevance or shared physical storage bypasses isolation."
+        },
+        {
+          "id": "AM-05",
+          "name": "autonomous_consolidation_drops_exception",
+          "setup": "Background consolidation creates a compact derived memory but drops one material exception from its source set.",
+          "required_observations": [
+            "maintenance proposal and authority",
+            "transaction state",
+            "post-write validation result",
+            "rollback/quarantine result",
+            "cursor/checkpoint advance"
+          ],
+          "unsafe_result": "Successful persistence is reported as successful consolidation after a required semantic probe fails."
+        },
+        {
+          "id": "AM-06",
+          "name": "delete_with_residual_projection",
+          "setup": "Canonical memory is deleted while one embedding, graph relation, summary, cache, or other derived representation survives.",
+          "required_observations": [
+            "canonical delete result",
+            "declared derivation closure",
+            "independent residue check",
+            "lifecycle satisfaction result"
+          ],
+          "unsafe_result": "A successful delete operation is reported as forgetting completeness."
+        }
+      ]
+    },
+    "code_reality": {
+      "first_party": "MythologIQ-Labs-LLC/CodeGenome@b498b80959f52a2eb37724e5b1c56ddcf68d3c7f",
+      "comparators": [
+        "abhigyanpatwari/GitNexus@28187bb3a70840998cbe760f8bef3655c113156c",
+        "Graphify-Labs/graphify@7fe58b0b0f3873be9a21c30106b8b8527c353aa6"
+      ],
+      "scenarios": [
+        {
+          "id": "CG-01",
+          "name": "logical_symbol_continuity_after_content_change",
+          "setup": "A symbol changes implementation content while retaining repository/path/semantic continuity.",
+          "required_observations": [
+            "old and new content addresses",
+            "logical symbol lineage",
+            "historical references",
+            "current graph identity"
+          ],
+          "unsafe_result": "Content-address change destroys logical continuity or silently rewrites history."
+        },
+        {
+          "id": "CG-02",
+          "name": "fabricated_import_edge",
+          "setup": "An external package name resembles an in-repository path strongly enough to tempt suffix/heuristic resolution.",
+          "required_observations": [
+            "resolver evidence",
+            "edge provenance",
+            "edge confidence",
+            "whether the false edge enters impact analysis"
+          ],
+          "unsafe_result": "An unproven external import becomes a high-confidence in-repository dependency edge."
+        },
+        {
+          "id": "CG-03",
+          "name": "source_correction_stale_inferred_edge",
+          "setup": "Source changes invalidate an inferred call/import/relation but the old graph edge or derived path remains physically present.",
+          "required_observations": [
+            "source revision identity",
+            "edge derivation/currentness",
+            "stale path behavior",
+            "incremental rebuild evidence"
+          ],
+          "unsafe_result": "Physical edge presence is treated as current structural truth."
+        },
+        {
+          "id": "CG-04",
+          "name": "correlated_observer_confidence_inflation",
+          "setup": "Two observers derive the same edge from a shared underlying source or algorithmic root.",
+          "required_observations": [
+            "observer identities",
+            "shared evidence root",
+            "fusion calculation",
+            "final confidence semantics"
+          ],
+          "unsafe_result": "Correlated observations are treated as independent and inflate confidence without disclosure."
+        },
+        {
+          "id": "CG-05",
+          "name": "cross_repository_scope_collision",
+          "setup": "Two repositories contain identical or near-identical content with different ownership/scope and potentially different semantic roles.",
+          "required_observations": [
+            "content address",
+            "logical repository/scope identity",
+            "candidate/query behavior",
+            "crossing authorization"
+          ],
+          "unsafe_result": "Identical content collapses repository/scope identity or permits cross-scope traversal."
+        },
+        {
+          "id": "CG-06",
+          "name": "known_ground_truth_change_impact",
+          "setup": "A fixture contains a known set of direct and transitive dependents for one changed symbol/file.",
+          "required_observations": [
+            "ground-truth dependent set",
+            "reported impact set",
+            "false negatives",
+            "false positives",
+            "provenance/confidence for each reported dependency"
+          ],
+          "unsafe_result": "High apparent coverage hides fabricated dependencies or misses known critical dependents."
+        }
+      ]
+    }
+  }
+}

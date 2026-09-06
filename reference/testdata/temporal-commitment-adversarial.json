@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Adversarial vectors for ADR-031 temporal commitment evidence.",
+  "base": {
+    "event_type": "approval_recorded",
+    "subject_ref": "action:deploy:42",
+    "payload_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "temporal_claims": {
+      "event_time": "2026-08-13T19:00:00Z",
+      "observed_at": "2026-08-13T19:00:01Z",
+      "valid_from": "2026-08-13T19:00:00Z",
+      "valid_to": null
+    },
+    "scope_ref": "scope:tenant-a/project-alpha",
+    "domain_schema_ref": "domain-schema:approval:v1",
+    "domain_schema_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "projection_profile": "governance-context-projection",
+    "projection_version": "0.1.0"
+  },
+  "mutations": [
+    {"id": "payload", "field": "payload_digest", "value": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+    {"id": "event-time", "field": "event_time", "value": "2026-08-13T19:05:00Z"},
+    {"id": "schema", "field": "domain_schema_digest", "value": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
+    {"id": "scope", "field": "scope_ref", "value": "scope:tenant-b/project-alpha"}
+  ],
+  "test_key": {
+    "seed_hex": "1111111111111111111111111111111111111111111111111111111111111111",
+    "key_ref": "test-key:temporal-ed25519-1"
+  }
+}
