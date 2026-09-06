@@ -201,6 +201,41 @@ LD7 was restated with "the console command never imports `receipts`" after readi
 
 ---
 
+### Failure #6: A test's import form was chosen from a comment's reasoning that was never run under the invocation it named
+
+**Date**: 2026-09-06
+**Iteration**: research (Loop 17, Sprint 3b)
+**Verdict ID**: CI job 101516308032 on PR #386 (`FAILED (errors=1)`; `attempted relative import with no known parent package`)
+**Category**: SPEC_DRIFT
+
+#### What Was Attempted
+
+#384 wrote `from .qualified_fixtures import ...` in `reference/tests/test_write_readable_visibility.py:20`, the only relative import under `reference/tests/`, with a comment asserting that an absolute `from tests...` import "only works under" `discover -t reference`.
+
+#### Why It Failed
+
+- The comment reasoned from module naming (`tests.X` vs `reference.tests.X`) and overlooked the file's own `sys.path.insert` at line 10, which makes `tests` importable under both. The absolute form works under every style; the clause was false.
+- A third CI invocation exists: `discover -s reference/tests -p 'test_*.py'` with no `-t` (`evolveai-multicapability-qualification.yml:148`, `hermes-observe-govern-integration.yml:167`) loads tests as top-level modules, where no relative import can resolve.
+- Both workflows are path-triggered and had not run on `main` since #384, so the defect stayed latent until PR #386 touched their paths.
+
+#### Pattern to Avoid
+
+**Anti-Pattern**: choosing an import form from reasoning about module names in a comment, without executing the candidate under each invocation style CI actually uses; treating "the targeted step and the umbrella step" as the complete set.
+
+**Correct Pattern**: enumerate every `python -m unittest` line under `.github/workflows/`, reduce them to their distinct module-naming styles, and run the candidate under each before asserting which forms resolve. Follow the convention the sibling files already use unless a run proves it fails.
+
+#### Resolution
+
+| Status | Action Taken |
+|--------|--------------|
+| FIXED | Research brief section 1d ran both forms under all three styles. Plan `docs/plan-sprint3b-visibility-test-discover.md` (audit PASS, Entry #27, C1) applied the sibling convention and added `reference/tests/test_test_import_convention.py`, which fails on the relative form under every discover style. Sealed at Entry #28. |
+
+#### Related Entries
+- Ledger Entry: #26 (RESEARCH BRIEF, this branch)
+- PR #386 (Sprint 3a branch): its ledger amendment records the CI run that surfaced this; that branch numbers its entries #26-#27 and will renumber on rebase
+
+---
+
 ## Pattern Library (Extracted Lessons)
 
 ### Section 4 Razor Violations
@@ -222,6 +257,7 @@ LD7 was restated with "the console command never imports `receipts`" after readi
 |--------------|-----------------|----------|
 | Present-tense capability claims in governance DNA | Forward objectives in their own section | Failure #1 |
 | Grep-shaped "no reference" claims | Read all consumer directories | Failure #2 |
+| Import-form claims reasoned from module names, unrun | Run the candidate under every CI invocation style | Failure #6 |
 
 ---
 
@@ -234,11 +270,11 @@ LD7 was restated with "the console command never imports `receipts`" after readi
 | GHOST_PATH | 0 | - |
 | HALLUCINATION | 2 | 2026-09-01 |
 | ORPHAN | 0 | - |
-| SPEC_DRIFT | 4 | 2026-09-01 |
+| SPEC_DRIFT | 5 | 2026-09-06 |
 | CHAIN_BREAK | 0 | - |
 
-**Total Failures Recorded**: 5
-**Failures Resolved**: 3 (Failure #2; Failures #3 and #4 grounds closed by the following iteration)
+**Total Failures Recorded**: 6
+**Failures Resolved**: 4 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28)
 **Patterns Extracted**: 5
 
 ---

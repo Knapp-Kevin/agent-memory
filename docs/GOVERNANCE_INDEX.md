@@ -1,6 +1,6 @@
 # Governance Index
 
-**Last Reviewed**: 2026-09-05
+**Last Reviewed**: 2026-09-06
 
 A single authoritative map of every governance artifact in this project, organized
 into six freshness tiers with explicit drift contracts. A stale entry here is
@@ -98,6 +98,8 @@ Live for plan duration; archived at substantiate. Drift signal: plan shipped but
 | Sprint 2m research brief | `docs/research-brief-sprint2m-fail-closed-flip-2026-09-05.md` | sprint2m-fail-closed-flip |
 | Sprint 2n plan | `docs/plan-sprint2n-seal-anchors.md` | sprint2n-seal-anchors |
 | Sprint 2n research brief | `docs/research-brief-sprint2n-seal-anchors-2026-09-05.md` | sprint2n-seal-anchors |
+| Sprint 3b plan | `docs/plan-sprint3b-visibility-test-discover.md` | sprint3b-visibility-test-discover |
+| Sprint 3b research brief | `docs/research-brief-sprint3b-visibility-test-discover-2026-09-06.md` | sprint3b-visibility-test-discover |
 
 ## Tier 5 — Reference Material
 

@@ -1706,3 +1706,123 @@ to retrieve is durable in the wrong sense.
 
 Audit: VETO, PASS -- attempts 1-2 of 5. Grounds V1-V2 closed and recorded.
 Review Boundary: staged, not committed.
+---
+
+### Entry #26: RESEARCH BRIEF
+
+**Timestamp**: 2026-09-06T11:20:00-04:00
+**Phase**: RESEARCH
+**Author**: Analyst
+**Risk Grade**: L1 (one import line in one test file; no runtime, schema, fixture or workflow change)
+**Session**: 2026-09-06T1100-c4d2f7
+
+**Content Hash**:
+```
+SHA256(docs/research-brief-sprint3b-visibility-test-discover-2026-09-06.md)
+= ac866daf040c124a8834cb44f36bb5a5441a55e3c0a78755ed34a52bd9c7409e
+```
+
+**Previous Hash**: `a3c420ff9646a0431b7445cacb2af841ff956f2a90c29d4d84f8c6d762137539`
+**Chain Hash**:
+```
+SHA256(content_hash + previous_hash)
+= 4f557aa049e2d5222b63e96c5c4690f9f1e9373477a4944455fb154cf7b9a4b2
+```
+
+**Decision**: Loop 17 (Sprint 3b) research complete, on the operator's 2026-09-06 ruling that the visibility test is fixed in its own cycle and PR #386 is held. The 73 `python -m unittest` lines across 47 workflows reduce to three module-naming styles; `test_write_readable_visibility.py:20` is the only relative import under `reference/tests/` and the only test that cannot load under the third style (`discover` without `-t`, two integration workflows). Both import forms were run under all three styles: the absolute form the other fifteen consumers use resolves everywhere, because the file's own `sys.path.insert` at line 10 makes `tests` importable. Drift: the #384 comment's clause "an absolute `from tests...` only works under the first" is false and omitted a style that exists. Minimal correction is one line plus a truthful comment; no workflow change. Shadow Genome Failure #6 recorded. Next: /qor-plan.
+---
+
+### Entry #27: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-06T12:05:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L1
+**Verdict**: PASS
+**Session**: 2026-09-06T1100-c4d2f7
+**Target**: docs/plan-sprint3b-visibility-test-discover.md (iteration 3; plan content hash 444f0c15d48250a83b75a9e7527b4ad7b848aa5ca3601537b7d2cbe0819b7c8b)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT.md) = 4f1d2f43b3b81c692893fb004ae7b596602d696a669dc8ca178ad6ab7815739b
+
+**Previous Hash**: `4f557aa049e2d5222b63e96c5c4690f9f1e9373477a4944455fb154cf7b9a4b2`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = fcb8a4fbf15f2e92ecfaed0906446891652d69babe885f27c356d2d0ea5aa04f
+
+**Decision**: PASS, attempt 1 of 5, solo mode (no author-momentum signal; agent-teams and external reviewer absent). All passes clean. Pre-audit `plan_grep_lint` found four citation defects in iteration 2 (a two-statement evidence line, two unpaired workflow citations, a citation to a file present only on the Sprint 3a branch); the Governor amended to iteration 3 before the tribunal rendered and the lint truth-checks four targets clean. One binding condition, C1: the guard scans `test_*.py`, the modules loaded top-level under `discover` without `-t`, not every `reference/tests/*.py`; helper modules are always imported as `tests.<helper>` and a relative import inside them resolves under every style. Recorded as an addendum at implementation. Required next action: /qor-implement.
+---
+
+### Entry #28: SESSION SEAL - Phase 18 (Sprint 3b: the visibility test under every CI discover style)
+
+**Entry ID**: `a21ebd6a1743`
+**Content Hash**: `4408c8f8da5a460d441d5ecdf5e8ba20bb79855f238cdd17cc10a776fbb015bd`
+**Previous Hash**: `fcb8a4fbf15f2e92ecfaed0906446891652d69babe885f27c356d2d0ea5aa04f`
+**Chain Hash**: `321afe6c31532435124e8ee5a2c94e3d04822e269604041f1a8ea3985758c892`
+**Timestamp**: 2026-09-06T12:40:00-04:00
+**Phase**: SUBSTANTIATE
+**Author**: Judge
+**Risk Grade**: L1
+**Verdict**: PASS
+**Session**: 2026-09-06T1100-c4d2f7
+**Plan**: docs/plan-sprint3b-visibility-test-discover.md (iteration 3 with the audit C1 addendum; change_class hotfix)
+**SSDF Practices**: PS.2.1, RV.2.1
+
+**Merkle Seal** (SHA256 over `git write-tree` of the staged index 3ae5c6043b36925901bf4c2e274be963adcb3468):
+`80754a2bdbfbf9dfd5af01e9e69c4fd501b0309904bc9d9bb823776722ecd9be`
+
+**Anchor**: `refs/seals/entry-28`.
+
+**What changed.** One import line and the comment that justified it.
+`reference/tests/test_write_readable_visibility.py:20` now reads
+`from tests.qualified_fixtures import corpus_for, registry_for, rule`, the
+form its fifteen sibling consumers use. The #384 comment claimed the absolute
+form "only works under" `discover -t reference`; it was wrong, because the
+file's own `sys.path.insert` at line 10 makes `tests` importable under every
+style, and it omitted the third style CI actually runs -- `discover` without
+`-t`, in two path-triggered integration workflows -- under which a relative
+import cannot resolve at all. The comment now says what is true.
+
+**The guard.** `reference/tests/test_test_import_convention.py`:
+`relative_imports(path)` parses a module with `ast` and returns its
+package-relative `ImportFrom` statements. The first test proves the helper on
+two synthetic modules written to a temporary directory (exact statement out;
+empty list out). The second applies it to every `reference/tests/test_*.py` --
+`test_*.py` only, per audit C1: those are the modules unittest imports
+top-level, while helpers are always imported as `tests.<helper>` -- and
+asserts no offenders. TDD-Light: red on the `origin/main` state with exactly
+one offender, green after the one-line change.
+
+**Verification.** Both CI invocation styles that already passed still pass,
+and the one that failed now passes: `discover -t reference`,
+`python -m unittest reference.tests.test_write_readable_visibility`, and
+`PYTHONPATH=reference` `discover -s reference/tests -p 'test_*.py'` (the exact
+step from CI job 101516308032) -- the full style-C regression runs 1111 tests
+OK. Full suite under style A: 1109 to 1111 (+2), 0 failures, 7 skipped under
+the pinned `cryptography==50.0.1`. Adversarial negative: reverting line 20 to
+the relative form fails the guard (`FAILED (failures=1)`); restored. Validators
+clean; feature index 20 total / 20 verified (FX020 new). Gates: intent lock
+VERIFIED, secret scan clean, DoD well-formed, merge velocity within capacity,
+instruction hygiene clean, governance index enforced.
+
+**One qualification, stated rather than hidden.** With `refs/seals/entry-26`
+present in the local clone, `test_seal_anchors` fails two tests: that anchor
+belongs to the Sprint 3a branch's seal (PR #386, held), whose entry number
+will change at rebase, and it has no matching entry on `main`. The suite
+figures above were taken with that one ref temporarily deleted locally and
+then restored (`1a18a7ce...`); with it present the same run is 1111 run, 2
+failures, both in `test_seal_anchors`, both naming that ref. The ref is also
+on `origin`, so `seal-anchors.yml` will fail on this branch's PR until the
+operator rules on deleting it -- raised in the research brief (section 3) and again
+here. Not this cycle's defect and not masked by it.
+
+**Also recorded.** Two cycles in flight from `origin/main` number their
+ledger entries and feature-index rows independently; the Sprint 3a branch
+renumbers its #26-#27 and FX020 at rebase. Shadow Genome Failure #6 (an
+import form chosen from a comment's reasoning that was never run under the
+invocation it named) is FIXED at this entry.
+
+**Decision**: audit PASS on attempt 1 with one binding condition (C1, the
+`test_*.py` scope), applied at implementation and recorded in the plan.
+Pre-audit `plan_grep_lint` caught four citation defects in plan iteration 2;
+the plan was amended to iteration 3 before the tribunal rendered. Review
+Boundary: staged, not committed; no push, PR, tag or merge.
