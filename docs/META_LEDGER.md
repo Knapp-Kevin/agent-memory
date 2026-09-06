@@ -1972,3 +1972,21 @@ passability. Iteration 2 executed every assertion before locking; attempt 2
 (Entry #31) PASSED on independent re-review with one condition, C1, applied.
 Shadow Genome Failure #8 records the pattern. Review Boundary: staged, not
 committed; no push, PR, tag or merge.
+---
+
+### Entry #33: AMENDMENT
+
+**Timestamp**: 2026-09-06T15:40:00-04:00
+**Phase**: IMPLEMENT
+**Author**: Specialist
+**Risk Grade**: L2
+**Session**: 2026-09-06T1300-d8e4a1
+
+**Artifact**: `.github/workflows/dashclaw-external-verdict.yml`
+**Content Hash**: `1c113cefd92b93851f0ec571c9c0cad0fe7d66ca2e1f6b1556a8f76ab5a1779c`
+**Previous Hash**: `dd4d5204ea567f0a2096a930f3732ad2807163ebb318b5523952291b00dc6ed4`
+**Chain Hash**: `2cc471a65e507a995bb367e1a950fcfd3156385cc4f3034393666b935e7199ea`
+
+**Decision**: Entry #32 sealed tree `9c6078db4ec4...` after the workflow's YAML parsed and its invariant block passed locally. CI on PR #391 then failed the `provider-proof` job at the step before the runner: the unittest invocation in `.github/workflows/dashclaw-external-verdict.yml` carried a literal backslash-n where a line continuation belonged (the patch that added the new test to the list wrote the two characters `\n` instead of a backslash and a newline), so the last two test paths collapsed into one argument and unittest reported `No module named 'n'`. YAML parsing could not catch it -- the sequence is legal inside a block scalar -- and the local checks exercised the invariant block, not the unittest step. The correction is the one line, verified by running the workflow's exact multi-line invocation locally with `PYTHONPATH=reference`. The sealed tree is superseded by the corrected staged tree `4e130601595d1e37037a9bb906b619122da8fa14` (SHA256 `527d47bc6682f5fccec67a8274e6389f1ad15c91ce09fc61c87f2ba0fe819999`); `refs/seals/entry-32` continues to point at the tree that was sealed; this entry is not a SESSION SEAL and is not anchored. Chain integrity is unaffected: chain hashes commit to recorded hex.
+
+**Lesson, recorded.** A workflow step changed by this cycle must be executed as the workflow executes it, not merely parsed and not only its sibling steps. Sprint 3b's guard for relative imports came from the same shape of gap: a check that passed one style of invocation and not the one CI used.
