@@ -63,7 +63,8 @@ jobs:
             reference/tests/test_dashclaw_external_verdict.py \
             reference/tests/test_dashclaw_project_authority.py \
             reference/tests/test_dashclaw_target_scope_recovery.py \
-            reference/tests/test_dashclaw_cloudflare_packaging.py \n            reference/tests/test_dashclaw_correction_parks.py
+            reference/tests/test_dashclaw_cloudflare_packaging.py \
+            reference/tests/test_dashclaw_correction_parks.py
 
       - name: Verify portable Cloudflare provider source preparation
         run: python examples/cloudflare-dashclaw-provider/prepare.py --check
