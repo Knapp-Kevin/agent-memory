@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="2260" viewBox="0 0 540 2260" role="img" aria-labelledby="title desc">
+<title id="title">Temporal policy and governed memory</title>
+<desc id="desc">A mobile-first flow showing canonical Agent Memory producing a versioned governed projection, a compatibility gate checking currentness, schemas, temporal horizon, isolation and actual evaluated context, consumer-specific Dogwood or Cedar-family views, an external policy decision, monotonic composition with PAMA, and returned decision evidence. Schema or currentness changes create new compatibility evidence rather than rewriting history.</desc>
+<style>
+:root{--bg:#ffffff;--border:#d0d7de;--text:#1f2328;--muted:#59636e;--blue:#0969da;--purple:#8250df;--green:#1a7f37;--red:#cf222e;--amber:#9a6700;--line:#8c959f;--neutral:#f6f8fa;--blueBox:#f0f6fc;--purpleBox:#f6f2ff;--greenBox:#effaf1;--amberBox:#fff8c5;--redBox:#fff1f3;}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--text)}
+.frame{fill:var(--bg);stroke:var(--border)}.neutral{fill:var(--neutral);stroke:var(--border)}.blueBox{fill:var(--blueBox);stroke:var(--blue);stroke-width:1.2}.purpleBox{fill:var(--purpleBox);stroke:var(--purple);stroke-width:1.2}.greenBox{fill:var(--greenBox);stroke:var(--green);stroke-width:1.2}.amberBox{fill:var(--amberBox);stroke:var(--amber);stroke-width:1.2}.redBox{fill:var(--redBox);stroke:var(--red);stroke-width:1.2}
+.title{font-size:26px;font-weight:700}.sub{font-size:15px;fill:var(--muted)}.eyebrow{font-size:14px;font-weight:700;letter-spacing:1px}.cardTitle{font-size:18px;font-weight:700}.body{font-size:14px}.bodyStrong{font-size:14px;font-weight:700}.small{font-size:13.4px}.tiny{font-size:12.8px}.muted{fill:var(--muted)}.blueText{fill:var(--blue)}.purpleText{fill:var(--purple)}.greenText{fill:var(--green)}.amberText{fill:var(--amber)}.redText{fill:var(--red)}.redStrong{fill:var(--red);font-weight:700}.greenStrong{fill:var(--green);font-weight:700}
+.line{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round}.blueLine{fill:none;stroke:var(--blue);stroke-width:2.3}.purpleLine{fill:none;stroke:var(--purple);stroke-width:2.3}.greenLine{fill:none;stroke:var(--green);stroke-width:2.3}.amberLine{fill:none;stroke:var(--amber);stroke-width:2.3}
+</style>
+<defs>
+<marker id="a" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="var(--line)"/></marker>
+<marker id="ab" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="var(--blue)"/></marker>
+<marker id="ap" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="var(--purple)"/></marker>
+<marker id="ag" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="var(--green)"/></marker>
+<marker id="aa" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="var(--amber)"/></marker>
+</defs>
+<rect x="1" y="1" width="538" height="2258" rx="18" class="frame"/>
+<text x="28" y="44" class="title">Temporal policy and governed memory</text>
+<text x="28" y="70" class="sub">Memory can evolve. Policy input must prove it still means what the consumer expects.</text>
+
+<rect x="28" y="94" width="484" height="176" rx="11" class="neutral"/>
+<text x="46" y="121" class="eyebrow redText">HARD INVARIANTS</text>
+<text x="46" y="148" class="bodyStrong">canonical memory != consumer trace</text>
+<text x="46" y="174" class="bodyStrong">valid JSON != semantic compatibility</text>
+<text x="46" y="200" class="bodyStrong">temporal match != current authority</text>
+<text x="46" y="226" class="bodyStrong">policy decision != execution evidence</text>
+<text x="46" y="254" class="tiny redStrong">A deterministic policy engine can still evaluate stale semantics.</text>
+
+<line x1="270" y1="270" x2="270" y2="302" class="blueLine" marker-end="url(#ab)"/>
+<text x="28" y="336" class="eyebrow blueText">01  CANONICAL AGENT MEMORY</text>
+<rect x="28" y="354" width="484" height="224" rx="11" class="blueBox"/>
+<text x="48" y="386" class="cardTitle">Keep the full memory semantics here</text>
+<text x="48" y="416" class="small muted">identity · provenance · event time · valid/current time</text>
+<text x="48" y="440" class="small muted">scope / isolation · domain schema · correction / supersession</text>
+<text x="48" y="464" class="small muted">revocation · deletion · derivation · currentness · PAMA</text>
+<text x="48" y="500" class="bodyStrong">Agent Memory owns memory meaning and lifecycle.</text>
+<text x="48" y="528" class="body muted">External policy systems do not become the canonical memory store.</text>
+<text x="48" y="558" class="tiny redStrong">Historical truth and current applicability remain separate.</text>
+
+<line x1="270" y1="578" x2="270" y2="610" class="blueLine" marker-end="url(#ab)"/>
+<text x="28" y="644" class="eyebrow blueText">02  VERSIONED GOVERNED PROJECTION</text>
+<rect x="28" y="662" width="484" height="202" rx="11" class="blueBox"/>
+<text x="48" y="694" class="cardTitle">Export only what the consumer needs</text>
+<text x="48" y="724" class="small muted">minimal historical events · current context · scope · source refs</text>
+<text x="48" y="748" class="small muted">projection profile/version · domain-schema identity · digest</text>
+<text x="48" y="784" class="bodyStrong">The projection is reconstructable derived state.</text>
+<text x="48" y="812" class="body muted">A rebuild after schema migration receives a new identity.</text>
+<text x="48" y="842" class="tiny redStrong">Consumer vocabulary stays outside canonical memory.</text>
+
+<line x1="270" y1="864" x2="270" y2="896" class="purpleLine" marker-end="url(#ap)"/>
+<text x="28" y="930" class="eyebrow purpleText">03  COMPATIBILITY + CURRENTNESS GATE</text>
+<rect x="28" y="948" width="484" height="296" rx="11" class="purpleBox"/>
+<text x="48" y="980" class="cardTitle">Prove the projection still matches the target contract</text>
+<text x="48" y="1010" class="small muted">source currentness · source/domain schema · projection version</text>
+<text x="48" y="1034" class="small muted">target action/event schema · policy/store identity</text>
+<text x="48" y="1058" class="small muted">required temporal horizon · available temporal horizon</text>
+<text x="48" y="1082" class="small muted">isolation strategy · validated partition evidence</text>
+<text x="48" y="1106" class="small muted">projected context digest · actually evaluated context digest</text>
+<text x="48" y="1142" class="bodyStrong">current · migration_required · incompatible · unknown</text>
+<text x="48" y="1172" class="body muted">Known incompatibility beats migration; migration beats unknown.</text>
+<text x="48" y="1198" class="body muted">Only fully established required evidence becomes current.</text>
+<text x="48" y="1228" class="tiny redStrong">unknown != current · compatibility has authority_effect = none</text>
+
+<line x1="270" y1="1244" x2="270" y2="1276" class="purpleLine" marker-end="url(#ap)"/>
+<text x="28" y="1310" class="eyebrow purpleText">04  CONSUMER-SPECIFIC DERIVED VIEW</text>
+<rect x="28" y="1328" width="484" height="260" rx="11" class="purpleBox"/>
+<text x="48" y="1360" class="cardTitle">Specialized systems keep specialized representations</text>
+<text x="48" y="1394" class="bodyStrong">Dogwood</text>
+<text x="48" y="1418" class="small muted">bounded temporal event trace · event schema · providers · pins</text>
+<text x="48" y="1448" class="bodyStrong">Cedar / Cedarling</text>
+<text x="48" y="1472" class="small muted">typed principal/action/resource/context · policy schema/store</text>
+<text x="48" y="1496" class="small muted">dynamic current context · decision diagnostics / logs</text>
+<text x="48" y="1532" class="bodyStrong">These views are derived and replaceable.</text>
+<text x="48" y="1560" class="tiny redStrong">Agent Memory history != Dogwood trace != Cedarling cache</text>
+
+<line x1="270" y1="1588" x2="270" y2="1620" class="amberLine" marker-end="url(#aa)"/>
+<text x="28" y="1654" class="eyebrow amberText">05  EXTERNAL POLICY DECISION</text>
+<rect x="28" y="1672" width="484" height="156" rx="11" class="amberBox"/>
+<text x="48" y="1704" class="cardTitle">Policy evaluates the compatible view</text>
+<text x="48" y="1736" class="small muted">ALLOW / DENY · determining policies · request/context identity</text>
+<text x="48" y="1764" class="bodyStrong">A temporal match is decision evidence, not memory authority.</text>
+<text x="48" y="1798" class="tiny redStrong">Policy ALLOW != human approval != execution</text>
+
+<line x1="270" y1="1828" x2="270" y2="1860" class="greenLine" marker-end="url(#ag)"/>
+<text x="28" y="1894" class="eyebrow greenText">06  MONOTONIC COMPOSITION</text>
+<rect x="28" y="1912" width="484" height="150" rx="11" class="greenBox"/>
+<text x="48" y="1944" class="cardTitle">External policy may tighten, never silently widen PAMA</text>
+<text x="48" y="1974" class="small muted">PAMA deny + external allow -> deny</text>
+<text x="48" y="1998" class="small muted">PAMA review + external allow -> review</text>
+<text x="48" y="2022" class="small muted">PAMA allow + external deny -> deny</text>
+
+<line x1="270" y1="2062" x2="270" y2="2094" class="greenLine" marker-end="url(#ag)"/>
+<text x="28" y="2128" class="eyebrow greenText">07  RETURNED EVIDENCE + LIFECYCLE LOOP</text>
+<rect x="28" y="2146" width="484" height="86" rx="11" class="greenBox"/>
+<text x="48" y="2176" class="bodyStrong">Decision evidence returns through normal provenance and lifecycle rules.</text>
+<text x="48" y="2202" class="small muted">Schema/currentness change -> new evaluation or rebuild; history stays immutable.</text>
+
+<text x="28" y="2248" class="tiny muted">Research: docs/research/temporal-policy-semantic-mediation.md · Decision candidate: ADR-030</text>
+</svg>

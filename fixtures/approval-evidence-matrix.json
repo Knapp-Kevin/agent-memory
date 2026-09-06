@@ -1,0 +1,120 @@
+{
+  "fixture_id": "approval-evidence-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "One-action approval evidence proves exact decision/action continuity without becoming standing authority or execution proof.",
+  "expected_behavior": {
+    "verification_cases": 7,
+    "current_satisfying_cases": 1,
+    "stale_cases": 2,
+    "invalid_cases": 2,
+    "denied_cases": 1,
+    "not_applicable_cases": 1
+  },
+  "memory_unit": {
+    "id": "mem:approval-evidence",
+    "content_ref": "fixture://approval-evidence/action",
+    "type": "decision",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "approval-evidence-matrix",
+      "timestamp": "2026-08-12T21:35:00Z",
+      "source_refs": ["issue://187", "issue://152"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:approval-continuity",
+        "kind": "approval_continuity_fixture",
+        "ref": "issue://187",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["approval_continuity", "authority_separation"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "high",
+      "policy_refs": ["issue:187", "issue:152"],
+      "permitted_actions": ["collect_more_evidence", "defer", "enter_pending_verification"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T21:35:00Z"
+  },
+  "scope_ref": "scope:tenant-a/project-a",
+  "observed_at": "2026-08-12T21:35:00Z",
+  "cases": [
+    {
+      "case_id": "current-approved-exact",
+      "composition_outcome": "require_review",
+      "approval_outcome": "approved",
+      "issued_at": "2026-08-12T21:00:00Z",
+      "expires_at": "2026-08-13T21:00:00Z",
+      "mutations": {},
+      "expected_status": "current",
+      "expected_satisfies": true
+    },
+    {
+      "case_id": "expired-approval",
+      "composition_outcome": "require_review",
+      "approval_outcome": "approved",
+      "issued_at": "2026-08-11T20:00:00Z",
+      "expires_at": "2026-08-12T20:00:00Z",
+      "mutations": {},
+      "expected_status": "stale",
+      "expected_satisfies": false
+    },
+    {
+      "case_id": "revoked-approval",
+      "composition_outcome": "require_review",
+      "approval_outcome": "revoked",
+      "issued_at": "2026-08-12T20:00:00Z",
+      "revoked_at": "2026-08-12T21:10:00Z",
+      "revocation_evidence_ref": "revocation:approval-1",
+      "mutations": {},
+      "expected_status": "stale",
+      "expected_satisfies": false
+    },
+    {
+      "case_id": "denied-approval",
+      "composition_outcome": "require_review",
+      "approval_outcome": "denied",
+      "issued_at": "2026-08-12T21:00:00Z",
+      "mutations": {},
+      "expected_status": "denied",
+      "expected_satisfies": false
+    },
+    {
+      "case_id": "wrong-input-identity",
+      "composition_outcome": "require_review",
+      "approval_outcome": "approved",
+      "issued_at": "2026-08-12T21:00:00Z",
+      "mutations": {"input_identity": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
+      "expected_status": "invalid",
+      "expected_satisfies": false
+    },
+    {
+      "case_id": "wrong-composition-identity",
+      "composition_outcome": "require_review",
+      "approval_outcome": "approved",
+      "issued_at": "2026-08-12T21:00:00Z",
+      "mutations": {"composition_id": "decision-composition:other"},
+      "expected_status": "invalid",
+      "expected_satisfies": false
+    },
+    {
+      "case_id": "approval-cannot-widen-deny",
+      "composition_outcome": "block",
+      "approval_outcome": "approved",
+      "issued_at": "2026-08-12T21:00:00Z",
+      "mutations": {},
+      "expected_status": "not_applicable",
+      "expected_satisfies": false
+    }
+  ]
+}

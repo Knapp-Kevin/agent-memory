@@ -1,0 +1,65 @@
+{
+  "fixture_id": "cross-system-authority-conflict",
+  "fixture_version": "1.0.0",
+  "class": "interoperability",
+  "description": "A receiving system is offered a governed memory whose sender-side export was authorized, but the receiver asserts a conflicting owner or attempts to reuse sender authority as local permission.",
+  "expected_behavior": {
+    "sender_allow_becomes_receiver_allow": false,
+    "ownership_conflict_fails_closed": true,
+    "receiver_reauthorizes_locally": true,
+    "source_scope_and_provenance_survive": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "scope_expansion",
+    "permitted_actions": ["enter_pending_verification", "collect_more_evidence", "defer"],
+    "prohibited_actions": ["silent_authority_import", "ownership_rewrite"],
+    "selected_action": "enter_pending_verification",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "authority_does_not_transit_seams",
+      "ownership_is_preserved_across_exchange",
+      "receiver_runs_local_governance",
+      "scope_provenance_survives_import"
+    ]
+  },
+  "memory_unit": {
+    "id": "mem:cross-system-authority-conflict",
+    "type": "decision",
+    "state": "crystallized",
+    "scope": {
+      "owner_principal": "user:alice",
+      "tenant": "tenant-a",
+      "project": "project-a",
+      "purpose": "security-review",
+      "isolation_domain_refs": ["domain:project-a"],
+      "primary_isolation_domain_ref": "domain:project-a"
+    },
+    "provenance": {
+      "origin": "synthetic interoperability fixture",
+      "observer": "system-a",
+      "method": "governed export/import authority conflict",
+      "timestamp": "2026-08-11T20:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:sender-export-receipt",
+        "kind": "boundary_crossing_receipt",
+        "ref": "fixture://sender/export/receipt",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.95,
+      "calibrated": true,
+      "durability_dimensions": ["certified_decision"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "permitted_actions": ["enter_pending_verification", "collect_more_evidence", "defer"],
+      "prohibited_actions": ["silent_authority_import", "ownership_rewrite"],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-11T20:00:00Z"
+  }
+}

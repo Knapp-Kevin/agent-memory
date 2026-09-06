@@ -1,0 +1,85 @@
+{
+  "fixture_id": "contradicted-memory",
+  "fixture_version": "1.0.0",
+  "class": "evaporate",
+  "description": "A previously useful memory is contradicted by stronger evidence and must become disputed.",
+  "expected_behavior": {
+    "candidate": false,
+    "crystallized": false,
+    "final_state": "disputed",
+    "reason": "Contradiction pressure must reduce saturation and block canonical use."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:contradicted-memory",
+    "content_ref": "fixture://contradicted-memory/raw",
+    "type": "fact",
+    "state": "disputed",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-contradiction-class",
+      "timestamp": "2026-07-06T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:original-claim",
+        "kind": "original_claim",
+        "ref": "fixture://contradicted-memory/original",
+        "confidence": 0.7
+      },
+      {
+        "id": "evidence:stronger-contradiction",
+        "kind": "contradiction",
+        "ref": "fixture://contradicted-memory/contradiction",
+        "confidence": 1
+      }
+    ],
+    "saturation": {
+      "sigma": 0.31,
+      "calibrated": true,
+      "threshold": 0.95,
+      "durability_dimensions": [
+        "contradiction_pressure",
+        "source_reliability"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": [
+        "ADR-002",
+        "ADR-004"
+      ]
+    },
+    "certification": {
+      "status": "fail",
+      "ref": "fixture://contradicted-memory/certification-failure",
+      "scope": "fact"
+    },
+    "decay_profile": {
+      "lambda_base": 0.1,
+      "lambda_eff": 0.2,
+      "pressure": 2
+    },
+    "ledger_ref": "fixture://ledger/contradicted-memory",
+    "created_at": "2026-07-06T00:00:00Z"
+  },
+  "interaction_history": [
+    {
+      "event": "observed",
+      "count": 1
+    },
+    {
+      "event": "used",
+      "count": 3
+    },
+    {
+      "event": "contradicted",
+      "count": 1
+    },
+    {
+      "event": "state_transition",
+      "to": "disputed"
+    }
+  ]
+}

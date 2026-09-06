@@ -1,0 +1,62 @@
+{
+  "fixture_id": "durable-decision-agent-proposal",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "An agent may propose supersession of a durable human-confirmed decision, but the proposal itself must not mutate current decision state.",
+  "expected_behavior": {
+    "proposal_status": "pending",
+    "target_status": "active",
+    "replacement_present": false,
+    "supersession_journal_count": 0,
+    "commit_without_authority_reason": "authority_required"
+  },
+  "memory_unit": {
+    "id": "decision:original",
+    "content_ref": "fixture://durable-decision/original",
+    "type": "decision",
+    "state": "crystallized",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "durable-decision-overwrite-proposal-trap",
+      "timestamp": "2026-08-12T16:00:00Z",
+      "source_refs": ["fixture://durable-decision/original-source"]
+    },
+    "evidence": [
+      {"id": "evidence:decision-original", "kind": "decision_record", "ref": "fixture://durable-decision/original-source", "confidence": 1.0}
+    ],
+    "saturation": {
+      "sigma": 0.8,
+      "calibrated": false,
+      "durability_dimensions": ["durable_decision_fixture"]
+    },
+    "authority": {
+      "pama_outcome": "require_external_verification",
+      "risk_class": "high",
+      "policy_refs": ["ADR-004", "ADR-025"],
+      "permitted_actions": ["request_external_verification", "collect_more_evidence", "defer"],
+      "prohibited_actions": ["decision_overwrite"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T16:00:00Z"
+  },
+  "decision": {
+    "decision_id": "decision:original",
+    "decision_statement": "Keep protected-branch changes behind reviewed pull requests.",
+    "rationale": "Canonical changes require review and current validation evidence.",
+    "decision_scope": "repo:agent-memory",
+    "owner": "human:maintainer",
+    "approval_refs": ["approval:original"],
+    "decided_at": "2026-08-12T16:00:00Z",
+    "human_confirmed": true
+  },
+  "overwrite_proposal": {
+    "proposal_id": "overwrite:fixture-pending",
+    "proposing_actor": "agent:planner",
+    "target_decision_id": "decision:original",
+    "replacement_decision_id": "decision:replacement",
+    "scope": "repo:agent-memory",
+    "state_snapshot": "v0",
+    "risk_class": "high"
+  }
+}

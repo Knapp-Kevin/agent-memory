@@ -1,0 +1,74 @@
+{
+  "fixture_id": "stochastic-replay-reconstruction",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A stochastic estimator produces a different result when rerun, but the original authority decision and consequence must remain reconstructable from the receipt.",
+  "expected_behavior": {
+    "exact_estimator_regeneration_required": false,
+    "original_decision_reconstructable": true,
+    "authority_receipt_preserved": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "replay_prior_decision",
+    "permitted_actions": [
+      "reconstruct_from_receipt",
+      "rerun_as_new_decision"
+    ],
+    "prohibited_actions": [
+      "overwrite_historical_receipt_with_rerun"
+    ],
+    "selected_action": "reconstruct_from_receipt",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "stochastic_cognition_need_not_reproduce_exactly",
+      "historical_estimate_remains_recorded",
+      "authority_and_consequence_remain_reconstructable"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:stochastic-replay",
+    "type": "decision",
+    "state": "crystallized",
+    "provenance": {
+      "origin": "synthetic replay fixture",
+      "observer": "recovery-harness",
+      "method": "recorded-estimate versus rerun comparison",
+      "timestamp": "2026-08-10T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:original-stochastic-output",
+        "kind": "decision_receipt",
+        "ref": "fixture://original-estimate/0.73",
+        "confidence": 1.0
+      },
+      {
+        "id": "evidence:rerun-output",
+        "kind": "stochastic_rerun",
+        "ref": "fixture://rerun-estimate/0.69",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.93,
+      "calibrated": true,
+      "durability_dimensions": [
+        "decision_history"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "medium",
+      "policy_version": "policy-v3",
+      "permitted_actions": [
+        "reconstruct_from_receipt",
+        "rerun_as_new_decision"
+      ],
+      "prohibited_actions": [
+        "overwrite_historical_receipt_with_rerun"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-10T00:00:00Z"
+  }
+}

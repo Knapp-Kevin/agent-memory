@@ -1,0 +1,40 @@
+name: Derivation Output Custody
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  derivation-output-custody:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Validate schemas and fixtures
+        run: python scripts/validate_schemas.py
+
+      - name: Execute derivation custody and compatibility tests
+        env:
+          PYTHONPATH: reference
+        run: >-
+          python -m unittest
+          tests.test_derivation_evidence
+          tests.test_derivation_output_custody
+          tests.test_derivation_currentness
+          tests.test_derivation_completion_status
+          tests.test_derivation_currentness_depth
+
+      - name: Validate output custody profile links
+        run: python scripts/validate_markdown_links.py docs/profiles/derivation-output-custody-profile.md

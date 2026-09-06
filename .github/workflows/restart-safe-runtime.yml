@@ -1,0 +1,80 @@
+name: Restart-Safe Runtime
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute targeted restart-runtime tests
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_restart_safe_runtime.py'
+
+      - name: Execute full reference regression suite
+        run: python -m unittest discover -s reference/tests -t reference
+
+      - name: Emit exact-head restart evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_restart_safe_runtime.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output restart-safe-runtime.json
+
+      - name: Validate evidence invariants
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("restart-safe-runtime.json").read_text())
+          if len(report["agent_memory_commit"]) != 40:
+              raise SystemExit("evidence is not exact-head bound")
+          failed = [
+              name for name, passed in report["structural_invariants"].items()
+              if not passed
+          ]
+          if failed:
+              raise SystemExit(f"restart invariants failed: {failed}")
+          if report["durability_claim"] != "reference_file_checkpoint_v1_only":
+              raise SystemExit("unexpected durability overclaim")
+          print(f"validated {len(report['structural_invariants'])} restart invariants")
+          PY
+
+      - name: Upload restart evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: restart-safe-runtime
+          path: restart-safe-runtime.json
+          if-no-files-found: error
+
+      - name: Publish restart summary
+        if: always()
+        run: |
+          {
+            echo "## Restart-safe Agent Memory runtime"
+            echo ""
+            echo "The reference checkpoint binds substrate persistence, governance state, component interpretation, and pending currentness obligations without collapsing them into one claim."
+            echo ""
+            echo "This earns only the bounded reference_file_checkpoint_v1 durability profile."
+            echo ""
+            echo '```'
+            echo "python -m unittest discover -s reference/tests -t reference -p 'test_restart_safe_runtime.py'"
+            echo "python reference/run_restart_safe_runtime.py --agent-memory-commit <exact-40-hex-commit> --output restart-safe-runtime.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

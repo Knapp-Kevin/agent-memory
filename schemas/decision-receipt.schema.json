@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/decision-receipt.schema.json",
+  "title": "Agent Memory Decision Receipt",
+  "description": "Decision-receipt compatibility schema. Version 1.0.0 receipts remain valid historical evidence; version 1.1.0 adds a required backlink to the authority decision and its outcome class for standalone authority/consequence reconstruction.",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "requested_action",
+    "policy_version",
+    "permitted_actions",
+    "selected_action",
+    "selection_mode",
+    "timestamp"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "receipt_id": { "type": "string" },
+    "decision_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable reference to the PAMA/authority decision artifact that produced this receipt."
+    },
+    "decision_outcome": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "allow_with_ledger",
+        "require_review",
+        "require_external_verification",
+        "block",
+        "abstain",
+        "quarantine",
+        "collect_more_evidence"
+      ],
+      "description": "Authority outcome class copied from the referenced decision for standalone reconstruction; consumers must verify consistency with the referenced decision when it is available."
+    },
+    "memory_id": { "type": "string" },
+    "actor": { "type": "string" },
+    "principal": { "type": "string" },
+    "requested_action": { "type": "string" },
+    "state_snapshot": { "type": ["string", "object"] },
+    "estimate_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "estimator_versions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "calibration_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "uncertainty_summary": { "type": ["string", "object"] },
+    "policy_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "policy_version": { "type": "string" },
+    "authority_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "permitted_actions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "prohibited_actions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "selected_action": { "type": "string" },
+    "selection_mode": {
+      "type": "string",
+      "enum": ["none", "deterministic", "stochastic", "learned", "human", "external"]
+    },
+    "before_state": { "type": ["string", "object"] },
+    "after_state": { "type": ["string", "object"] },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "rollback_or_recovery_ref": { "type": "string" },
+    "ledger_ref": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "schema_version": { "const": "1.1.0" } },
+        "required": ["schema_version"]
+      },
+      "then": {
+        "required": ["decision_ref", "decision_outcome"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "selected_action": { "type": "string", "minLength": 1 }
+        },
+        "required": ["selected_action"]
+      },
+      "then": {
+        "description": "Consumers must additionally enforce that selected_action is a member of permitted_actions. JSON Schema cannot portably express array membership equality across sibling properties."
+      }
+    }
+  ],
+  "additionalProperties": false
+}

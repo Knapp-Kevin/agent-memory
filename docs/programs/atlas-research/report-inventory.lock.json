@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "atlas_commit": "90bfeed14764e268c82c925d4c39645c7480d015",
+  "record_count": 283,
+  "inventory_sha256": "4573f48dc220948f46c97aa3669e77da8b130ca966007f63876592c16535dc5a",
+  "canonical_representation": "UTF-8 JSONL exactly as emitted by scripts/build_atlas_research_inventory.py for the pinned Atlas checkout",
+  "generator": "scripts/build_atlas_research_inventory.py",
+  "storage_posture": "deterministically_generated_not_committed",
+  "evidence": {
+    "workflow": "Atlas Research Intake",
+    "run_id": 31858276516,
+    "artifact_id": 9239709526,
+    "artifact_name": "atlas-report-inventory-90bfeed",
+    "artifact_archive_sha256": "68e1f8ecd012d280c6671a805b83cc6e0d3d937ab5d75b2c1de15ef4c582f46f",
+    "note": "The Actions artifact is convenience evidence and may expire. This committed lock plus the pinned Atlas source and generator is the durable reconstruction boundary."
+  },
+  "authority_effect": "none"
+}

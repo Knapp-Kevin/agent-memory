@@ -1,0 +1,504 @@
+{
+  "component_id": "codegenome",
+  "component_version": "43a6b7147ec78ec5c616723fa1dd30f342174860",
+  "profile_version": "component-capability-v2",
+  "enabled": true,
+  "runtime_ref": "MythologIQ-Labs-LLC/CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860",
+  "failure_posture": "explicit_unavailable",
+  "provenance_refs": [
+    "repo://MythologIQ-Labs-LLC/CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860",
+    "issue://MythologIQ-Labs-LLC/agent-memory/293",
+    "qualification://code-graph-traversal-currentness@1.1.0"
+  ],
+  "capabilities": [
+    {
+      "capability_id": "content_addressed_code_identity",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-identity/src/identity/digest.rs"
+      ],
+      "limitations": [
+        "code_domain_content_identity_is_not_agent_memory_logical_identity",
+        "runtime_behavior_not_independently_qualified"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "multi_overlay_graph_state",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:README.md#graph-composition",
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-identity/src/index/resolver_multi.rs"
+      ],
+      "limitations": [
+        "codegenome_graph_ontology_is_external_domain_state",
+        "provider_state_does_not_become_agent_memory_canonical_state"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "code_graph_traversal",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "qualification:codegenome:code-graph-traversal-currentness@1.1.0",
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-cli/src/commands/query.rs"
+      ],
+      "limitations": [
+        "qualification_covers_bounded_code_graph_fixture_and_full_rebuild_currentness",
+        "repository_scope_requires_explicit_agent_memory_binding",
+        "graph_reachability_is_candidate_evidence_not_recall_permission"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "graph_candidate_retrieval",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-cli/src/commands/query.rs"
+      ],
+      "limitations": [
+        "candidate_retrieval_not_separately_qualified_from_traversal",
+        "retrieval_does_not_create_recall_admission"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "graph_augmented_context_assembly",
+      "capability_version": "1.0",
+      "maturity": "declared",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": false,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:README.md"
+      ],
+      "limitations": [
+        "end_to_end_graph_augmented_context_assembly_not_runtime_qualified",
+        "graph_traversal_is_not_graph_rag_conformance"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "structural_program_analysis",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:README.md#graph-composition"
+      ],
+      "limitations": [
+        "overlay_outputs_are_domain_evidence_not_agent_memory_truth"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "impact_propagation",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "proposal_only",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-cli/src/commands/query.rs"
+      ],
+      "limitations": [
+        "impact_evidence_does_not_create_mutation_or_action_authority",
+        "capability_not_separately_qualified_from_graph_traversal"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "embedding_persistence",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-substrate/src/embedding/store.rs"
+      ],
+      "limitations": [
+        "embedding_storage_not_independently_runtime_qualified"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "vector_similarity",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-substrate/src/embedding/similarity.rs",
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-substrate/src/tests/embedding_tests.rs"
+      ],
+      "limitations": [
+        "similarity_is_ranking_evidence_not_recall_permission",
+        "supported_product_runtime_path_not_yet_qualified"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "vector_candidate_retrieval",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-substrate/src/embedding/store.rs",
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-substrate/src/embedding/similarity.rs"
+      ],
+      "limitations": [
+        "k_nearest_implementation_exists_but_supported_product_runtime_path_is_not_qualified",
+        "vector_candidate_retrieval_does_not_create_recall_admission"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "confidence_evidence_fusion",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-identity/src/tests/fusion_tests.rs"
+      ],
+      "limitations": [
+        "fusion_score_is_evidence_not_truth",
+        "correlated_observations_must_not_be_treated_as_independent_authority"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": true},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "freshness_currentness",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-cli/src/commands/status.rs",
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:README.md"
+      ],
+      "limitations": [
+        "provider_freshness_signal_does_not_replace_agent_memory_currentness",
+        "only_code_graph_full_rebuild_currentness_is_currently_evidence_proven"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "provenance_observer_separation",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:README.md#core-concepts"
+      ],
+      "limitations": [
+        "provider_provenance_is_normalized_without_becoming_agent_memory_evidentiary_privilege"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "multi_language_extraction",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-identity/src/index/resolver_multi.rs",
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:README.md#multi-language-support"
+      ],
+      "limitations": [
+        "language_neutral_ir_is_codegenome_domain_state_not_agent_memory_core_schema"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "mcp_agent_exposure",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "external",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-mcp/Cargo.toml",
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-cli/src/commands/serve.rs"
+      ],
+      "limitations": [
+        "mcp_exposure_is_not_agent_memory_conformance",
+        "provider_write_tools_create_no_agent_memory_authority"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "not_applicable",
+        "invalidation_model": "not_applicable",
+        "correction_model": "not_applicable",
+        "deletion_model": "not_applicable",
+        "residue_model": "not_applicable",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "external_authorization_required"
+      }
+    },
+    {
+      "capability_id": "experiment_evaluation",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "external",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "proposal_only",
+      "enabled": true,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:codegenome-cli/src/commands/experiment.rs"
+      ],
+      "limitations": [
+        "self_evaluation_may_propose_changes_but_cannot_promote_agent_memory_capability_or_authority"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "not_applicable",
+        "invalidation_model": "not_applicable",
+        "correction_model": "not_applicable",
+        "deletion_model": "not_applicable",
+        "residue_model": "not_applicable",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "proposal_only"
+      }
+    },
+    {
+      "capability_id": "lsp_overlay",
+      "capability_version": "1.0",
+      "maturity": "declared",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": false,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:README.md#graph-composition"
+      ],
+      "limitations": [
+        "rust_analyzer_detection_stub_contributes_no_edges_at_pinned_revision",
+        "must_not_count_as_active_overlay_capability"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": false, "read": false, "recall_candidate": false},
+        "currentness_model": "not_applicable",
+        "invalidation_model": "not_applicable",
+        "correction_model": "not_applicable",
+        "deletion_model": "not_applicable",
+        "residue_model": "not_applicable",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    },
+    {
+      "capability_id": "deletion_rebuild",
+      "capability_version": "1.0",
+      "maturity": "implemented",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "explicit_unavailable",
+      "authority_effect": "none",
+      "enabled": false,
+      "evidence_refs": [
+        "source:CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860:README.md"
+      ],
+      "limitations": [
+        "agent_memory_deletion_residue_conformance_not_established",
+        "disabled_until_dedicated_rebuild_and_residue_qualification_exists"
+      ],
+      "behavior_contract": {
+        "operation_support": {"write": true, "read": true, "recall_candidate": false},
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "provider_managed",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      }
+    }
+  ]
+}

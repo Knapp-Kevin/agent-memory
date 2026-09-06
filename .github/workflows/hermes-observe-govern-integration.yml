@@ -1,0 +1,240 @@
+name: Hermes Observe Govern Integration
+
+on:
+  pull_request:
+    paths:
+      - 'integrations/hermes-agent-memory/**'
+      - 'docs/programs/hermes-integration/**'
+      - '.github/workflows/hermes-observe-govern-integration.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/hermes-agent-memory/**'
+      - 'docs/programs/hermes-integration/**'
+      - '.github/workflows/hermes-observe-govern-integration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hermes-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Checkout exact Hermes source
+        uses: actions/checkout@v7
+        with:
+          repository: NousResearch/hermes-agent
+          ref: 165c889e5b4277b56dadd42949a4112c1e6175a6
+          path: _hermes
+          persist-credentials: false
+
+      - name: Verify exact Hermes source and extension seams
+        run: |
+          test "$(git -C _hermes rev-parse HEAD)" = "165c889e5b4277b56dadd42949a4112c1e6175a6"
+          head -n 1 _hermes/LICENSE | grep -q 'MIT License'
+          grep -q 'resolve_pre_tool_block' _hermes/agent/tool_executor.py
+          grep -q '_AGENT_LOOP_TOOLS' _hermes/model_tools.py
+          grep -q 'apply_memory_pending' _hermes/hermes_cli/write_approval_commands.py
+          grep -q '_skill_gate_bypass.set(True)' _hermes/tools/skill_manager_tool.py
+          grep -q 'archive_skill(name)' _hermes/agent/curator.py
+          grep -q 'MemoryStore._write_file' _hermes/agent/learning_mutations.py
+          grep -q 'provider.on_memory_write' _hermes/agent/memory_manager.py
+          grep -q 'hermes_agent.plugins' _hermes/website/docs/developer-guide/plugins/index.md
+          grep -q 'hermes_agent.memory_providers' _hermes/website/docs/developer-guide/memory-provider-plugin.md
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install Agent Memory reference and Hermes integration dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r reference/requirements.txt
+          python -m pip install --disable-pip-version-check ./integrations/hermes-agent-memory
+
+      - name: Compile standalone integration package
+        run: python -m compileall -q integrations/hermes-agent-memory/src
+
+      - name: Exercise package against exact Hermes MemoryProvider contract
+        env:
+          PYTHONPATH: ${{ github.workspace }}/_hermes
+        run: python -m unittest integrations/hermes-agent-memory/tests/test_exact_hermes_contract.py
+
+      - name: Execute observe govern failure and recursive scenario tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/_hermes
+        run: >-
+          python -m unittest discover
+          -s integrations/hermes-agent-memory/tests
+          -p 'test_*.py'
+
+      - name: Exercise installed doctor in observe govern and strict modes
+        env:
+          AGENT_MEMORY_HERMES_REVISION: 165c889e5b4277b56dadd42949a4112c1e6175a6
+          PYTHONPATH: ${{ github.workspace }}/_hermes
+        run: |
+          set -euo pipefail
+          export HERMES_HOME="$(mktemp -d)"
+          mkdir -p /tmp/hermes-integration
+
+          agent-memory-hermes doctor \
+            --hermes-home "$HERMES_HOME" \
+            --hermes-revision "$AGENT_MEMORY_HERMES_REVISION" \
+            --mode observe --json \
+            > /tmp/hermes-integration/observe-doctor.json
+
+          python - <<'PY'
+          import sys
+          from agent_memory_hermes.config import IntegrationConfig, save_config
+          import os
+          save_config(
+              os.environ['HERMES_HOME'],
+              IntegrationConfig(
+                  mode='govern',
+                  governor_command=(
+                      sys.executable,
+                      'integrations/hermes-agent-memory/tests/fake_governor.py',
+                      'allow',
+                  ),
+                  governor_required=True,
+              ),
+          )
+          PY
+
+          agent-memory-hermes doctor \
+            --hermes-home "$HERMES_HOME" \
+            --hermes-revision "$AGENT_MEMORY_HERMES_REVISION" \
+            --mode govern --json \
+            > /tmp/hermes-integration/govern-doctor.json
+
+          set +e
+          agent-memory-hermes doctor \
+            --hermes-home "$HERMES_HOME" \
+            --hermes-revision "$AGENT_MEMORY_HERMES_REVISION" \
+            --mode strict --json \
+            > /tmp/hermes-integration/strict-doctor.json
+          strict_rc=$?
+          set -e
+          test "$strict_rc" -eq 2
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          observe = json.loads(Path('/tmp/hermes-integration/observe-doctor.json').read_text())
+          govern = json.loads(Path('/tmp/hermes-integration/govern-doctor.json').read_text())
+          strict = json.loads(Path('/tmp/hermes-integration/strict-doctor.json').read_text())
+          assert observe['integration']['ready'] is True
+          assert govern['integration']['ready'] is True
+          assert strict['integration']['ready'] is False
+          assert observe['hermes']['profile_current'] is True
+          assert len(observe['surfaces']) == 12
+          assert len(observe['recursive_evidence_scenarios']) == 5
+          assert strict['strict']['supported'] is False
+          assert len(strict['strict']['blocking_surfaces']) == 6
+          assert strict['authority_effect'] == 'none'
+          PY
+
+      - name: Prove exact profile drift invalidates doctor applicability
+        env:
+          PYTHONPATH: ${{ github.workspace }}/_hermes
+        run: |
+          set +e
+          agent-memory-hermes doctor \
+            --hermes-home "$(mktemp -d)" \
+            --hermes-revision 0000000000000000000000000000000000000000 \
+            --mode observe --json \
+            > /tmp/hermes-integration/drift-doctor.json
+          drift_rc=$?
+          set -e
+          test "$drift_rc" -eq 2
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('/tmp/hermes-integration/drift-doctor.json').read_text())
+          assert value['hermes']['profile_current'] is False
+          assert value['integration']['ready'] is False
+          assert value['authority_effect'] == 'none'
+          PY
+
+      - name: Run full Agent Memory reference regression
+        env:
+          PYTHONPATH: reference
+        run: python -m unittest discover -s reference/tests -p 'test_*.py'
+
+      - name: Record exact-head integration evidence
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib
+          import importlib.metadata
+          import json
+          import os
+          from pathlib import Path
+
+          observe = json.loads(Path('/tmp/hermes-integration/observe-doctor.json').read_text())
+          govern = json.loads(Path('/tmp/hermes-integration/govern-doctor.json').read_text())
+          strict = json.loads(Path('/tmp/hermes-integration/strict-doctor.json').read_text())
+          drift = json.loads(Path('/tmp/hermes-integration/drift-doctor.json').read_text())
+          plugin_eps = {
+              ep.name: ep.value
+              for ep in importlib.metadata.entry_points(group='hermes_agent.plugins')
+          }
+          provider_eps = {
+              ep.name: ep.value
+              for ep in importlib.metadata.entry_points(group='hermes_agent.memory_providers')
+          }
+          invariants = {
+              'exact_hermes_pin': observe['hermes']['observed_revision'] == '165c889e5b4277b56dadd42949a4112c1e6175a6',
+              'observe_ready': observe['integration']['ready'] is True,
+              'govern_ready_with_governor': govern['integration']['ready'] is True,
+              'strict_refused': strict['integration']['ready'] is False and strict['strict']['supported'] is False,
+              'strict_six_blockers': len(strict['strict']['blocking_surfaces']) == 6,
+              'all_twelve_surfaces_reported': len(observe['surfaces']) == 12,
+              'five_recursive_scenarios_reported': len(observe['recursive_evidence_scenarios']) == 5,
+              'profile_drift_invalidates': drift['integration']['ready'] is False and drift['hermes']['profile_current'] is False,
+              'plugin_entrypoint_exact': plugin_eps.get('agent-memory') == 'agent_memory_hermes.safe_plugin:register',
+              'provider_entrypoint_exact': provider_eps.get('agent-memory') == 'agent_memory_hermes.provider:register_memory',
+              'authority_effect_none': all(item['authority_effect'] == 'none' for item in (observe, govern, strict, drift)),
+          }
+          assert all(type(value) is bool and value for value in invariants.values()), invariants
+          files = [
+              Path('integrations/hermes-agent-memory/pyproject.toml'),
+              Path('integrations/hermes-agent-memory/src/agent_memory_hermes/plugin.py'),
+              Path('integrations/hermes-agent-memory/src/agent_memory_hermes/provider.py'),
+              Path('docs/programs/hermes-integration/README.md'),
+          ]
+          report = {
+              'schema_version': '1.0.0',
+              'agent_memory_commit': os.environ['HEAD_SHA'],
+              'hermes_commit': '165c889e5b4277b56dadd42949a4112c1e6175a6',
+              'integration_version': importlib.metadata.version('agent-memory-hermes'),
+              'invariants': invariants,
+              'digests': {
+                  str(path): 'sha256:' + hashlib.sha256(path.read_bytes()).hexdigest()
+                  for path in files
+              },
+              'authority_effect': 'none',
+          }
+          out = Path('/tmp/hermes-integration/integration-evidence.json')
+          out.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          print(out.read_text())
+          PY
+
+      - name: Upload exact-head Hermes integration evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: hermes-observe-govern-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/hermes-integration/observe-doctor.json
+            /tmp/hermes-integration/govern-doctor.json
+            /tmp/hermes-integration/strict-doctor.json
+            /tmp/hermes-integration/drift-doctor.json
+            /tmp/hermes-integration/integration-evidence.json
+          if-no-files-found: error
+          retention-days: 30

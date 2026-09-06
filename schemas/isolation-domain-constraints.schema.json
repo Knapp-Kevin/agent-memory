@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/isolation-domain-constraints.schema.json",
+  "title": "Agent Memory Isolation Domain Constraints",
+  "description": "Companion sidecar for explicit memory-domain routing and mandatory conjunctive compartment constraints. Ordinary isolation_domain_refs are alternate governed routes; required_isolation_domain_refs must all be present in the active authorization context.",
+  "type": "object",
+  "required": ["memory_ref", "isolation_domain_refs"],
+  "properties": {
+    "memory_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "isolation_domain_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1},
+      "description": "Governed domain routes through which the memory may be eligible for admission. A matching route is necessary but not sufficient."
+    },
+    "required_isolation_domain_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1},
+      "description": "Mandatory domain/compartment constraints. Every listed ref must be present in the active recall context; these refs must also appear in isolation_domain_refs."
+    },
+    "policy_ref": {
+      "type": "string"
+    },
+    "authority_ref": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["required_isolation_domain_refs"]
+      },
+      "then": {
+        "properties": {
+          "required_isolation_domain_refs": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

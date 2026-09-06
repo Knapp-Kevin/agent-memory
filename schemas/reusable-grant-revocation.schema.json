@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/reusable-grant-revocation.schema.json",
+  "title": "Reusable Grant Revocation",
+  "type": "object",
+  "required": ["schema_version","grant_id","revocation_ref","revoking_principal_ref","revoker_authority_evidence_ref","revoker_authority_verified","revoked_at","evidence_refs"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "grant_id": {"type": "string", "pattern": "^reusable-grant:sha256:[0-9a-f]{64}$"},
+    "revocation_ref": {"type": "string", "minLength": 1},
+    "revoking_principal_ref": {"type": "string", "minLength": 1},
+    "revoker_authority_evidence_ref": {"type": "string", "minLength": 1},
+    "revoker_authority_verified": {"const": true},
+    "revoked_at": {"type": "string", "format": "date-time"},
+    "evidence_refs": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "additionalProperties": false
+}

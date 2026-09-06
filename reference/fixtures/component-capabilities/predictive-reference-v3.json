@@ -1,0 +1,58 @@
+{
+  "component_id": "agent-memory-predictive-reference",
+  "component_version": "0.1.0",
+  "profile_version": "component-capability-v3",
+  "enabled": true,
+  "runtime_ref": "reference/agentmem_ref/predictive_memory.py",
+  "failure_posture": "fail_closed",
+  "provenance_refs": [
+    "https://github.com/MythologIQ-Labs-LLC/agent-memory/issues/348",
+    "https://github.com/MythologIQ-Labs-LLC/agent-memory/pull/345",
+    "https://github.com/MythologIQ-Labs-LLC/agent-memory/pull/347"
+  ],
+  "capabilities": [
+    {
+      "capability_id": "predictive_counterfactual_memory",
+      "capability_version": "1.0",
+      "maturity": "runtime_wired",
+      "state_posture": "derived",
+      "scope_posture": "enforces_agent_memory_scope",
+      "failure_posture": "fail_closed",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "reference/agentmem_ref/predictive_memory.py",
+        "reference/tests/test_predictive_memory.py",
+        "docs/programs/memory-modules/predictive-counterfactual-memory-reference.md"
+      ],
+      "limitations": [
+        "Reference prediction and comparison indexes are process-local and are not restart reconstructable.",
+        "Prediction confidence and outcome-comparison disposition are descriptive evidence and not authority.",
+        "Observed outcome summaries remain comparison evidence and are not promoted to semantic fact memory by this component.",
+        "Predictive deletion/residue behavior is outside this bounded runtime slice.",
+        "This component stores predictive artifacts; it does not execute a simulation engine or external world model."
+      ],
+      "behavior_contract": {
+        "operation_support": {
+          "write": true,
+          "read": true,
+          "recall_candidate": true
+        },
+        "currentness_model": "basis_versioned",
+        "invalidation_model": "version_relation",
+        "correction_model": "invalidate_derived",
+        "deletion_model": "not_applicable",
+        "residue_model": "not_applicable",
+        "migration_rebuild_model": "unsupported",
+        "structural_mutation_requirement": "none"
+      },
+      "operational_contract": {
+        "write_atomicity": "process_local",
+        "concurrency_control": "process_local",
+        "idempotency": "process_local",
+        "restart_recovery": "process_local_only",
+        "reconciliation": "process_local_only"
+      }
+    }
+  ]
+}

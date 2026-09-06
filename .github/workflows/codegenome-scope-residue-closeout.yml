@@ -1,0 +1,152 @@
+name: CodeGenome Scope and Residue Closeout
+
+on:
+  pull_request:
+    paths:
+      - "reference/agentmem_ref/crg/codegenome_scope_residue.py"
+      - "reference/run_codegenome_scope_residue.py"
+      - "reference/tests/test_codegenome_scope_residue.py"
+      - "reference/fixtures/component-capabilities/codegenome.example.json"
+      - "reference/fixtures/component-qualification/**"
+      - "docs/programs/memory-modules/codegenome-scope-residue-closeout.md"
+      - ".github/workflows/codegenome-scope-residue-closeout.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CODEGENOME_COMMIT: 43a6b7147ec78ec5c616723fa1dd30f342174860
+
+jobs:
+  closeout:
+    runs-on: ubuntu-latest
+    env:
+      AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      FIXTURE_ROOT: ${{ github.workspace }}/reference/fixtures/component-qualification
+      EVIDENCE_ROOT: /tmp/codegenome-scope-residue
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute scope and residue unit tests
+        env:
+          PYTHONPATH: reference
+        run: |
+          python -m unittest \
+            reference/tests/test_codegenome_scope_residue.py \
+            reference/tests/test_codegenome_multicapability_profile.py \
+            reference/tests/test_code_graph_qualification.py
+
+      - name: Prepare evidence directories
+        run: mkdir -p "$EVIDENCE_ROOT/raw" "$EVIDENCE_ROOT/source-rights"
+
+      - name: Fetch exact CodeGenome source
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/MythologIQ-Labs-LLC/CodeGenome.git /tmp/codegenome
+          git -C /tmp/codegenome fetch --depth=1 origin "$CODEGENOME_COMMIT"
+          git -C /tmp/codegenome checkout --detach "$CODEGENOME_COMMIT"
+          test "$(git -C /tmp/codegenome rev-parse HEAD)" = "$CODEGENOME_COMMIT"
+          grep -qi "MIT License" /tmp/codegenome/LICENSE
+          cp /tmp/codegenome/LICENSE "$EVIDENCE_ROOT/source-rights/CodeGenome-LICENSE"
+
+      - name: Build exact CodeGenome CLI
+        working-directory: /tmp/codegenome
+        run: cargo build -p codegenome-cli
+
+      - name: Execute v1 historical graph
+        run: |
+          /tmp/codegenome/target/debug/codegenome index \
+            --source-dir "$FIXTURE_ROOT/v1" \
+            --store-dir /tmp/codegenome-closeout-v1 \
+            > "$EVIDENCE_ROOT/raw/v1-index.txt"
+          /tmp/codegenome/target/debug/codegenome query \
+            --store-dir /tmp/codegenome-closeout-v1 \
+            --file main.rs --line 6 --direction downstream --json \
+            > "$EVIDENCE_ROOT/raw/v1-main-downstream.json"
+          find /tmp/codegenome-closeout-v1 -type f -print0 \
+            | sort -z \
+            | xargs -0 sha256sum \
+            > "$EVIDENCE_ROOT/raw/v1-store-manifest.txt"
+          test -s "$EVIDENCE_ROOT/raw/v1-store-manifest.txt"
+
+      - name: Execute v2 source-deletion full rebuild
+        run: |
+          /tmp/codegenome/target/debug/codegenome index \
+            --source-dir "$FIXTURE_ROOT/v2" \
+            --store-dir /tmp/codegenome-closeout-v2 \
+            > "$EVIDENCE_ROOT/raw/v2-index.txt"
+          /tmp/codegenome/target/debug/codegenome query \
+            --store-dir /tmp/codegenome-closeout-v2 \
+            --file main.rs --line 6 --direction downstream --json \
+            > "$EVIDENCE_ROOT/raw/v2-main-downstream.json"
+          find /tmp/codegenome-closeout-v2 -type f -print0 \
+            | sort -z \
+            | xargs -0 sha256sum \
+            > "$EVIDENCE_ROOT/raw/v2-store-manifest.txt"
+          test -s "$EVIDENCE_ROOT/raw/v2-store-manifest.txt"
+
+      - name: Emit exact-head scope and residue evidence
+        env:
+          PYTHONPATH: reference
+        run: |
+          python reference/run_codegenome_scope_residue.py \
+            --agent-memory-commit "$AGENT_MEMORY_COMMIT" \
+            --v1-main-downstream "$EVIDENCE_ROOT/raw/v1-main-downstream.json" \
+            --v2-main-downstream "$EVIDENCE_ROOT/raw/v2-main-downstream.json" \
+            --v1-store-manifest "$EVIDENCE_ROOT/raw/v1-store-manifest.txt" \
+            --v2-store-manifest "$EVIDENCE_ROOT/raw/v2-store-manifest.txt" \
+            --output "$EVIDENCE_ROOT/codegenome-scope-residue.json"
+
+      - name: Verify closeout semantics
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report = json.loads(
+              (Path(os.environ["EVIDENCE_ROOT"]) / "codegenome-scope-residue.json").read_text()
+          )
+          assert report["agent_memory_commit"] == os.environ["AGENT_MEMORY_COMMIT"]
+          assert report["component"]["component_version"] == os.environ["CODEGENOME_COMMIT"]
+          assert report["base_qualification"] == {
+              "profile_id": "code-graph-traversal-currentness",
+              "profile_version": "1.1.0",
+              "evidence_ref": "qualification:codegenome:code-graph-traversal-currentness@1.1.0",
+          }
+          scope = report["scope_bridge"]
+          assert scope["exact"]["admitted"] is True
+          assert scope["missing_binding"]["admitted"] is False
+          assert scope["foreign_provider"]["admitted"] is False
+          assert scope["foreign_agent_memory_scope"]["admitted"] is False
+          deletion = report["deletion_rebuild"]
+          assert deletion["currentness_result"] == "deleted_source_not_current"
+          assert deletion["old_source_current_after_rebuild"] is False
+          assert deletion["replacement_source_current_after_rebuild"] is True
+          assert deletion["historical_provider_artifact_retained"] is True
+          assert deletion["historical_provider_artifact_current"] is False
+          assert deletion["physical_erasure_proven"] is False
+          assert deletion["residue_posture"] == "historical_provider_artifact_disclosed_not_current"
+          assert all(report["invariants"].values()), report["invariants"]
+          assert report["authority_effect"] == "none"
+          PY
+
+      - name: Upload exact-head closeout evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: codegenome-scope-residue-${{ env.AGENT_MEMORY_COMMIT }}
+          path: /tmp/codegenome-scope-residue
+          if-no-files-found: error

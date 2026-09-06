@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/security-finding-evidence.schema.json",
+  "title": "Agent Memory Security Finding Evidence",
+  "description": "Vendor-neutral scoped security/adversarial finding evidence. Scanner output remains evidence under exact test conditions and cannot establish universal vulnerability, safety, memory authority, standing policy, memory admission, or certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_version",
+    "finding_id",
+    "finding_family",
+    "source",
+    "target",
+    "test",
+    "result",
+    "reproduction_state",
+    "finding_state",
+    "candidate_classification",
+    "execution_context",
+    "raw_evidence_digest",
+    "known_limitations",
+    "lineage",
+    "binding_status",
+    "binding_reasons",
+    "observed_at",
+    "interpretation"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "profile_version": { "const": "0.1.0" },
+    "finding_id": { "type": "string", "minLength": 1 },
+    "finding_family": {
+      "type": "string",
+      "enum": ["behavioral_probe", "supply_chain_configuration"]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "version",
+        "source_ref",
+        "source_commit",
+        "adapter_id",
+        "adapter_version",
+        "source_contract_status"
+      ],
+      "properties": {
+        "tool": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "source_ref": { "type": "string", "minLength": 1 },
+        "source_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "adapter_id": { "type": "string", "minLength": 1 },
+        "adapter_version": { "type": "string", "minLength": 1 },
+        "source_contract_status": {
+          "type": "string",
+          "enum": ["stable_pinned", "experimental_projection"]
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_ref", "scope_ref"],
+      "properties": {
+        "target_ref": { "type": "string", "minLength": 1 },
+        "target_configuration_ref": { "type": "string", "minLength": 1 },
+        "scope_ref": { "type": "string", "minLength": 1 },
+        "tenant_ref": { "type": "string", "minLength": 1 },
+        "project_ref": { "type": "string", "minLength": 1 },
+        "environment_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["check_ref"],
+      "properties": {
+        "check_ref": { "type": "string", "minLength": 1 },
+        "check_version": { "type": "string", "minLength": 1 },
+        "case_ref": { "type": "string", "minLength": 1 },
+        "case_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "evaluator_ref": { "type": "string", "minLength": 1 },
+        "evaluator_version": { "type": "string", "minLength": 1 },
+        "sample_size": { "type": "integer", "minimum": 0 },
+        "repetitions": { "type": "integer", "minimum": 0 },
+        "seed_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "verdict"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "observed",
+            "aborted",
+            "declined",
+            "partial",
+            "target_unavailable",
+            "evaluator_failure",
+            "unknown_schema"
+          ]
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["hit", "no_hit", "mixed", "unknown", "error", "not_run"]
+        },
+        "passed": { "type": "integer", "minimum": 0 },
+        "fails": { "type": "integer", "minimum": 0 },
+        "total_evaluated": { "type": "integer", "minimum": 0 },
+        "source_metric": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "value"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "value": { "type": "number" },
+            "lower_bound": { "type": "number" },
+            "upper_bound": { "type": "number" }
+          }
+        },
+        "source_severity": { "type": "string", "minLength": 1 }
+      }
+    },
+    "reproduction_state": {
+      "type": "string",
+      "enum": [
+        "not_attempted",
+        "observed_once",
+        "reproduced",
+        "not_reproduced",
+        "nondeterministic",
+        "disputed"
+      ]
+    },
+    "finding_state": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "reproduced",
+        "not_reproduced",
+        "nondeterministic",
+        "triaged",
+        "remediation_proposed",
+        "remediation_applied",
+        "rescanned",
+        "resolved",
+        "residual",
+        "disputed",
+        "not_run"
+      ]
+    },
+    "candidate_classification": {
+      "type": "string",
+      "enum": ["threat_evidence", "correction_evidence", "incident_evidence", "conformance_evidence"]
+    },
+    "execution_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_execution", "sandbox", "consent"],
+      "properties": {
+        "target_execution": {
+          "type": "string",
+          "enum": ["observed", "possible", "not_observed", "not_applicable", "unknown"]
+        },
+        "sandbox": {
+          "type": "string",
+          "enum": ["isolated", "not_isolated", "not_applicable", "unknown"]
+        },
+        "consent": {
+          "type": "string",
+          "enum": ["granted", "declined", "bypassed", "not_required", "unknown"]
+        },
+        "scanner_privilege_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "raw_evidence_ref": { "type": "string", "minLength": 1 },
+    "raw_evidence_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "known_limitations": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_finding_refs", "remediation_refs", "rescan_refs", "conflict_refs"],
+      "properties": {
+        "prior_finding_refs": { "$ref": "#/$defs/refList" },
+        "remediation_refs": { "$ref": "#/$defs/refList" },
+        "rescan_refs": { "$ref": "#/$defs/refList" },
+        "conflict_refs": { "$ref": "#/$defs/refList" }
+      }
+    },
+    "binding_status": {
+      "type": "string",
+      "enum": ["exact", "mismatch", "not_evaluated"]
+    },
+    "binding_reasons": { "$ref": "#/$defs/refList" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_effect",
+        "universal_vulnerability",
+        "safety_claim",
+        "standing_policy",
+        "memory_admission",
+        "certification_claim"
+      ],
+      "properties": {
+        "authority_effect": { "const": "none" },
+        "universal_vulnerability": { "const": "not_established" },
+        "safety_claim": { "const": "not_established" },
+        "standing_policy": { "const": "not_established" },
+        "memory_admission": { "const": "not_established" },
+        "certification_claim": { "const": "none" }
+      }
+    }
+  },
+  "$defs": {
+    "refList": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

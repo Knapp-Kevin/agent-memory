@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/approval-verification-result.schema.json",
+  "title": "Agent Memory Approval Verification Result",
+  "description": "Deterministic verification of one-action approval evidence against the exact decision composition and current observation context.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "approval_id",
+    "input_identity",
+    "composition_id",
+    "status",
+    "satisfies_required_approval",
+    "reasons",
+    "reusable_authority"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "approval_id": { "type": "string", "minLength": 1 },
+    "input_identity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "composition_id": { "type": "string", "minLength": 1 },
+    "status": {
+      "type": "string",
+      "enum": ["current", "denied", "stale", "invalid", "not_applicable"]
+    },
+    "satisfies_required_approval": { "type": "boolean" },
+    "reasons": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "reusable_authority": { "const": false }
+  }
+}

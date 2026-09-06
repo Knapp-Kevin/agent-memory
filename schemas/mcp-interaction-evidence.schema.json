@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/mcp-interaction-evidence.schema.json",
+  "title": "Agent Memory MCP Interaction Evidence",
+  "description": "Content-minimized evidence for MCP tools/call and resources/read interactions. MCP transport, server identity, request IDs, results, and resource content do not establish Agent Memory authority, execution proof, memory admission, or lifecycle satisfaction.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_version",
+    "interaction_id",
+    "protocol",
+    "interaction_kind",
+    "method",
+    "client_ref",
+    "server_ref",
+    "request_id",
+    "target_ref",
+    "memory_effect",
+    "request_status",
+    "result_status",
+    "result_classification",
+    "governance_status",
+    "governance_alignment",
+    "binding_status",
+    "binding_reasons",
+    "request_digest",
+    "observed_at",
+    "evidence_refs",
+    "interpretation"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "profile_version": { "const": "0.1.0" },
+    "interaction_id": { "type": "string", "minLength": 1 },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "revision", "source_ref", "source_commit"],
+      "properties": {
+        "name": { "const": "mcp" },
+        "revision": { "const": "2026-07-28" },
+        "source_ref": { "type": "string", "minLength": 1 },
+        "source_commit": { "const": "5f5440bb26a62e2cf3440b92da5a667efa03b267" }
+      }
+    },
+    "interaction_kind": {
+      "type": "string",
+      "enum": ["tool_call", "resource_read"]
+    },
+    "method": {
+      "type": "string",
+      "enum": ["tools/call", "resources/read"]
+    },
+    "client_ref": { "type": "string", "minLength": 1 },
+    "server_ref": { "type": "string", "minLength": 1 },
+    "session_ref": { "type": "string", "minLength": 1 },
+    "transport_ref": { "type": "string", "minLength": 1 },
+    "request_id": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "integer" }
+      ]
+    },
+    "target_ref": { "type": "string", "minLength": 1 },
+    "memory_effect": {
+      "type": "string",
+      "enum": ["none", "memory_candidate", "durable_mutation"]
+    },
+    "request_status": {
+      "type": "string",
+      "enum": ["observed", "not_observed"]
+    },
+    "result_status": {
+      "type": "string",
+      "enum": ["complete", "input_required", "mcp_error", "unavailable", "not_observed"]
+    },
+    "result_classification": {
+      "type": "string",
+      "enum": ["success", "tool_error", "protocol_error", "input_required", "unavailable", "not_observed"]
+    },
+    "governance_status": {
+      "type": "string",
+      "enum": ["available", "unavailable", "not_required"]
+    },
+    "effective_decision": {
+      "type": "string",
+      "enum": ["allow", "warn", "require_approval", "deny"]
+    },
+    "governance_alignment": {
+      "type": "string",
+      "enum": [
+        "within_governance",
+        "result_observed_under_deny",
+        "approval_not_established",
+        "blocked_governance_unavailable",
+        "binding_mismatch",
+        "not_applicable",
+        "not_evaluated"
+      ]
+    },
+    "binding_status": {
+      "type": "string",
+      "enum": ["exact", "mismatch", "not_evaluated"]
+    },
+    "binding_reasons": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "action_ref": { "type": "string", "minLength": 1 },
+    "input_identity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "scope_ref": { "type": "string", "minLength": 1 },
+    "tenant_ref": { "type": "string", "minLength": 1 },
+    "project_ref": { "type": "string", "minLength": 1 },
+    "pama_decision_ref": { "type": "string", "minLength": 1 },
+    "composition_ref": { "type": "string", "minLength": 1 },
+    "approval_evidence_ref": { "type": "string", "minLength": 1 },
+    "execution_witness_ref": { "type": "string", "minLength": 1 },
+    "trace_correlation_ref": { "type": "string", "minLength": 1 },
+    "request_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "result_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "mcp_error_code": { "type": "integer" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_effect",
+        "memory_admission",
+        "execution_claim",
+        "lifecycle_satisfaction",
+        "request_id_authority",
+        "server_identity_authority"
+      ],
+      "properties": {
+        "authority_effect": { "const": "none" },
+        "memory_admission": { "const": "not_established" },
+        "execution_claim": { "const": "not_established" },
+        "lifecycle_satisfaction": { "const": "not_established" },
+        "request_id_authority": { "const": "none" },
+        "server_identity_authority": { "const": "none" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "interaction_kind": { "const": "tool_call" } },
+        "required": ["interaction_kind"]
+      },
+      "then": {
+        "properties": { "method": { "const": "tools/call" } }
+      }
+    },
+    {
+      "if": {
+        "properties": { "interaction_kind": { "const": "resource_read" } },
+        "required": ["interaction_kind"]
+      },
+      "then": {
+        "properties": { "method": { "const": "resources/read" } }
+      }
+    },
+    {
+      "if": {
+        "properties": { "memory_effect": { "const": "durable_mutation" } },
+        "required": ["memory_effect"]
+      },
+      "then": {
+        "required": ["action_ref", "input_identity", "scope_ref"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "governance_status": { "const": "available" } },
+        "required": ["governance_status"]
+      },
+      "then": {
+        "required": ["effective_decision"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "scenario_set_version": "1.0.0",
+  "status": "exploratory_research",
+  "canonical_authority": "none",
+  "issue": 228,
+  "table": {
+    "table_id": "conditional-table:t1",
+    "table_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "model_ref": "model:fixture-v1",
+    "checkpoint_ref": "checkpoint:fixture-v1",
+    "tokenizer_ref": "tokenizer:fixture-v1",
+    "hash_config_ref": "hash-config:fixture-v1",
+    "layer_ids": [1, 15],
+    "partition_ref": "tenant-a/project-a",
+    "source_ref": "uor:test:conditional-source-a"
+  },
+  "hash_fixture": {
+    "token_ids": [11, 23, 37],
+    "multipliers": [3, 5, 7],
+    "moduli": [101, 103, 107]
+  },
+  "cases": [
+    {"id": "deterministic-address", "source_state": "current", "requested_partition": "tenant-a/project-a", "suppressed": false, "expected_gate": "allow"},
+    {"id": "revoked-source-still-addressable", "source_state": "revoked", "requested_partition": "tenant-a/project-a", "suppressed": false, "expected_gate": "block_stale"},
+    {"id": "deleted-source-still-addressable", "source_state": "deleted", "requested_partition": "tenant-a/project-a", "suppressed": false, "expected_gate": "block_stale"},
+    {"id": "cross-partition-address", "source_state": "current", "requested_partition": "tenant-b/project-b", "suppressed": false, "expected_gate": "block_scope"},
+    {"id": "overlay-suppresses-current-address", "source_state": "current", "requested_partition": "tenant-a/project-a", "suppressed": true, "expected_gate": "block_suppressed"}
+  ]
+}

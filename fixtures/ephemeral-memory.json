@@ -1,0 +1,76 @@
+{
+  "fixture_id": "ephemeral-memory",
+  "fixture_version": "1.0.0",
+  "class": "evaporate",
+  "description": "A one-time transient observation should decay and remain outside durable memory.",
+  "expected_behavior": {
+    "candidate": false,
+    "crystallized": false,
+    "final_state": "pruned",
+    "reason": "The memory has provenance but lacks durability signals and should decay."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:ephemeral-memory",
+    "content_ref": "fixture://ephemeral-memory/raw",
+    "type": "observation",
+    "state": "pruned",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-evaporate-class",
+      "timestamp": "2026-07-06T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:session-only",
+        "kind": "session_observation",
+        "ref": "fixture://ephemeral-memory/source",
+        "confidence": 0.6
+      }
+    ],
+    "saturation": {
+      "sigma": 0.05,
+      "calibrated": true,
+      "threshold": 0.95,
+      "durability_dimensions": [
+        "single_session_use"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "low",
+      "policy_refs": [
+        "ADR-004"
+      ]
+    },
+    "certification": {
+      "status": "none",
+      "scope": "ephemeral"
+    },
+    "decay_profile": {
+      "lambda_base": 0.1,
+      "lambda_eff": 0.1,
+      "pressure": 1
+    },
+    "ledger_ref": "fixture://ledger/ephemeral-memory",
+    "created_at": "2026-07-06T00:00:00Z"
+  },
+  "interaction_history": [
+    {
+      "event": "observed",
+      "count": 1
+    },
+    {
+      "event": "meaningful_reuse",
+      "count": 0
+    },
+    {
+      "event": "decay_window_elapsed",
+      "count": 1
+    },
+    {
+      "event": "pruned",
+      "count": 1
+    }
+  ]
+}

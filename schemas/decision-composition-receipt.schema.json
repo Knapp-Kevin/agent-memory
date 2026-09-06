@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/decision-composition-receipt.schema.json",
+  "title": "Agent Memory Decision Composition Receipt",
+  "description": "Evidence that a local Agent Memory authority decision and optional external policy decision were composed. This schema does not claim downstream enforcement.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "composition_id",
+    "input_identity",
+    "local_decision_ref",
+    "local_normalized_decision",
+    "provider_mode",
+    "external_provider_status",
+    "effective_decision",
+    "composition_rule_version",
+    "execution_status"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "composition_id": { "type": "string", "minLength": 1 },
+    "input_identity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "local_decision_ref": { "type": "string", "minLength": 1 },
+    "local_normalized_decision": { "$ref": "#/$defs/normalizedDecision" },
+    "provider_mode": { "type": "string", "enum": ["none", "advisory", "authoritative"] },
+    "external_provider_status": {
+      "type": "string",
+      "enum": ["not_configured", "available", "unavailable", "invalid", "stale_identity"]
+    },
+    "external_decision_ref": { "type": "string", "minLength": 1 },
+    "external_normalized_decision": { "$ref": "#/$defs/normalizedDecision" },
+    "effective_decision": { "$ref": "#/$defs/normalizedDecision" },
+    "composition_rule_version": { "const": "0.1.0" },
+    "execution_status": { "type": "string", "enum": ["unknown", "not_observed"] },
+    "execution_evidence_ref": { "type": "string", "minLength": 1 },
+    "reason": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "normalizedDecision": {
+      "type": "string",
+      "enum": ["allow", "warn", "require_approval", "deny"]
+    }
+  }
+}

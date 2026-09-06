@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/runtime-trace-correlation.schema.json",
+  "title": "Agent Memory Runtime Trace Correlation",
+  "description": "Content-minimized correlation between runtime trace/span identity and Agent Memory governance/evidence references. Correlation is evidence linkage, not memory authority, execution proof, or lifecycle satisfaction.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_version",
+    "correlation_id",
+    "telemetry_status",
+    "sampling_state",
+    "binding_status",
+    "binding_reasons",
+    "runtime_ref",
+    "action_ref",
+    "scope_ref",
+    "correlated_at",
+    "authority_effect",
+    "execution_claim",
+    "lifecycle_satisfaction"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "profile_version": { "const": "0.1.0" },
+    "correlation_id": { "type": "string", "minLength": 1 },
+    "telemetry_status": {
+      "type": "string",
+      "enum": ["observed", "not_observed", "telemetry_unavailable"]
+    },
+    "sampling_state": {
+      "type": "string",
+      "enum": ["sampled", "not_sampled", "unknown"]
+    },
+    "trace_id": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+    "span_id": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+    "parent_span_id": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+    "binding_status": {
+      "type": "string",
+      "enum": ["exact", "mismatch", "not_evaluated"]
+    },
+    "binding_reasons": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "runtime_ref": { "type": "string", "minLength": 1 },
+    "service_ref": { "type": "string", "minLength": 1 },
+    "action_ref": { "type": "string", "minLength": 1 },
+    "input_identity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "pama_decision_ref": { "type": "string", "minLength": 1 },
+    "composition_ref": { "type": "string", "minLength": 1 },
+    "execution_witness_ref": { "type": "string", "minLength": 1 },
+    "external_evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "policy_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "scope_ref": { "type": "string", "minLength": 1 },
+    "tenant_ref": { "type": "string", "minLength": 1 },
+    "project_ref": { "type": "string", "minLength": 1 },
+    "correlated_at": { "type": "string", "format": "date-time" },
+    "authority_effect": { "const": "none" },
+    "execution_claim": { "const": "not_established" },
+    "lifecycle_satisfaction": { "const": "not_established" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "telemetry_status": { "const": "observed" } },
+        "required": ["telemetry_status"]
+      },
+      "then": {
+        "required": ["trace_id", "span_id"]
+      }
+    }
+  ]
+}

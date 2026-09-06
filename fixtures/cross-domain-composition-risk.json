@@ -1,0 +1,88 @@
+{
+  "fixture_id": "cross-domain-composition-risk",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "Two memories are individually admissible to the requesting context, but an explicit project-separation policy prohibits their combined admission. Candidate-level permission does not manufacture composition permission.",
+  "expected_behavior": {
+    "individual_recall_admitted": true,
+    "composition_admitted": false,
+    "composition_policy_enforced": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "admit_composed_context",
+    "permitted_actions": [
+      "block_composition",
+      "narrow_context",
+      "defer"
+    ],
+    "prohibited_actions": [
+      "admit_composed_context"
+    ],
+    "selected_action": "block_composition",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "individual_admission_not_equal_composition_permission",
+      "domain_provenance_preserved_through_composition_gate",
+      "explicit_composition_constraint_enforced",
+      "prohibited_action_not_selected"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:cross-domain-composition-context",
+    "type": "summary",
+    "state": "candidate",
+    "scope": {
+      "owner_principal": "user:alice",
+      "origin_actor": "agent:planner",
+      "tenant": "tenant-a",
+      "purpose": "assistance",
+      "isolation_domain_refs": [
+        "domain:project-red",
+        "domain:project-blue"
+      ],
+      "source_isolation_domain_refs": [
+        "domain:project-red",
+        "domain:project-blue"
+      ]
+    },
+    "provenance": {
+      "origin": "synthetic composition proposal",
+      "observer": "context-assembler",
+      "method": "set-level composition",
+      "timestamp": "2026-08-12T00:00:00Z",
+      "derived_from": [
+        "uor:test:project-red-memory",
+        "uor:test:project-blue-memory"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:composition-policy",
+        "kind": "policy_constraint",
+        "ref": "policy:separate-red-blue",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.8,
+      "calibrated": true,
+      "durability_dimensions": [
+        "composition_candidate"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "block",
+      "risk_class": "high",
+      "permitted_actions": [
+        "block_composition",
+        "narrow_context",
+        "defer"
+      ],
+      "prohibited_actions": [
+        "admit_composed_context"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-12T00:00:00Z"
+  }
+}

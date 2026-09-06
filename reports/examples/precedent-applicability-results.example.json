@@ -1,0 +1,19 @@
+{
+  "profile": "agent-memory.precedent-applicability.v0.1",
+  "fixture": "fixtures/precedent-applicability-matrix.json",
+  "scope": "required bounded adversarial scenarios only",
+  "cases_evaluated": 8,
+  "redundant_review_reductions_proposed": 2,
+  "unsafe_equivalence_false_positives": 0,
+  "material_difference_misses": 0,
+  "negative_precedent_misses": 0,
+  "cross_scope_leakage_failures": 0,
+  "stale_precedent_reuse_failures": 0,
+  "independent_human_derived_evidence_attribution_errors": 0,
+  "novel_case_escalation_rate": 1.0,
+  "non_claims": [
+    "zero unsafe-equivalence false positives on this fixture set is not a universal safety claim",
+    "review reduction is advisory context and does not authorize execution",
+    "policy-derived outcomes are not independent human approvals"
+  ]
+}

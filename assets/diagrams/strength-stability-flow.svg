@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="2500" viewBox="0 0 540 2500" role="img" aria-labelledby="title desc">
+  <title id="title">Agent Memory strength and stability dynamics</title>
+  <desc id="desc">A mobile-first map showing that evidence confidence, source trust, saturation, contradiction pressure, certification, lifecycle stability, and PAMA authority are distinct signals. Corroboration, verification, meaningful reuse, and stable provenance can strengthen the case for persistence; contradiction, expiry, invalidation, uncertainty, and drift can weaken it. No score, trust estimate, saturation level, or confidence value creates authority. PAMA or equivalent governance decides permitted consequence.</desc>
+<style>
+:root{--bg:#0d1117;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--purple:#a371f7;--green:#3fb950;--red:#f85149;--amber:#d29922;--line:#6e7681;--neutral:#161b22;--purpleBox:#171321;--amberBox:#211a0b;--redBox:#211416;--greenBox:#0f1d14;--blueBox:#101b2a;}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--text)}
+.frame{fill:var(--bg);stroke:var(--border)} .neutral{fill:var(--neutral);stroke:var(--border)} .blueBox{fill:var(--blueBox);stroke:var(--blue);stroke-width:1.2} .purpleBox{fill:var(--purpleBox);stroke:var(--purple);stroke-width:1.2} .amberBox{fill:var(--amberBox);stroke:var(--amber);stroke-width:1.2} .redBox{fill:var(--redBox);stroke:var(--red);stroke-width:1.2} .greenBox{fill:var(--greenBox);stroke:var(--green);stroke-width:1.2}
+.title{font-size:25px;font-weight:700}.sub{font-size:15px;fill:var(--muted)}.eyebrow{font-size:14px;font-weight:700;letter-spacing:1px}.cardTitle{font-size:18px;font-weight:700}.body{font-size:14px}.bodyStrong{font-size:14px;font-weight:700}.small{font-size:13.5px}.tiny{font-size:13px}.muted{fill:var(--muted)}.blueText{fill:var(--blue)}.purpleText{fill:var(--purple)}.greenText{fill:var(--green)}.redText{fill:var(--red)}.amberText{fill:var(--amber)}.redStrong{fill:var(--red);font-weight:700}.greenStrong{fill:var(--green);font-weight:700}.purpleStrong{fill:var(--purple);font-weight:700}
+.line{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.plus{fill:none;stroke:var(--green);stroke-width:2.2}.minus{fill:none;stroke:var(--amber);stroke-width:2.2}.gate{fill:none;stroke:var(--purple);stroke-width:2.4}
+</style>
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--line)"/></marker>
+    <marker id="ag" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--green)"/></marker>
+    <marker id="aa" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--amber)"/></marker>
+    <marker id="ap" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--purple)"/></marker>
+  </defs>
+  <rect x="1" y="1" width="538" height="2498" rx="18" class="frame"/>
+  <text x="28" y="44" class="title">Strength &amp; stability dynamics</text>
+  <text x="28" y="70" class="sub">Distinct signals inform persistence; governance controls consequence</text>
+
+  <rect x="28" y="94" width="484" height="126" rx="11" class="neutral"/>
+  <text x="46" y="121" class="eyebrow blueText">CORE RULE</text>
+  <text x="46" y="148" class="bodyStrong">There is no universal “memory strength” authority meter.</text>
+  <text x="46" y="173" class="body muted">Signals may support, weaken, route, or stabilize a lifecycle decision.</text>
+  <text x="46" y="198" class="bodyStrong redText">Evidence quality or repeated use never creates permission.</text>
+
+  <text x="28" y="266" class="eyebrow blueText">01  EVIDENCE CONFIDENCE</text>
+  <rect x="28" y="284" width="484" height="206" rx="11" class="blueBox"/>
+  <text x="48" y="316" class="cardTitle">Support for an estimate</text>
+  <text x="48" y="344" class="greenStrong body">Strengthening evidence</text>
+  <text x="48" y="368" class="small muted">independent corroboration · verification · cross-reference</text>
+  <text x="48" y="390" class="small muted">stable provenance · successful task-relevant evidence</text>
+  <text x="48" y="421" class="amberText bodyStrong">Weakening / uncertainty</text>
+  <text x="48" y="445" class="small muted">contradiction · estimator disagreement · failed verification</text>
+  <text x="48" y="467" class="small muted">out-of-scope calibration · distribution or environment drift</text>
+  <text x="48" y="485" class="tiny redStrong">confidence != truth · confidence != authority</text>
+
+  <line x1="270" y1="490" x2="270" y2="522" class="line" marker-end="url(#a)"/>
+  <text x="28" y="556" class="eyebrow blueText">02  SOURCE TRUST</text>
+  <rect x="28" y="574" width="484" height="190" rx="11" class="blueBox"/>
+  <text x="48" y="606" class="cardTitle">Scoped evidence weighting</text>
+  <text x="48" y="634" class="greenStrong body">May strengthen when</text>
+  <text x="48" y="658" class="small muted">identity and provenance are intact · scope matches · evidence is</text>
+  <text x="48" y="680" class="small muted">independent · reliability is supported within the relevant domain</text>
+  <text x="48" y="711" class="amberText bodyStrong">May weaken when</text>
+  <text x="48" y="735" class="small muted">trust degrades · domain mismatches · origin is laundered · evidence ages</text>
+  <text x="48" y="756" class="tiny redStrong">source trust != permission · certification · factual truth</text>
+
+  <line x1="270" y1="764" x2="270" y2="796" class="line" marker-end="url(#a)"/>
+  <text x="28" y="830" class="eyebrow greenText">03  SATURATION / PERSISTENCE PRESSURE</text>
+  <rect x="28" y="848" width="484" height="218" rx="11" class="greenBox"/>
+  <text x="48" y="880" class="cardTitle">Pressure toward retention, not truth</text>
+  <text x="48" y="908" class="greenStrong body">Can rise with</text>
+  <text x="48" y="932" class="small muted">corroboration · verification · meaningful re-access · cross-reference</text>
+  <text x="48" y="954" class="small muted">dependency strength · relevant approval · policy relevance · reuse</text>
+  <text x="48" y="985" class="amberText bodyStrong">Can fall with</text>
+  <text x="48" y="1009" class="small muted">temporal pressure · weak pinning · contradiction · dependency weakening</text>
+  <text x="48" y="1031" class="small muted">or invalidated evidence basis</text>
+  <text x="48" y="1057" class="tiny redStrong">raw access must not dominate · saturation != confidence · truth · authority</text>
+
+  <line x1="270" y1="1066" x2="270" y2="1098" class="line" marker-end="url(#a)"/>
+  <text x="28" y="1132" class="eyebrow amberText">04  CONTRADICTION PRESSURE</text>
+  <rect x="28" y="1150" width="484" height="178" rx="11" class="amberBox"/>
+  <text x="48" y="1182" class="cardTitle">Conflict increases review and routing pressure</text>
+  <text x="48" y="1210" class="body muted">A contradiction can mean error, newer state, different scope, an</text>
+  <text x="48" y="1232" class="body muted">exception, malicious evidence, or a world-state change.</text>
+  <text x="48" y="1263" class="bodyStrong">Preserve the conflict until governance resolves the distinction.</text>
+  <text x="48" y="1295" class="tiny redStrong">contradiction != automatic winner · contradiction != deletion authority</text>
+
+  <line x1="270" y1="1328" x2="270" y2="1360" class="line" marker-end="url(#a)"/>
+  <text x="28" y="1394" class="eyebrow purpleText">05  CERTIFICATION</text>
+  <rect x="28" y="1412" width="484" height="170" rx="11" class="purpleBox"/>
+  <text x="48" y="1444" class="cardTitle">Required confirmation passed within scope</text>
+  <text x="48" y="1472" class="body muted">Certification can support a durable transition after required gates.</text>
+  <text x="48" y="1496" class="body muted">Expiry, contradiction, policy change, or invalidated dependencies can</text>
+  <text x="48" y="1518" class="body muted">trigger reevaluation or demotion.</text>
+  <text x="48" y="1551" class="tiny redStrong">certification != permanence forever</text>
+
+  <line x1="270" y1="1582" x2="270" y2="1614" class="line" marker-end="url(#a)"/>
+  <text x="28" y="1648" class="eyebrow purpleText">06  LIFECYCLE &amp; BOUNDARY STABILITY</text>
+  <rect x="28" y="1666" width="484" height="232" rx="11" class="purpleBox"/>
+  <text x="48" y="1698" class="cardTitle">Estimator output proposes; policy commits</text>
+  <text x="48" y="1726" class="body muted">A score may make memory eligible for a next gate or recommend</text>
+  <text x="48" y="1748" class="body muted">non-promotion, review, evidence collection, or demotion.</text>
+  <text x="48" y="1779" class="bodyStrong amberText">Near consequential thresholds</text>
+  <text x="48" y="1803" class="small muted">measure instability · preserve uncertainty · use abstention bands or</text>
+  <text x="48" y="1825" class="small muted">calibrated hysteresis where repeated oscillation is costly</text>
+  <text x="48" y="1856" class="bodyStrong">Exact threshold values require calibration; none are doctrine here.</text>
+  <text x="48" y="1884" class="tiny redStrong">threshold crossing != truth proof · proposal != commit</text>
+
+  <line x1="270" y1="1898" x2="270" y2="1930" class="gate" marker-end="url(#ap)"/>
+  <text x="28" y="1964" class="eyebrow purpleText">07  PAMA AUTHORITY</text>
+  <rect x="28" y="1982" width="484" height="278" rx="11" class="purpleBox"/>
+  <text x="48" y="2014" class="cardTitle">Governance determines permitted consequence</text>
+  <text x="48" y="2042" class="body muted">PAMA evaluates the requested mutation with dimensions such as:</text>
+  <text x="48" y="2068" class="small muted">target class · lifecycle strength · requested operation · downstream</text>
+  <text x="48" y="2090" class="small muted">authority · risk · scope · reversibility · evidence · actor authority</text>
+  <text x="48" y="2121" class="bodyStrong">Possible outcomes include:</text>
+  <text x="48" y="2147" class="small muted">allow · allow_with_ledger · require_review</text>
+  <text x="48" y="2169" class="small muted">require_external_verification · block</text>
+  <text x="48" y="2200" class="bodyStrong redText">No probabilistic score directly selects its own authority outcome.</text>
+  <text x="48" y="2224" class="small muted">A strongly validated memory may still have a low authority ceiling.</text>
+  <text x="48" y="2248" class="tiny redStrong">reliability != permission · relevance != permission</text>
+
+  <line x1="270" y1="2260" x2="270" y2="2292" class="plus" marker-end="url(#ag)"/>
+  <rect x="28" y="2300" width="484" height="136" rx="11" class="greenBox"/>
+  <text x="46" y="2330" class="eyebrow greenText">SAFE INTERPRETATION</text>
+  <text x="46" y="2357" class="bodyStrong">Evidence and meaningful use can strengthen the case for persistence.</text>
+  <text x="46" y="2382" class="bodyStrong">Weakening signals can increase decay, review, or demotion pressure.</text>
+  <text x="46" y="2407" class="bodyStrong redText">Neither direction grants authority to promote, share, execute, or delete.</text>
+
+  <text x="28" y="2472" class="small muted">Canonical: docs/03-scoring-and-decay.md · docs/16-source-trust-and-reputation.md</text>
+  <text x="28" y="2492" class="small muted">Governance boundary: docs/04-governance-and-pama.md</text>
+</svg>

@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0.0",
+  "program_issue": "#274",
+  "status": "ready_to_close_after_exact_head_validation",
+  "agent_memory_evidence_boundary": "721cb69e81f72cabc9b71047243dc5ed923e7bfb",
+  "first_party_qualification_boundaries": {
+    "evolveai": {
+      "issue": "#292",
+      "provider_revision": "21161ce7b88dbffeb7ed59757b4d02d24a9c2acd",
+      "profile": "docs/programs/memory-modules/evolveai-multicapability-profile.md",
+      "reference_qualified_capabilities": [
+        "audited_deletion",
+        "content_addressed_exact_retrieval",
+        "l3_provenance_audit",
+        "persistent_snapshot_restart"
+      ],
+      "authority_effect": "none"
+    },
+    "codegenome": {
+      "issue": "#293",
+      "provider_revision": "43a6b7147ec78ec5c616723fa1dd30f342174860",
+      "profile": "docs/programs/memory-modules/codegenome-multicapability-profile.md",
+      "evidence_proven_capabilities": [
+        "code_graph_traversal"
+      ],
+      "reference_qualified_capabilities": [],
+      "authority_effect": "none"
+    }
+  },
+  "acceptance_criteria": [
+    {
+      "criterion": "reusable_component_capability_profile_contract_exists",
+      "satisfied": true,
+      "evidence": ["#280", "#287", "ADR-033", "schemas/component-capability-qualification.schema.json"]
+    },
+    {
+      "criterion": "capability_maturity_is_first_class_and_machine_readable",
+      "satisfied": true,
+      "evidence": ["#287", "reference/agentmem_ref/capabilities.py"]
+    },
+    {
+      "criterion": "configuration_install_validation_is_first_class_documented_surface",
+      "satisfied": true,
+      "evidence": ["#280", "#282", "#318", "docs/CONFIGURATION.md", "docs/programs/runtime-evidence/runtime-configuration.md"]
+    },
+    {
+      "criterion": "at_least_two_materially_different_capabilities_implement_common_contract",
+      "satisfied": true,
+      "evidence": ["#295", "#292", "#293", "#300"]
+    },
+    {
+      "criterion": "multi_capability_component_preserves_per_capability_evidence",
+      "satisfied": true,
+      "evidence": ["#292", "#293", "docs/programs/memory-modules/evolveai-multicapability-profile.md", "docs/programs/memory-modules/codegenome-multicapability-profile.md"]
+    },
+    {
+      "criterion": "overlapping_providers_resolve_or_reject_deterministically",
+      "satisfied": true,
+      "evidence": ["#290", "#300"]
+    },
+    {
+      "criterion": "graph_and_retrieval_derived_state_exercises_provenance_currentness_correction_deletion",
+      "satisfied": true,
+      "evidence": ["#280", "#293", "#300", "#308"]
+    },
+    {
+      "criterion": "component_optionality_removal_and_rebuild_are_proven",
+      "satisfied": true,
+      "evidence": ["#280", "reference/run_runtime_composition.py"]
+    },
+    {
+      "criterion": "cross_scope_and_stale_state_negative_paths_fail_closed",
+      "satisfied": true,
+      "evidence": ["#292", "#293", "#295", "#300"]
+    },
+    {
+      "criterion": "component_outputs_cannot_directly_create_governed_consequence_permission",
+      "satisfied": true,
+      "evidence": ["#290", "#292", "#293", "ADR-033", "ADR-034"]
+    },
+    {
+      "criterion": "hybrid_composition_preserves_source_component_capability_boundaries",
+      "satisfied": true,
+      "evidence": ["#280", "reference/run_runtime_composition.py", "docs/prd/PRD-001-configurable-agent-memory-runtime.md"]
+    },
+    {
+      "criterion": "evolveai_and_codegenome_are_qualified_capability_by_capability",
+      "satisfied": true,
+      "evidence": ["#292", "#293"]
+    },
+    {
+      "criterion": "external_alternatives_are_mapped_against_same_capability_rows",
+      "satisfied": true,
+      "evidence": ["#286", "docs/programs/memory-modules/external-capability-frontier.md", "docs/programs/memory-modules/external-capability-frontier-refresh-2026-08-14.md"]
+    },
+    {
+      "criterion": "source_rights_license_obligations_are_recorded_for_material_optional_dependencies",
+      "satisfied": true,
+      "evidence": ["docs/SOURCE_RIGHTS_POLICY.md", "#292", "#293", "#300"]
+    },
+    {
+      "criterion": "public_readme_canonical_docs_wiki_and_visuals_are_not_stale",
+      "satisfied": true,
+      "evidence": [
+        "README.md",
+        "docs/42-governed-mutable-memory-fabric.md",
+        "docs/programs/memory-modules/README.md",
+        "wiki-src/Mutable-Memory-Fabric.md",
+        "assets/diagrams/agent-memory-flow.png",
+        "assets/diagrams/agent-memory-flow-light.png"
+      ],
+      "note": "The root flow visuals make no provider-specific maturity claims and remain semantically correct; living component-program and Wiki status are synchronized in the #274 closeout slice. Historical pinned inventories remain historical."
+    },
+    {
+      "criterion": "each_implementation_slice_passed_exact_head_focused_and_repository_wide_validation",
+      "satisfied": true,
+      "evidence": ["#280", "#292", "#293", "#300", "#318"]
+    },
+    {
+      "criterion": "production_and_conformance_claims_do_not_exceed_earned_evidence",
+      "satisfied": true,
+      "evidence": [
+        "docs/programs/memory-modules/evolveai-multicapability-profile.md",
+        "docs/programs/memory-modules/codegenome-multicapability-profile.md",
+        "docs/programs/memory-modules/component-qualification-runtime.md"
+      ]
+    }
+  ],
+  "historical_snapshot_posture": {
+    "first_party_capability_inventory_rewritten": false,
+    "reason": "The August 14 inventory is intentionally revision-pinned evidence. Current qualification profiles supersede it for present maturity without altering historical observations."
+  },
+  "doctrine_disposition": "no_new_adr",
+  "authority_effect": "none"
+}

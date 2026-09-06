@@ -1,0 +1,75 @@
+{
+  "fixture_id": "unauthorized-mutation-attempt",
+  "fixture_version": "1.0.0",
+  "class": "governance",
+  "description": "An agent attempts to mutate durable memory without sufficient authority.",
+  "expected_behavior": {
+    "mutation_allowed": false,
+    "pama_outcome": "block",
+    "audit_record_created": true,
+    "reason": "Capability to mutate memory must not imply authority to mutate memory."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:unauthorized-mutation-attempt",
+    "content_ref": "fixture://unauthorized-mutation-attempt/raw",
+    "type": "decision",
+    "state": "crystallized",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-governance-class",
+      "timestamp": "2026-07-06T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:durable-decision",
+        "kind": "decision_record",
+        "ref": "fixture://unauthorized-mutation-attempt/decision",
+        "confidence": 1
+      }
+    ],
+    "saturation": {
+      "sigma": 0.99,
+      "calibrated": true,
+      "threshold": 0.95,
+      "durability_dimensions": [
+        "approval",
+        "cross_reference",
+        "certification"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "block",
+      "risk_class": "high",
+      "policy_refs": [
+        "ADR-004"
+      ]
+    },
+    "certification": {
+      "status": "pass",
+      "ref": "fixture://unauthorized-mutation-attempt/certificate",
+      "scope": "decision"
+    },
+    "decay_profile": {
+      "lambda_base": 0.001,
+      "lambda_eff": 0,
+      "pressure": 0
+    },
+    "ledger_ref": "fixture://ledger/unauthorized-mutation-attempt",
+    "created_at": "2026-07-06T00:00:00Z"
+  },
+  "interaction_history": [
+    {
+      "event": "mutation_requested",
+      "actor": "unauthorized-agent"
+    },
+    {
+      "event": "pama_evaluated",
+      "result": "block"
+    },
+    {
+      "event": "audit_record_created",
+      "count": 1
+    }
+  ]
+}

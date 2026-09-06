@@ -1,0 +1,133 @@
+name: CodeGenome Multi-Capability Profile
+
+on:
+  pull_request:
+    paths:
+      - "reference/fixtures/component-capabilities/codegenome.example.json"
+      - "reference/agentmem_ref/crg/codegenome_profile.py"
+      - "reference/agentmem_ref/crg/code_graph_qualification.py"
+      - "reference/run_codegenome_multicapability_profile.py"
+      - "reference/tests/test_codegenome_multicapability_profile.py"
+      - "reference/tests/test_component_capabilities.py"
+      - "reference/tests/test_code_graph_qualification.py"
+      - "schemas/component-capability-profile.schema.json"
+      - "docs/programs/memory-modules/codegenome-multicapability-profile.md"
+      - ".github/workflows/codegenome-multicapability-profile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CODEGENOME_COMMIT: 43a6b7147ec78ec5c616723fa1dd30f342174860
+
+jobs:
+  validate-profile:
+    runs-on: ubuntu-latest
+    env:
+      AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      EVIDENCE_ROOT: /tmp/codegenome-multicapability-profile
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Agent Memory reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Validate profile, declaration, and qualification regressions
+        env:
+          PYTHONPATH: reference
+        run: |
+          python -m unittest \
+            reference/tests/test_codegenome_multicapability_profile.py \
+            reference/tests/test_component_capabilities.py \
+            reference/tests/test_code_graph_qualification.py
+
+      - name: Fetch exact CodeGenome source
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/MythologIQ-Labs-LLC/CodeGenome.git /tmp/codegenome
+          git -C /tmp/codegenome fetch --depth=1 origin "$CODEGENOME_COMMIT"
+          git -C /tmp/codegenome checkout --detach "$CODEGENOME_COMMIT"
+          test "$(git -C /tmp/codegenome rev-parse HEAD)" = "$CODEGENOME_COMMIT"
+
+      - name: Verify source rights and capability evidence paths
+        working-directory: /tmp/codegenome
+        run: |
+          grep -qi "MIT License" LICENSE
+          test -f codegenome-identity/src/identity/digest.rs
+          test -f codegenome-identity/src/index/resolver_multi.rs
+          test -f codegenome-identity/src/tests/fusion_tests.rs
+          test -f codegenome-substrate/src/embedding/store.rs
+          test -f codegenome-substrate/src/embedding/similarity.rs
+          test -f codegenome-substrate/src/tests/embedding_tests.rs
+          test -f codegenome-cli/src/commands/query.rs
+          test -f codegenome-cli/src/commands/status.rs
+          test -f codegenome-cli/src/commands/experiment.rs
+          test -f codegenome-cli/src/commands/serve.rs
+          test -f codegenome-mcp/Cargo.toml
+          mkdir -p "$EVIDENCE_ROOT/source-rights"
+          cp LICENSE "$EVIDENCE_ROOT/source-rights/CodeGenome-LICENSE"
+
+      - name: Execute pinned CodeGenome source regressions
+        working-directory: /tmp/codegenome
+        run: |
+          cargo test -p codegenome-identity duplicate_names_and_overlapping_spans_remain_file_scoped
+          cargo test -p codegenome-substrate --lib
+          cargo build -p codegenome-cli
+
+      - name: Emit exact-head multi-capability profile evidence
+        env:
+          PYTHONPATH: reference
+        run: |
+          mkdir -p "$EVIDENCE_ROOT"
+          python reference/run_codegenome_multicapability_profile.py \
+            --agent-memory-commit "$AGENT_MEMORY_COMMIT" \
+            --output "$EVIDENCE_ROOT/codegenome-multicapability-profile.json"
+
+      - name: Verify profile evidence boundaries
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report = json.loads(
+              (Path(os.environ["EVIDENCE_ROOT"]) / "codegenome-multicapability-profile.json").read_text()
+          )
+          assert report["agent_memory_commit"] == os.environ["AGENT_MEMORY_COMMIT"]
+          assert report["component"]["component_id"] == "codegenome"
+          assert report["component"]["component_version"] == os.environ["CODEGENOME_COMMIT"]
+          assert report["component"]["profile_version"] == "component-capability-v2"
+          assert report["maturity_counts"] == {
+              "declared": 2,
+              "implemented": 15,
+              "runtime_wired": 0,
+              "evidence_proven": 1,
+              "reference_qualified": 0,
+          }
+          assert report["qualification_binding"] == {
+              "capability_id": "code_graph_traversal",
+              "qualification_profile_id": "code-graph-traversal-currentness",
+              "qualification_profile_version": "1.1.0",
+              "evidence_ref": "qualification:codegenome:code-graph-traversal-currentness@1.1.0",
+          }
+          assert report["proposal_only_surfaces"] == ["experiment_evaluation", "impact_propagation"]
+          assert report["authority_effect"] == "none"
+          assert all(report["invariants"].values()), report["invariants"]
+          PY
+
+      - name: Upload exact-head profile evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: codegenome-multicapability-profile-${{ env.AGENT_MEMORY_COMMIT }}
+          path: /tmp/codegenome-multicapability-profile
+          if-no-files-found: error

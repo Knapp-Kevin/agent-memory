@@ -1,0 +1,148 @@
+{
+  "fixture_id": "enforcement-evidence-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "Execution witness and posture cases distinguish configured governance, delivered decisions, observed enforcement points, and action outcomes without inferring lifecycle satisfaction.",
+  "expected_behavior": {
+    "witness_cases": 6,
+    "decision_violations_observed": 1,
+    "configuration_only_postures": 1,
+    "witness_capability_only_postures": 1,
+    "observed_enforcement_postures": 1
+  },
+  "memory_unit": {
+    "id": "mem:enforcement-evidence",
+    "content_ref": "fixture://enforcement-evidence/action",
+    "type": "decision",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "enforcement-evidence-matrix",
+      "timestamp": "2026-08-12T21:20:00Z",
+      "source_refs": ["issue://152"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:enforcement-evidence",
+        "kind": "execution_witness_fixture",
+        "ref": "issue://152",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["enforcement_evidence", "execution_observation"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "high",
+      "policy_refs": ["issue:152", "ADR-020", "ADR-021"],
+      "permitted_actions": ["collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T21:20:00Z"
+  },
+  "witness_cases": [
+    {
+      "case_id": "deny-prevented-mechanically",
+      "local_pama_outcome": "block",
+      "enforcement_mode": "mechanical",
+      "delivery_status": "delivered",
+      "enforcement_point_status": "reached",
+      "action_status": "prevented",
+      "liveness_status": "healthy",
+      "expected_alignment": "consistent"
+    },
+    {
+      "case_id": "deny-but-action-executed",
+      "local_pama_outcome": "block",
+      "enforcement_mode": "cooperative",
+      "delivery_status": "delivered",
+      "enforcement_point_status": "reached",
+      "action_status": "executed",
+      "liveness_status": "degraded",
+      "expected_alignment": "violation"
+    },
+    {
+      "case_id": "allow-and-action-executed",
+      "local_pama_outcome": "allow_with_ledger",
+      "enforcement_mode": "mechanical",
+      "delivery_status": "delivered",
+      "enforcement_point_status": "reached",
+      "action_status": "executed",
+      "liveness_status": "healthy",
+      "expected_alignment": "consistent"
+    },
+    {
+      "case_id": "allow-but-host-prevents",
+      "local_pama_outcome": "allow_with_ledger",
+      "enforcement_mode": "mechanical",
+      "delivery_status": "delivered",
+      "enforcement_point_status": "reached",
+      "action_status": "prevented",
+      "liveness_status": "healthy",
+      "expected_alignment": "stricter_than_decision"
+    },
+    {
+      "case_id": "approval-required-but-execution-observed",
+      "local_pama_outcome": "require_review",
+      "enforcement_mode": "cooperative",
+      "delivery_status": "delivered",
+      "enforcement_point_status": "reached",
+      "action_status": "executed",
+      "liveness_status": "healthy",
+      "expected_alignment": "unverifiable"
+    },
+    {
+      "case_id": "decision-delivered-enforcement-not-observed",
+      "local_pama_outcome": "block",
+      "enforcement_mode": "unknown",
+      "delivery_status": "delivered",
+      "enforcement_point_status": "not_observed",
+      "action_status": "not_observed",
+      "liveness_status": "unknown",
+      "expected_alignment": "unverifiable"
+    }
+  ],
+  "posture_cases": [
+    {
+      "case_id": "governance-configured-enforcement-absent",
+      "configured_governance": true,
+      "memory_write": "cooperative",
+      "recall_admission": "unknown",
+      "background_maintenance": "unknown",
+      "external_import": "cooperative",
+      "execution_witness": "absent",
+      "observed_witness_count": 0,
+      "liveness_status": "degraded",
+      "expected_evidence_scope": "configuration_only"
+    },
+    {
+      "case_id": "witness-capability-without-event",
+      "configured_governance": true,
+      "memory_write": "mechanical",
+      "recall_admission": "mechanical",
+      "background_maintenance": "cooperative",
+      "external_import": "mechanical",
+      "execution_witness": "available",
+      "observed_witness_count": 0,
+      "liveness_status": "healthy",
+      "expected_evidence_scope": "witness_capability_only"
+    },
+    {
+      "case_id": "observed-enforcement-posture",
+      "configured_governance": true,
+      "memory_write": "mechanical",
+      "recall_admission": "mechanical",
+      "background_maintenance": "cooperative",
+      "external_import": "mechanical",
+      "execution_witness": "available",
+      "observed_witness_count": 3,
+      "liveness_status": "healthy",
+      "expected_evidence_scope": "observed_enforcement"
+    }
+  ]
+}
