@@ -12,12 +12,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agentmem_ref import policy, projections  # noqa: E402
 
 # Imported AFTER the sys.path setup above: `qualified_fixtures` imports
-# `agentmem_ref`, so it cannot load until `reference/` is on the path.
-# Relative import: this module is loaded as `tests.X` under
-# `discover -t reference` and as `reference.tests.X` by the targeted CI step, and
-# a relative import resolves under both. An absolute `from tests...` only works
-# under the first.
-from .qualified_fixtures import corpus_for, registry_for, rule
+# `agentmem_ref`, so it cannot load until `reference/` is on the path. That same
+# insert makes `tests` importable, so this absolute form resolves under all three
+# CI invocation styles (`discover -t reference`, `reference.tests.X`, and
+# `discover` without `-t`); a relative import fails under the third.
+from tests.qualified_fixtures import corpus_for, registry_for, rule
 
 
 def _visibility_corpus():
