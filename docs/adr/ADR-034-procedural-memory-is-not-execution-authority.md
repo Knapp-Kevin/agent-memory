@@ -197,9 +197,9 @@ ADR-034 was promoted only after the #295 reference vertical slice exercised the 
 
 The executable evidence surfaces are:
 
-- `reference/agentmem_ref/capabilities.py` — independent capability maturity and deterministic provider resolution;
+- `reference/agentmem_ref/contracts/capabilities.py` — independent capability maturity and deterministic provider resolution;
 - `schemas/component-capability-profile.schema.json` — machine-readable capability declaration profile;
-- `reference/agentmem_ref/procedural_memory.py` — procedural retention, exact approval binding, activation, action separation, revocation, and metamemory boundary;
+- `reference/agentmem_ref/memory/procedural_memory.py` — procedural retention, exact approval binding, activation, action separation, revocation, and metamemory boundary;
 - `reference/tests/test_component_capabilities.py` — maturity, ambiguity, preference, and no-downgrade tests;
 - `reference/tests/test_procedural_memory.py` — positive and adversarial procedural-memory paths;
 - `reference/run_procedural_memory.py` — deterministic reconstructable evidence harness;

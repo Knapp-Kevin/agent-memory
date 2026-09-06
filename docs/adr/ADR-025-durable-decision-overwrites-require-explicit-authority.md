@@ -101,7 +101,7 @@ The executable slice demonstrates:
 
 Reference artifacts:
 
-- `reference/agentmem_ref/decision_overwrite.py`
+- `reference/agentmem_ref/memory/decision_overwrite.py`
 - `reference/tests/test_decision_overwrite.py`
 - `reference/tests/test_decision_overwrite_fixtures.py`
 - `fixtures/durable-decision-agent-proposal.json`

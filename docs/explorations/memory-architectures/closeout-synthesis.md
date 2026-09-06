@@ -8,7 +8,7 @@ Issue #67 was intentionally finite. Its purpose was not to find a single winning
 
 The closeout uses three complementary evidence classes:
 
-1. **Matched local architecture-family experiment** under `reference/agentmem_ref/architecture_family_closeout.py`, exercising equivalent transitions across ten non-latent family surfaces.
+1. **Matched local architecture-family experiment** under `reference/agentmem_ref/harness/architecture_family_closeout.py`, exercising equivalent transitions across ten non-latent family surfaces.
 2. **Existing model-internal / conditional-memory evidence** in `model-internal-conditional-memory.md` and its executable evidence workflows for opaque learned or behavioral influence.
 3. **Existing cross-cutting research/evidence** for hybrid composition, long-horizon behavior, autonomous maintenance, domain-schema evolution, deletion/correction, observability, and adversarial scenarios.
 

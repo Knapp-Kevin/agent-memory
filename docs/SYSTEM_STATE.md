@@ -30,15 +30,15 @@ agent-memory/
 |-- schemas/                   58 JSON Schemas (draft 2020-12)
 |-- fixtures/                  64 validated scenario fixtures
 |-- reference/
-|   |-- agentmem_ref/          121 modules (reference runtime + CLI)
+|   |-- agentmem_ref/          124 modules in 7 layered subpackages: core/ state/ contracts/ runtime/ memory/ crg/ harness/ (+ 124 top-level compatibility aliases, _paths.py)
 |   |-- run_*.py               68 evidence emitters
 |   |-- native/                1 Rust driver
 |   |-- policies/, fixtures/ (15 JSON), testdata/
-|   `-- tests/                 139 test files, 1113 tests
+|   `-- tests/                 140 test files, 1121 tests
 |-- integrations/
 |   |-- agent-memory-runtime/  JS, 1 source + 1 test, private
 |   `-- hermes-agent-memory/   Python, 10 modules, 6 tests
-|-- scripts/                   12 repository validators
+|-- scripts/                   13 repository validators (incl. restructure_package.py)
 |-- wiki-src/                  27 wiki pages
 |-- .github/workflows/         58 workflows (umbrella: validate-doctrine-evidence.yml)
 `-- pyproject.toml             agent-memory-reference 0.1.0, console script agent-memory
@@ -54,8 +54,8 @@ agent-memory/
 | Total Test Files | 137 (`reference/tests`) + 6 (hermes) + 1 (JS) |
 | Total Lines of Code | 60,376 under `reference/` |
 | Average File Size | ~300 lines (`agentmem_ref`) |
-| Max File Size | 733 lines (file: `reference/agentmem_ref/runtime_config.py`) |
-| Max Function Size | 311 lines (file: `reference/agentmem_ref/precedent_candidate_harness.py:177`) |
+| Max File Size | 733 lines (file: `reference/agentmem_ref/runtime/runtime_config.py`) |
+| Max Function Size | 311 lines (file: `reference/agentmem_ref/harness/precedent_candidate_harness.py:177`) |
 | Section 4 Violations | 58 files >250 lines; 175 functions >40 lines; 22 functions nesting >3 (if/for/while/with/try metric) |
 
 ---
@@ -93,11 +93,11 @@ Compared `docs/ARCHITECTURE_PLAN.md` file tree (Promise) against the working tre
 
 | File | Lines | Status |
 |------|-------|--------|
-| `reference/agentmem_ref/runtime_config.py` | 733/250 | FAIL |
-| `reference/agentmem_ref/capabilities.py` | 726/250 | FAIL |
-| `reference/agentmem_ref/cedar_policy_comparator.py` | 626/250 | FAIL |
-| `reference/agentmem_ref/procedural_memory.py` | 601/250 | FAIL |
-| `reference/agentmem_ref/dashclaw_external_verdict.py` | 595/250 | FAIL |
+| `reference/agentmem_ref/runtime/runtime_config.py` | 733/250 | FAIL |
+| `reference/agentmem_ref/contracts/capabilities.py` | 726/250 | FAIL |
+| `reference/agentmem_ref/harness/cedar_policy_comparator.py` | 626/250 | FAIL |
+| `reference/agentmem_ref/memory/procedural_memory.py` | 601/250 | FAIL |
+| `reference/agentmem_ref/memory/dashclaw_external_verdict.py` | 595/250 | FAIL |
 | 53 further modules | >250 | FAIL (tracked as GAP-RT-04, Sprint 11) |
 | `scripts/validate_fixtures.py`, `validate_schemas.py`, `generate_calibration_report.py`, `build_atlas_research_inventory.py` | 276-347/250 | FAIL |
 
@@ -105,11 +105,11 @@ Compared `docs/ARCHITECTURE_PLAN.md` file tree (Promise) against the working tre
 
 | File | Longest Function | Deepest Nesting | Status |
 |------|-----------------|-----------------|--------|
-| `reference/agentmem_ref/precedent_candidate_harness.py` | 311/40 lines | - | FAIL |
-| `reference/agentmem_ref/runtime_config.py` | 249/40 lines (`validate_runtime_configuration`) | - | FAIL |
-| `reference/agentmem_ref/doctor.py` | 117/40 lines (`diagnose`) | 5/3 levels | FAIL |
-| `reference/agentmem_ref/approval_evidence.py` | - | 8/3 levels | FAIL |
-| `reference/agentmem_ref/portable_evidence.py` | - | 8/3 levels | FAIL |
+| `reference/agentmem_ref/harness/precedent_candidate_harness.py` | 311/40 lines | - | FAIL |
+| `reference/agentmem_ref/runtime/runtime_config.py` | 249/40 lines (`validate_runtime_configuration`) | - | FAIL |
+| `reference/agentmem_ref/runtime/doctor.py` | 117/40 lines (`diagnose`) | 5/3 levels | FAIL |
+| `reference/agentmem_ref/memory/approval_evidence.py` | - | 8/3 levels | FAIL |
+| `reference/agentmem_ref/core/portable_evidence.py` | - | 8/3 levels | FAIL |
 
 Pre-existing at genesis. Any new file under `/qor-plan` must meet the razor.
 
@@ -138,8 +138,8 @@ Sprint 1 install correctness (branch `feat/agent-memory-genesis`, staged, uncomm
 |------|-------------|---------------|
 | `setup.py`, `MANIFEST.in`, `.gitattributes`, `.github/dependabot.yml` | Created | +29, +1, +7, +13 |
 | `pyproject.toml` | Modified | deps (cryptography, rfc8785), `comparators` extra, package-data |
-| `reference/agentmem_ref/receipts.py` | Modified | `_SOURCE_SCHEMAS`, `_packaged_schemas`, `schema_dir`; `_validator` reads through it |
-| `reference/agentmem_ref/cedar_policy_comparator.py` | Modified | `policy_sha256` normalizes CRLF |
+| `reference/agentmem_ref/core/receipts.py` | Modified | `_SOURCE_SCHEMAS`, `_packaged_schemas`, `schema_dir`; `_validator` reads through it |
+| `reference/agentmem_ref/harness/cedar_policy_comparator.py` | Modified | `policy_sha256` normalizes CRLF |
 | `reference/tests/{pin_support,test_pin_support,test_receipts_schema_location}.py` | Created | +16, +23, +55 |
 | `reference/tests/{test_cedar_policy_comparator,test_agent_manifest_correlation,test_trace_action_evidence}.py` | Modified | EOL test; two `skipUnless` pin guards |
 | `.github/workflows/cli-doctor.yml` | Modified | `wheel-install` job (+38) |

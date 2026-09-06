@@ -192,7 +192,7 @@ The profile validator rejects direct authority escalation.
 
 ## Fail-closed profile validator
 
-`reference/agentmem_ref/codegenome_profile.py` freezes the current evidence boundary.
+`reference/agentmem_ref/crg/codegenome_profile.py` freezes the current evidence boundary.
 
 It rejects, among other things:
 

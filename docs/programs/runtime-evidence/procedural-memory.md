@@ -52,12 +52,12 @@ The procedural reference path uses the existing `GovernedMemoryAdapter` and its 
 
 ## Executable surfaces
 
-- `reference/agentmem_ref/capabilities.py`
+- `reference/agentmem_ref/contracts/capabilities.py`
 - `schemas/component-capability-profile.schema.json`
 - `reference/fixtures/component-capabilities/evolveai.example.json`
 - `reference/fixtures/component-capabilities/codegenome.example.json`
 - `reference/fixtures/component-capabilities/procedural-reference.json`
-- `reference/agentmem_ref/procedural_memory.py`
+- `reference/agentmem_ref/memory/procedural_memory.py`
 - `reference/tests/test_component_capabilities.py`
 - `reference/tests/test_procedural_memory.py`
 - `reference/run_procedural_memory.py`

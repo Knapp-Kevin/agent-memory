@@ -3,13 +3,13 @@ name: CodeGenome Reality Graph Evidence
 on:
   pull_request:
     paths:
-      - "reference/agentmem_ref/codegenome_cognitive_mesh.py"
+      - "reference/agentmem_ref/crg/codegenome_cognitive_mesh.py"
       - "reference/native/codegenome_reality_driver.rs"
       - "reference/run_codegenome_cognitive_mesh.py"
       - "reference/tests/test_codegenome_cognitive_mesh.py"
-      - "reference/agentmem_ref/cognitive_mesh.py"
-      - "reference/agentmem_ref/codegenome_profile.py"
-      - "reference/agentmem_ref/code_graph_qualification.py"
+      - "reference/agentmem_ref/memory/cognitive_mesh.py"
+      - "reference/agentmem_ref/crg/codegenome_profile.py"
+      - "reference/agentmem_ref/crg/code_graph_qualification.py"
       - "reference/fixtures/component-qualification/**"
       - "docs/programs/runtime-evidence/codegenome-reality-mesh.md"
       - ".github/workflows/codegenome-reality-mesh-evidence.yml"

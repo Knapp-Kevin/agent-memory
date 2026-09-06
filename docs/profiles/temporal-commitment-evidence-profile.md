@@ -95,7 +95,7 @@ UOR identity != signer identity != trusted time != currentness != PAMA authority
 
 - `docs/research/cryptographic-temporal-commitments.md`
 - ADR-031
-- `reference/agentmem_ref/temporal_commitment.py`
+- `reference/agentmem_ref/memory/temporal_commitment.py`
 - `reference/tests/test_temporal_commitment.py`
 - `.github/workflows/temporal-commitment-evidence.yml`
 - #259

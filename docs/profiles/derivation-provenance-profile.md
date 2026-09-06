@@ -217,7 +217,7 @@ A later transformation gets a new derivation identifier because a new transforma
 
 ## Behavioral PAMA proof
 
-The V0.1 harness is [`../../reference/agentmem_ref/authority_laundering_harness.py`](../../reference/agentmem_ref/authority_laundering_harness.py).
+The V0.1 harness is [`../../reference/agentmem_ref/harness/authority_laundering_harness.py`](../../reference/agentmem_ref/harness/authority_laundering_harness.py).
 
 It performs this sequence:
 

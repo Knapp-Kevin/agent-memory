@@ -166,7 +166,7 @@ This is `H` evidence against the Agent Memory A2A normalizer. It is not live A2A
 The generated report is validated by:
 
 - `schemas/security-evidence-depth-report.schema.json`
-- `reference/agentmem_ref/security_evidence_depth.py`
+- `reference/agentmem_ref/harness/security_evidence_depth.py`
 - `reference/run_security_evidence_depth.py`
 - `reference/tests/test_security_evidence_depth.py`
 - `fixtures/security-evidence-depth-matrix.json`

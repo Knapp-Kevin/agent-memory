@@ -3,9 +3,9 @@ name: DashClaw External Verdict Provider
 on:
   pull_request:
     paths:
-      - "reference/agentmem_ref/dashclaw_external_verdict.py"
-      - "reference/agentmem_ref/dashclaw_authority.py"
-      - "reference/agentmem_ref/dashclaw_governed_commit.py"
+      - "reference/agentmem_ref/memory/dashclaw_external_verdict.py"
+      - "reference/agentmem_ref/memory/dashclaw_authority.py"
+      - "reference/agentmem_ref/memory/dashclaw_governed_commit.py"
       - "reference/run_dashclaw_provider.py"
       - "reference/run_dashclaw_external_verdict.py"
       - "reference/tests/test_dashclaw_external_verdict.py"
@@ -47,9 +47,9 @@ jobs:
       - name: Compile provider surfaces
         run: |
           python -m py_compile \
-            reference/agentmem_ref/dashclaw_external_verdict.py \
-            reference/agentmem_ref/dashclaw_authority.py \
-            reference/agentmem_ref/dashclaw_governed_commit.py \
+            reference/agentmem_ref/memory/dashclaw_external_verdict.py \
+            reference/agentmem_ref/memory/dashclaw_authority.py \
+            reference/agentmem_ref/memory/dashclaw_governed_commit.py \
             reference/run_dashclaw_provider.py \
             reference/run_dashclaw_external_verdict.py \
             examples/cloudflare-dashclaw-provider/prepare.py \

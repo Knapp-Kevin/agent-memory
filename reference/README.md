@@ -44,26 +44,34 @@ The Governance Context Projection adds a complementary boundary: remembered cont
 
 ## Layout
 
+`agentmem_ref` is seven subpackages in dependency order -- a module imports only from its own layer or an earlier one, and `reference/tests/test_package_layout.py` enforces that order as read from `scripts/restructure_package.py`, the script that produced the layout.
+
 ```text
 reference/
   requirements.txt                   pinned main reference-validation dependencies
   agentmem_ref/
-    substrate.py                     port + permissive in-memory temporal graph
-    policy.py                        PAMA evaluation: base table, class floors, modifiers
-    receipts.py                      schema-conformant decisions, receipts, audit events
-    adapter.py                       the governed path
-    write_claims.py                  ADR-024 pre-write shared-mutation coordination
-    decision_overwrite.py            proposed ADR-025 durable-decision authority boundary
-    governance_projection.py         deterministic ADR-029 context projection builder
-    fixture_conformance.py           drives the doctrine corpus through enforcement
-    projections.py                   tier-3 declarations and the freshness relation
-    residue.py                       deletion residue partition and independent sweep
-    projection_governance.py         governed correction, purge, and rebuild
-    portable_evidence.py             P4.5a Ed25519 portable issuer/verifier
-    agent_manifest_correlation.py    P4.5b checkpoint correlation boundary
-    trace_action_evidence.py         P4.5c TRACE/cMCP external action evidence
-    (selectors live in adapter.py: deterministic and seeded stochastic)
-  agentmem_ref/graphiti_driver.py     binding to a real temporal knowledge graph
+    _paths.py                        PACKAGE_ROOT / REFERENCE_ROOT / REPO_ROOT, computed once
+    core/                            PAMA evaluator (policy), receipts + schema validation,
+                                     evidence qualification, verification, parking, resumption,
+                                     readmission, contextual recall, governance projection,
+                                     portable evidence
+    state/                           canonical state (substrate, graphiti_driver) and derived
+                                     state (projections, residue, visibility)
+    contracts/                       capability contract, provider qualification, substitution,
+                                     fallback, failure probes
+    runtime/                         the governed adapter, restart-safe and configured runtimes,
+                                     composition, discovery, doctor, cli, write_claims,
+                                     projection_governance, scope/revocation
+    memory/                          governed memory kinds and their evidence: cognitive, epistemic,
+                                     predictive, procedural, decision_overwrite, structural,
+                                     crossing, interchange, temporal, precedent, maintenance,
+                                     dashclaw, external/approval/enforcement/telemetry evidence
+    crg/                             Agent Memory's Code Reality Graph; CodeGenome is its
+                                     first-party implementation profile (ADR-035, ADR-036)
+    harness/                         characterization harnesses, depth probes, comparators,
+                                     benchmarks -- leaves
+    <module>.py                      compatibility alias: `agentmem_ref.policy is
+                                     agentmem_ref.core.policy` (every old path still works)
   tests/                              model, claim, decision, projection, real-substrate, and interoperability paths
   run_trace_cmcp_comparator.py        isolated released cMCP verifier execution
   run_conformance.py

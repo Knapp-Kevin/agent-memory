@@ -310,7 +310,7 @@ proposal intent
 
 A valid claim that later encounters a PAMA `block` remains blocked. Coordination cannot launder authority.
 
-Successful, rejected, conflicting, stale, expired, and unauthorized claims should remain audit evidence. The reference implementation in `reference/agentmem_ref/write_claims.py` demonstrates one exact-scope lease mechanism; it is evidence for the contract, not a requirement that implementations adopt that mechanism.
+Successful, rejected, conflicting, stale, expired, and unauthorized claims should remain audit evidence. The reference implementation in `reference/agentmem_ref/runtime/write_claims.py` demonstrates one exact-scope lease mechanism; it is evidence for the contract, not a requirement that implementations adopt that mechanism.
 
 ## Deterministic substrate
 

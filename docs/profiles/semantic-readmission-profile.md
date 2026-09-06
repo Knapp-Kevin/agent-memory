@@ -194,8 +194,8 @@ Hashing is minimization, not anonymization.
 The reference profile lives in:
 
 ```text
-reference/agentmem_ref/readmission.py
-reference/agentmem_ref/semantic_readmission_adapter.py
+reference/agentmem_ref/core/readmission.py
+reference/agentmem_ref/runtime/semantic_readmission_adapter.py
 reference/tests/test_semantic_readmission.py
 reference/tests/test_semantic_readmission_adapter.py
 fixtures/rejected-value-semantic-reentry.json

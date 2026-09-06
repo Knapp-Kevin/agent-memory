@@ -70,6 +70,6 @@ The initial Dogwood comparator is pinned to public source commit `c6237c88099b3f
 
 - `docs/research/temporal-policy-semantic-mediation.md`
 - `docs/profiles/policy-projection-compatibility-profile.md`
-- `reference/agentmem_ref/policy_projection_compatibility.py`
+- `reference/agentmem_ref/memory/policy_projection_compatibility.py`
 - `reference/tests/test_policy_projection_compatibility.py`
 - `wiki-src/Temporal-Policy-and-Governed-Memory.md`

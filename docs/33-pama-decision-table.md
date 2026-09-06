@@ -97,7 +97,7 @@ Operations admitted by `pama-decision.schema.json` but deliberately absent from
 this table: `capability_promotion`, `authority_change`, and `other`. They carry no
 base cell by decision, not by omission -- they resolve through the reference
 implementation's conservative `require_review` fallback
-(`reference/agentmem_ref/policy.py` `_base_outcome`), which is the correct floor
+(`reference/agentmem_ref/core/policy.py` `_base_outcome`), which is the correct floor
 for an operation whose risk profile this table has not characterised. Removing the
 fallback would turn an unknown operation into a `KeyError` on the authority path.
 

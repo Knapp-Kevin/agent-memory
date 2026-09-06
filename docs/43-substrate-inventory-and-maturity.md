@@ -27,8 +27,8 @@ Verified by enumerating classes implementing the full `TemporalGraphPort` surfac
 
 | Substrate | Location | Maturity | Notes |
 |---|---|---|---|
-| `InMemoryTemporalGraph` | `reference/agentmem_ref/substrate.py:92` | **reference implementation** — the executable definition, not a qualified component | Deliberately permissive: `write_fact` is documented as "Direct write. No authority check, by design and by observation." Governance lives in the adapter above it. Owns the identifier counter as of ledger entry #12. |
-| `GraphitiSubstrate` | `reference/agentmem_ref/graphiti_driver.py:64` | **`declared`** — no qualification artifact exists | Implements the port over `graphiti-core`. **Not a declared dependency**, and targets deprecated Kuzu. Cannot be checkpointed: `JsonRuntimeStateStore` reaches into `InMemoryTemporalGraph` privates (`_episodes`, `_facts`, `write_log`). Tracked as [#363](https://github.com/MythologIQ-Labs-LLC/agent-memory/issues/363). |
+| `InMemoryTemporalGraph` | `reference/agentmem_ref/state/substrate.py:92` | **reference implementation** — the executable definition, not a qualified component | Deliberately permissive: `write_fact` is documented as "Direct write. No authority check, by design and by observation." Governance lives in the adapter above it. Owns the identifier counter as of ledger entry #12. |
+| `GraphitiSubstrate` | `reference/agentmem_ref/state/graphiti_driver.py:64` | **`declared`** — no qualification artifact exists | Implements the port over `graphiti-core`. **Not a declared dependency**, and targets deprecated Kuzu. Cannot be checkpointed: `JsonRuntimeStateStore` reaches into `InMemoryTemporalGraph` privates (`_episodes`, `_facts`, `write_log`). Tracked as [#363](https://github.com/MythologIQ-Labs-LLC/agent-memory/issues/363). |
 
 **No other substrate exists in this repository.** Any additional substrate is prospective work, not an implementation with a location.
 
@@ -40,11 +40,11 @@ Verified by enumerating classes implementing the full `TemporalGraphPort` surfac
 
 | Implementation | Location | What it is |
 |---|---|---|
-| Epistemic belief memory | `reference/agentmem_ref/epistemic_memory.py` | Bounded `epistemic_belief_memory` runtime surface, Capability Contract v3 |
-| Procedural / skill memory | `reference/agentmem_ref/procedural_memory.py` | ADR-034 vertical slice; a skill is bounded JSON metadata plus human-readable procedure, not a specialized skill store |
-| Predictive / counterfactual memory | `reference/agentmem_ref/predictive_memory.py` | Bounded `predictive_counterfactual_memory` surface, Capability Contract v3 |
-| Conditional memory influence | `reference/agentmem_ref/conditional_memory_influence.py` | Vendor-neutral admission evidence for model-internal conditional memory |
-| Code-graph qualification | `reference/agentmem_ref/code_graph_qualification.py` | Provider-neutral CodeGenome/Graphify normalizer (#300) |
+| Epistemic belief memory | `reference/agentmem_ref/memory/epistemic_memory.py` | Bounded `epistemic_belief_memory` runtime surface, Capability Contract v3 |
+| Procedural / skill memory | `reference/agentmem_ref/memory/procedural_memory.py` | ADR-034 vertical slice; a skill is bounded JSON metadata plus human-readable procedure, not a specialized skill store |
+| Predictive / counterfactual memory | `reference/agentmem_ref/memory/predictive_memory.py` | Bounded `predictive_counterfactual_memory` surface, Capability Contract v3 |
+| Conditional memory influence | `reference/agentmem_ref/memory/conditional_memory_influence.py` | Vendor-neutral admission evidence for model-internal conditional memory |
+| Code-graph qualification | `reference/agentmem_ref/crg/code_graph_qualification.py` | Provider-neutral CodeGenome/Graphify normalizer (#300) |
 
 These are **memory implementations**, not substrates: they sit above `TemporalGraphPort` and use a substrate for persistence. A substrate is where facts live; a memory implementation is a governed surface with its own contract, lifecycle, and admission semantics.
 
@@ -95,7 +95,7 @@ So the ownership split is settled: **Agent Memory owns the contract and the nami
 
 **CodeGenome is adoptable wholesale** ([ADR-036](adr/ADR-036-same-owner-components-are-first-party-modules.md)): it shares Agent Memory's owner, so it is a first-party module candidate rather than an attributed provider. Adopted work is named **Agent Memory's Code Reality Graph (CRG) module** — no provider label, no originating-repository name, no attribution obligation. It will therefore never earn a qualification artifact here, because qualifying your own module against your own contract measures nothing; its maturity is ordinary module maturity.
 
-**What exists here now**: `reference/agentmem_ref/code_graph_qualification.py` is a provider-neutral CodeGenome/Graphify qualification normalizer (issue #300). It preserves provider-native outputs as separate artifacts and normalizes only the shared factual surface, and its docstring states it "cannot grant Agent Memory authority". Profiles live at `docs/programs/memory-modules/codegenome-multicapability-profile.md` and `codegenome-scope-residue-closeout.md`.
+**What exists here now**: `reference/agentmem_ref/crg/code_graph_qualification.py` is a provider-neutral CodeGenome/Graphify qualification normalizer (issue #300). It preserves provider-native outputs as separate artifacts and normalizes only the shared factual surface, and its docstring states it "cannot grant Agent Memory authority". Profiles live at `docs/programs/memory-modules/codegenome-multicapability-profile.md` and `codegenome-scope-residue-closeout.md`.
 
 **What does not exist here**: a named, Agent-Memory-owned Code Reality Graph *module*. See §6.
 

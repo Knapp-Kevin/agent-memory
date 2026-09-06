@@ -10,7 +10,7 @@ The governing risk is **shadow memory**: raw memory content, prompts, summaries,
 
 ## V1 minimization profile
 
-`reference/agentmem_ref/telemetry.py` projects schema-valid `memory-audit-event` records into `telemetry-projection.schema.json`.
+`reference/agentmem_ref/memory/telemetry.py` projects schema-valid `memory-audit-event` records into `telemetry-projection.schema.json`.
 
 The projection is strict allowlist, not denylist.
 
@@ -50,7 +50,7 @@ Explicitly absent from the projection:
 
 ## V2 retention and deletion
 
-`reference/agentmem_ref/telemetry_retention.py` treats minimized telemetry as governed derived state rather than an indefinite logging exemption.
+`reference/agentmem_ref/memory/telemetry_retention.py` treats minimized telemetry as governed derived state rather than an indefinite logging exemption.
 
 The local reference store persists only:
 

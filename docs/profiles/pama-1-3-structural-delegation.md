@@ -160,8 +160,8 @@ Executable surfaces:
 
 - `schemas/structural-mutation-impact.schema.json`
 - `schemas/pama-decision.schema.json`
-- `reference/agentmem_ref/structural_mutation.py`
-- `reference/agentmem_ref/structural_pama.py`
+- `reference/agentmem_ref/memory/structural_mutation.py`
+- `reference/agentmem_ref/memory/structural_pama.py`
 - `reference/tests/test_structural_mutation_governance.py`
 - `reference/run_structural_mutation_governance.py`
 - `.github/workflows/structural-mutation-governance.yml`

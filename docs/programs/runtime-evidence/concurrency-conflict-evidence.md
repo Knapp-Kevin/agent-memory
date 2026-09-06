@@ -23,7 +23,7 @@ proposal B observes v0
 
 ## Executed reference path
 
-`reference/agentmem_ref/concurrency_evidence.py` constructs two proposals before either consequence is committed. Both carry `state_snapshot = v0`.
+`reference/agentmem_ref/harness/concurrency_evidence.py` constructs two proposals before either consequence is committed. Both carry `state_snapshot = v0`.
 
 The reference adapter commits proposal A. Its canonical state version advances to `v1` and exactly one substrate fact is written.
 

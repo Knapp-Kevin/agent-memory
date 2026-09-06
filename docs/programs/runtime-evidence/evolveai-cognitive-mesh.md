@@ -26,7 +26,7 @@ This slice does not claim the real embedding path is exercised. The provider's r
 
 ## Adapter boundary
 
-`reference/agentmem_ref/evolveai_cognitive_mesh.py` introduces a versioned normalization adapter:
+`reference/agentmem_ref/memory/evolveai_cognitive_mesh.py` introduces a versioned normalization adapter:
 
 ```text
 EvolveAI native observation

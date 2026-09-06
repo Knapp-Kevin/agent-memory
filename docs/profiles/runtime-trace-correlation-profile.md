@@ -49,7 +49,7 @@ Schema:
 
 Reference implementation:
 
-`reference/agentmem_ref/runtime_trace_correlation.py`
+`reference/agentmem_ref/memory/runtime_trace_correlation.py`
 
 The bounded record can carry:
 

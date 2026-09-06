@@ -6,6 +6,8 @@ conformance level on its own. See `reference/README.md` for what it does and
 does not constitute as evidence.
 """
 
-from . import adapter, governance_projection, policy, receipts, substrate
+from .runtime import adapter
+from .core import governance_projection, policy, receipts
+from .state import substrate
 
 __all__ = ["adapter", "governance_projection", "policy", "receipts", "substrate"]

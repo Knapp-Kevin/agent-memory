@@ -172,5 +172,5 @@ It does not establish:
 - #223 Agent Manifest implementation
 - ADR-021 portable governance evidence
 - `schemas/external-evidence-normalized.schema.json`
-- `reference/agentmem_ref/external_evidence.py`
-- `reference/agentmem_ref/agent_manifest_external_evidence.py`
+- `reference/agentmem_ref/memory/external_evidence.py`
+- `reference/agentmem_ref/memory/agent_manifest_external_evidence.py`

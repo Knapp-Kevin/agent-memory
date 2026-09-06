@@ -10,7 +10,7 @@ It does **not** introduce a new composition policy engine.
 
 The implementation already exists in:
 
-- [`../../reference/agentmem_ref/composition.py`](../../reference/agentmem_ref/composition.py)
+- [`../../reference/agentmem_ref/runtime/composition.py`](../../reference/agentmem_ref/runtime/composition.py)
 - the completed isolation/composition work from #68 and #132.
 
 The evidence boundary is:
@@ -108,7 +108,7 @@ different domain refs
 
 ## Fixture-linked behavioral sequence
 
-The harness in [`../../reference/agentmem_ref/unsafe_composition_harness.py`](../../reference/agentmem_ref/unsafe_composition_harness.py) executes:
+The harness in [`../../reference/agentmem_ref/harness/unsafe_composition_harness.py`](../../reference/agentmem_ref/harness/unsafe_composition_harness.py) executes:
 
 ```text
 memory A / domain red

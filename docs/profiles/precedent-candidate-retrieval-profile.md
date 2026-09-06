@@ -14,7 +14,7 @@ semantic / probabilistic estimator
 
 The estimator may improve which historical precedent is considered. It may not decide whether that precedent is materially applicable, current, within scope, or authorized.
 
-The controlling deterministic implementation remains `reference/agentmem_ref/precedent_applicability.py`. Candidate retrieval calls that evaluator after discovery rather than replacing or modifying it.
+The controlling deterministic implementation remains `reference/agentmem_ref/memory/precedent_applicability.py`. Candidate retrieval calls that evaluator after discovery rather than replacing or modifying it.
 
 ## Invariants
 
@@ -55,7 +55,7 @@ A production estimator may use a different implementation only if its identity, 
 
 ## Adversarial harness
 
-`reference/agentmem_ref/precedent_candidate_harness.py` exercises twelve bounded cases:
+`reference/agentmem_ref/harness/precedent_candidate_harness.py` exercises twelve bounded cases:
 
 1. safe paraphrase recovery;
 2. force-main near match;

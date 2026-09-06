@@ -6,7 +6,7 @@ This slice establishes a machine-readable runtime composition contract for attac
 
 ## Earned claim
 
-`runtime-configuration.schema.json@1.0.0` plus `reference/agentmem_ref/runtime_config.py` can deterministically validate and resolve a bounded Agent Memory runtime configuration that includes:
+`runtime-configuration.schema.json@1.0.0` plus `reference/agentmem_ref/runtime/runtime_config.py` can deterministically validate and resolve a bounded Agent Memory runtime configuration that includes:
 
 - an operator-managed agent runtime identity;
 - an explicit canonical memory owner;

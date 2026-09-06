@@ -28,8 +28,8 @@ Existing PAMA dimensions remain controlling. If the same request also widens sco
 Executable evidence:
 
 - `schemas/pama-decision.schema.json`
-- `reference/agentmem_ref/policy.py`
-- `reference/agentmem_ref/domain_schema_mutation.py`
+- `reference/agentmem_ref/core/policy.py`
+- `reference/agentmem_ref/memory/domain_schema_mutation.py`
 - `reference/tests/test_domain_schema_mutation_policy.py`
 - `reference/tests/test_domain_schema_mutation_compatibility.py`
 - `.github/workflows/domain-schema-mutation-contract.yml`
