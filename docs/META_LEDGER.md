@@ -2159,3 +2159,151 @@ aliases; V3 residents unstated), then PASS with C1, satisfied as above. This
 re-seal was written by a script that first verified the staged tree is
 complete, the layout matches the table and the 1121-test suite is green, and
 refused to write otherwise. Review Boundary: staged, not committed.
+---
+
+### Entry #37: RESEARCH BRIEF
+
+**Timestamp**: 2026-09-06T18:40:00-04:00
+**Phase**: RESEARCH
+**Author**: Analyst
+**Risk Grade**: L2 (packaging and two runtime modules' schema lookup; resolved schema unchanged)
+**Session**: 2026-09-06T1830-e5f1a2
+
+**Content Hash**:
+```
+SHA256(docs/research-brief-sprint3d-packaging-remainder-2026-09-06.md)
+= 6d25af944f96a39514e64c1a6ea4fe064a8997b662b26b4a4fe042341abb20c9
+```
+
+**Previous Hash**: `db24c5ab3afd88eaee0599ecc8641a7d1512cee6eeca3d1024bfb93eeeb5f232`
+**Chain Hash**:
+```
+SHA256(content_hash + previous_hash)
+= 2572beb935e51706691014e0ede4c2aa5bdc7cfa7a46413fd69d4498a2d94867
+```
+
+**Decision**: Loop 19 research complete: the open issue set after Sprints 3a-3c was re-measured on `main` at `7caaa52`. #365's "14 emitter loaders" are already gone -- Sprint 3a's `_paths.py` removed every `Path(__file__)` walker in the package as a side effect (0 remain) -- and the issue text is stale. What remains of #365 is two `importlib.metadata` fallbacks (`runtime_config.py:226-247`, `discovery.py:81-93`) that scan for `data-files` entries the wheel no longer needs, the `[tool.setuptools.data-files]` section (`pyproject.toml:37-41`), and a coverage gap: no test or wheel smoke exercises either fallback. `receipts.schema_dir()` already resolves both schemas from source or the packaged `_schemas/`, proven from outside the checkout by Sprint 3a's audit C1; `runtime` may import `core`. #362 is a boundary freeze with an undesigned approval stage and a diverging JS surface, a `/qor-ideate` candidate rather than a plan; #364 legs 2-3 and #363 sequence after it; #392 is blocked DashClaw-side. Recommendation: Loop 19 closes #365 (L2); Loop 20 opens Sprint 4 through ideation. Next: /qor-plan.
+---
+
+### Entry #38: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-06T19:20:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L2
+**Verdict**: VETO
+**Session**: 2026-09-06T1830-e5f1a2
+**Target**: docs/plan-sprint3d-packaging-remainder.md (iteration 1; plan content hash 1a7a78dbba6b6dbcc05ed13ba7ad940106c0f1b864d7a5a499fe7871c553ac4b)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_3d_attempt1.md) = af7025e03f2b63b2095200fa6b30d4dfff509d7cdee53d4be99931efd71eae6a
+
+**Previous Hash**: `2572beb935e51706691014e0ede4c2aa5bdc7cfa7a46413fd69d4498a2d94867`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = de31bb6dacfca76293a61c2a79e18775327fca6d710feb7ba37ea5af16a0ece6
+
+**Decision**: VETO, attempt 1 of 5, Option B mandatory and performed. One ground, V1: the plan claimed its packaged-copy test would be red on `main` because today's loaders consult `receipts._SOURCE_SCHEMAS`; they do not -- `runtime_config.py:229` and `discovery.py:76` build the source path from `REPO_ROOT`, which exists in the checkout -- so that test as worded is green on `main` and the one that is red is the neither-source-nor-package test. D4 restated the false claim as a hard condition. Every citation, seam, layer-order and packaging claim held. Advisories A1-A4: assertion wording in LD4, a dead `$id`-or-`title` hedge, a smoke coupled to private loader names, and the hotfix label against L2. Required next action: Governor amends plan text on V1 and A1-A4, re-runs /qor-audit (attempt 2).
+---
+
+### Entry #39: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-06T19:55:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L2
+**Verdict**: VETO
+**Session**: 2026-09-06T1830-e5f1a2
+**Target**: docs/plan-sprint3d-packaging-remainder.md (iteration 2; plan content hash 09d793beaa4fafdbb84ed5468ea7035f94a5f583678357f9a45c9b4e61c3be91)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_3d_attempt2.md) = a26a924a9ad1d4643df666c94b1449cd31fcef4d707a296c8c781a74e6e7d122
+
+**Previous Hash**: `de31bb6dacfca76293a61c2a79e18775327fca6d710feb7ba37ea5af16a0ece6`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = b97a2994bc60ac5d4f7ed6c573605824857ff649a694f85994079b6169171f20
+
+**Decision**: VETO, attempt 2 of 5, Option B repeated. Attempt-1 ground V1 and advisories A1-A4 all closed; the red/green now stated was observed by running the tests against `origin/main`. One new ground, V2, of a different signature: iteration 2 decorated the `change_class` header with a rationale in parentheses, and `governance_helpers.parse_change_class` -- which `/qor-substantiate` calls before the version step -- rejects anything after the class name; reproduced by the Judge before this entry was written (`ValueError`). The plan gate had recorded `hotfix` because its writer is lenient, so a passing gate hid a failing seal. Advisories A5 (cite `plan-iter3` in the seal) and A6 (Windows form of the local smoke recipe). Required next action: Governor moves the rationale to its own line, verifies with the parser, re-runs /qor-audit (attempt 3).
+---
+
+### Entry #40: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-06T20:20:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L2
+**Verdict**: PASS
+**Session**: 2026-09-06T1830-e5f1a2
+**Target**: docs/plan-sprint3d-packaging-remainder.md (iteration 3; plan content hash 525272ecf45f8b601da078e8d14da6826602ed9d05303280da52ccd2b462f40e)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT.md) = bff73765c403eb3d87b3dd969cf4f98bfdcfc4c2be21f3bfd2a158db0cc0d2f7
+
+**Previous Hash**: `b97a2994bc60ac5d4f7ed6c573605824857ff649a694f85994079b6169171f20`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 16122d59d3d92642afba47a7fb1cd1d95060859e0bd2c857a280b9540f482df2
+
+**Decision**: PASS, attempt 3 of 5, Option B repeated on every iteration. V1 (iteration 1 inferred red/green from the intended fix; iteration 2 states what running the tests against `origin/main` observed) and V2 (iteration 2 decorated the `change_class` header; iteration 3 moves the rationale to its own line and the canonical parser returns `hotfix`) closed; A1-A6 closed. No new ground. Advisories A7 (PowerShell does not expand `dist/*.whl`; the local run uses Git Bash and names the wheel) and A8 (ledger and gate clocks differ; pre-existing). Two VETOs of different signature; no escalation. Required next action: /qor-implement.
+---
+
+### Entry #41: SESSION SEAL - Phase 20 (Sprint 3d: one schema resolver, data-files retired; #365)
+
+**Entry ID**: `8687b0bf8f96`
+**Content Hash**: `525272ecf45f8b601da078e8d14da6826602ed9d05303280da52ccd2b462f40e`
+**Previous Hash**: `16122d59d3d92642afba47a7fb1cd1d95060859e0bd2c857a280b9540f482df2`
+**Chain Hash**: `fcfa72d8112bda9086f7d1f00ae10b7a33603153e5b0b4038ba4ce763339ec0c`
+**Timestamp**: 2026-09-06T21:10:00-04:00
+**Phase**: SUBSTANTIATE
+**Author**: Judge
+**Risk Grade**: L2
+**Verdict**: PASS
+**Session**: 2026-09-06T1830-e5f1a2
+**Plan**: docs/plan-sprint3d-packaging-remainder.md (iteration 3; change_class hotfix; gate `plan-iter4.json`)
+**SSDF Practices**: PS.2.1, RV.2.1
+
+**Merkle Seal** (SHA256 over `git write-tree` of the staged index 4b9979a73e25eeb0a9e2f262ec467543ea5f3454):
+`954ab357d45a7bb6a53c0b082c3e26102236c7238a3b288145f86408a7909a17`
+
+**Anchor**: `refs/seals/entry-41`.
+
+**What changed.** `runtime_config._configuration_schema_path()` and
+`discovery._probe_schema_path()` resolve through `receipts.schema_dir()` --
+source tree when present, the packaged `_schemas/` copy when installed --
+and raise their own error types, with the same "install" message shape, when
+neither exists. Removed: the `importlib.metadata` scans for `data-files`
+entries, `_DISTRIBUTION_NAME`, both `_..._DATA_SUFFIX` constants, both
+`_repo_root()` helpers and the `REPO_ROOT` imports they alone consumed, and
+`[tool.setuptools.data-files]` in `pyproject.toml`. Each resolver is nine
+lines. `cli-doctor.yml`'s `wheel-install` job gains a step that, from
+outside the checkout, calls both loaders on the installed package and exits 0
+only if each returns a dict whose `$id` ends with the expected file name.
+
+**What Sprint 3a had already closed.** #365's "14 emitter loaders still
+resolve by `Path(__file__)` walking" was stale at research: Entry #36's
+`_paths.py` removed every such site (0 remain). The issue is updated after
+merge with both facts.
+
+**Verification.** New `test_packaged_schema_resolution.py` (FX023): three
+states driven through the two `receipts` seams -- source present; source
+absent with a packaged copy; neither. Observed on the pre-fix tree: 2 of 3
+red (the packaged-copy path assertion, because the old resolvers built their
+path from `REPO_ROOT`; the neither case, because the old loaders returned
+instead of raising); all green after. Full suite 1121 to 1124, 0 failures, 7
+skipped under `cryptography==50.0.1`, both discover styles; layout matches
+the table. Wheel smoke from outside the checkout, by the job's own recipe:
+with `data-files` removed and the resolvers reverted, exit 1
+(`RuntimeConfigurationError ... install`); fixed, exit 0 with both `$id`s
+printed; the built wheel carries no `agent_memory_reference/schemas` entries
+and 58 packaged schemas. This seal's writer re-ran the layout check, the
+suite and the installed-wheel smoke, inspected the wheel, and confirmed the
+removed names are absent, before writing.
+
+**Decision**: audit VETOed twice, different signatures, Option B on every
+attempt. Attempt 1 (Entry #38): the plan inferred red/green from the intended
+fix; iteration 2 states what running the tests against `origin/main`
+observed. Attempt 2 (Entry #39): the change-class rationale was written into
+the header line, which the canonical parser rejects while the lenient gate
+writer accepts; iteration 3 moved it below the header and verified with
+`parse_change_class`. Attempt 3 (Entry #40) PASSED with no grounds;
+advisories A7 (PowerShell wheel glob; the local run used Git Bash) and A8
+(ledger and gate clocks differ) recorded. Shadow Genome Failure #9 FIXED.
+Review Boundary: staged, not committed; no push, PR, tag or merge.

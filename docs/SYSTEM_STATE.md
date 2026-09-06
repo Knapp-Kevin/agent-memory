@@ -34,7 +34,7 @@ agent-memory/
 |   |-- run_*.py               68 evidence emitters
 |   |-- native/                1 Rust driver
 |   |-- policies/, fixtures/ (15 JSON), testdata/
-|   `-- tests/                 140 test files, 1121 tests
+|   `-- tests/                 141 test files, 1124 tests
 |-- integrations/
 |   |-- agent-memory-runtime/  JS, 1 source + 1 test, private
 |   `-- hermes-agent-memory/   Python, 10 modules, 6 tests

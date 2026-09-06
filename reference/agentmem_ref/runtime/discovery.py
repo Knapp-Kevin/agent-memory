@@ -8,19 +8,17 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from importlib import metadata, util
+from importlib import util
 import json
 from pathlib import Path
 import shutil
 from typing import Mapping
 
 import jsonschema
-from .._paths import REPO_ROOT
+from ..core.receipts import schema_dir
 
 
 PROBE_SCHEMA_VERSION = "1.0.0"
-_DISTRIBUTION_NAME = "agent-memory-reference"
-_PROBE_SCHEMA_DATA_SUFFIX = "agent_memory_reference/schemas/provider-probes.schema.json"
 _SECRET_SCHEMES = ("env://", "secret://", "vault://", "keyring://")
 _SUPPORTED_PROBE_KINDS = frozenset({"executable", "python_import", "filesystem_path"})
 
@@ -68,30 +66,15 @@ class ProbeResult:
         }
 
 
-def _repo_root() -> Path:
-    return REPO_ROOT
-
-
 def _probe_schema_path() -> Path:
-    source_path = _repo_root() / "schemas" / "provider-probes.schema.json"
-    if source_path.is_file():
-        return source_path
-
+    """The canonical probe schema: source tree when present, packaged copy when installed."""
     try:
-        distribution_files = metadata.files(_DISTRIBUTION_NAME) or ()
-    except metadata.PackageNotFoundError:
-        distribution_files = ()
-
-    for entry in distribution_files:
-        normalized = str(entry).replace("\\", "/")
-        if normalized.endswith(_PROBE_SCHEMA_DATA_SUFFIX):
-            installed_path = Path(entry.locate())
-            if installed_path.is_file():
-                return installed_path
-
-    raise DiscoveryInputError(
-        "provider probe schema is unavailable; install the distribution with its packaged schema data"
-    )
+        path = schema_dir() / "provider-probes.schema.json"
+    except FileNotFoundError:
+        path = None
+    if path is None or not path.is_file():
+        raise DiscoveryInputError("provider probe schema is unavailable; install the distribution with its packaged schema data")
+    return path
 
 
 def _probe_schema() -> dict:

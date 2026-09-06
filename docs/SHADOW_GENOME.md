@@ -305,6 +305,39 @@ The plan specified the laundering-path test from the ladder's prose ("discharges
 
 ---
 
+### Failure #9: Sprint 3d plan iteration 1 VETOed on an inverted red/green claim
+
+**Date**: 2026-09-06
+**Iteration**: 1 (audit attempt 1 of 5)
+**Verdict ID**: AUDIT_REPORT_3d_attempt1 2026-09-06T19:20 VETO (V1)
+**Category**: SPEC_DRIFT
+
+#### What Was Attempted
+
+The plan asserted which of its new tests would be red on `main` from the design of the fix (the resolvers will consult `receipts` seams, so patching those seams must change today's behaviour) rather than from today's code, which builds its source path from `REPO_ROOT` and never reads those seams.
+
+#### Why It Failed
+
+- The claim was reasoned forward from the intended implementation, not backward from the current one. Sprint 3c's Failure #8 was the same shape (an assertion locked without executing the path) one loop earlier.
+
+#### Pattern to Avoid
+
+**Anti-Pattern**: declaring red/green from the shape of the fix; treating "the test exercises the seam" as "the seam is what today's code reads".
+
+**Correct Pattern**: run every new test against `origin/main` before locking which are red, and write the observed result into the plan.
+
+#### Resolution
+
+| Status | Action Taken |
+|--------|--------------|
+| FIXED | Iteration 2 closed V1 and A1-A4 (red/green observed, not inferred). Attempt 2 (Entry #39) VETOed on a new ground: the change-class rationale written into the header line, which the canonical parser rejects while the lenient gate writer accepts -- a header is data, not prose. Iteration 3 moved it below the header, verified with `parse_change_class`; attempt 3 (Entry #40) PASSED with no grounds. |
+
+#### Related Entries
+- Ledger Entry: #38 (GATE TRIBUNAL, VETO)
+- Audit Report: `.agent/staging/AUDIT_REPORT_3d_attempt1.md`
+
+---
+
 ## Pattern Library (Extracted Lessons)
 
 ### Section 4 Razor Violations
@@ -340,11 +373,11 @@ The plan specified the laundering-path test from the ladder's prose ("discharges
 | GHOST_PATH | 0 | - |
 | HALLUCINATION | 2 | 2026-09-01 |
 | ORPHAN | 0 | - |
-| SPEC_DRIFT | 7 | 2026-09-06 |
+| SPEC_DRIFT | 8 | 2026-09-06 |
 | CHAIN_BREAK | 0 | - |
 
-**Total Failures Recorded**: 8
-**Failures Resolved**: 6 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28; Failure #8 grounds closed by iteration 2; Failure #7 fixed at Entry #32)
+**Total Failures Recorded**: 9
+**Failures Resolved**: 7 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28; Failure #8 grounds closed by iteration 2; Failure #7 fixed at Entry #32; Failure #9 grounds closed by iterations 2-3)
 **Patterns Extracted**: 5
 
 ---
