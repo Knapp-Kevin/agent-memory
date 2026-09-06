@@ -1,0 +1,67 @@
+{
+  "fixture_id": "stochastic-retrieval-policy-envelope",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A stochastic retriever may vary ordering among permitted memories but may never select a prohibited candidate.",
+  "expected_behavior": {
+    "ordering_may_vary": true,
+    "prohibited_candidate_admitted": false,
+    "action_set_invariant": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "select_recall_candidate",
+    "permitted_actions": [
+      "admit_memory_a",
+      "admit_memory_b"
+    ],
+    "prohibited_actions": [
+      "admit_memory_secret"
+    ],
+    "selected_action": "admit_memory_a",
+    "selection_mode": "stochastic",
+    "expected_invariants": [
+      "selected_action_in_permitted_set",
+      "randomness_does_not_create_permission",
+      "blocked_candidate_never_admitted"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:stochastic-retrieval",
+    "type": "observation",
+    "state": "operationally_reused",
+    "provenance": {
+      "origin": "synthetic stochastic recall fixture",
+      "observer": "governed-recall-planner",
+      "method": "stochastic candidate ranking",
+      "timestamp": "2026-08-10T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:trial-plan",
+        "kind": "conformance_plan",
+        "ref": "fixture://multiple-seeds",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.5,
+      "calibrated": true,
+      "durability_dimensions": [
+        "not_material_to_recall_permission"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "medium",
+      "permitted_actions": [
+        "admit_memory_a",
+        "admit_memory_b"
+      ],
+      "prohibited_actions": [
+        "admit_memory_secret"
+      ],
+      "selection_mode": "stochastic"
+    },
+    "created_at": "2026-08-10T00:00:00Z"
+  }
+}

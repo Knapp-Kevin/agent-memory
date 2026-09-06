@@ -1,0 +1,46 @@
+name: Sleeper Poisoning Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  sleeper-poisoning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute contextual recall and sleeper tests
+        env:
+          PYTHONPATH: reference
+        run: >-
+          python -m unittest
+          tests.test_contextual_recall
+          tests.test_sleeper_poisoning_depth
+
+      - name: Emit exact-head sleeper evidence depth
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_sleeper_poisoning_depth.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output sleeper-poisoning-depth.json
+
+      - name: Upload sleeper poisoning evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: sleeper-poisoning-evidence-depth
+          path: sleeper-poisoning-depth.json
+          if-no-files-found: error

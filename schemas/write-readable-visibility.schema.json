@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-memory.dev/schemas/write-readable-visibility.schema.json",
+  "title": "Agent Memory Write-to-Readable Visibility Evidence",
+  "type": "object",
+  "required": ["schema_version", "operation", "timing", "phases", "obligations", "disposition", "metrics"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "operation": {
+      "type": "object",
+      "required": [
+        "operation_id", "memory_id", "memory_version", "operation_type",
+        "runtime_version", "profile_version", "agent_memory_commit",
+        "required_projection_ids", "optional_projection_ids", "component_versions",
+        "capability_versions", "receipt_ref", "correlation_ref", "visibility_target",
+        "environment_ref"
+      ],
+      "properties": {
+        "operation_id": { "type": "string", "minLength": 1 },
+        "memory_id": { "type": "string", "minLength": 1 },
+        "memory_version": { "type": "integer", "minimum": 0 },
+        "operation_type": { "type": "string", "minLength": 1 },
+        "runtime_version": { "type": "string", "minLength": 1 },
+        "profile_version": { "type": "string", "minLength": 1 },
+        "agent_memory_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "required_projection_ids": { "$ref": "#/$defs/stringArray" },
+        "optional_projection_ids": { "$ref": "#/$defs/stringArray" },
+        "component_versions": { "$ref": "#/$defs/stringArray" },
+        "capability_versions": { "$ref": "#/$defs/stringArray" },
+        "receipt_ref": { "type": "string" },
+        "correlation_ref": { "type": "string" },
+        "visibility_target": { "enum": ["current_value", "absence", "none"] },
+        "environment_ref": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "timing": {
+      "type": "object",
+      "required": ["clock", "segment", "cross_restart_duration_policy", "latency_is_observational_only", "latency_is_not_authority"],
+      "properties": {
+        "clock": { "const": "process_monotonic_ns" },
+        "segment": { "type": "integer", "minimum": 0 },
+        "cross_restart_duration_policy": { "const": "unavailable_between_monotonic_segments" },
+        "latency_is_observational_only": { "const": true },
+        "latency_is_not_authority": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["phase", "status", "segment", "offset_ns", "detail"],
+        "properties": {
+          "phase": {
+            "enum": [
+              "request_received", "policy_decision_complete", "canonical_commit_complete",
+              "required_projection_refresh_started", "required_projection_refresh_complete",
+              "governed_recall_current_visible", "context_current_visible",
+              "settlement_reached", "quiescence_reached"
+            ]
+          },
+          "status": { "enum": ["observed", "not_applicable"] },
+          "segment": { "type": "integer", "minimum": 0 },
+          "offset_ns": { "type": ["integer", "null"], "minimum": 0 },
+          "detail": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["obligation_id", "kind", "required", "status", "detail"],
+        "properties": {
+          "obligation_id": { "type": "string", "minLength": 1 },
+          "kind": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "status": { "enum": ["pending", "satisfied", "failed", "quarantined", "not_applicable"] },
+          "detail": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "disposition": {
+      "type": "object",
+      "required": [
+        "settled", "quiescent", "posture", "pending_required_obligations",
+        "failed_required_obligations", "unsatisfied_required_obligations", "optional_residual_work"
+      ],
+      "properties": {
+        "settled": { "type": "boolean" },
+        "quiescent": { "type": "boolean" },
+        "posture": { "enum": ["pending", "degraded", "quiescent"] },
+        "pending_required_obligations": { "$ref": "#/$defs/stringArray" },
+        "failed_required_obligations": { "$ref": "#/$defs/stringArray" },
+        "unsatisfied_required_obligations": { "$ref": "#/$defs/stringArray" },
+        "optional_residual_work": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "request_to_canonical_durable", "canonical_to_required_projections_current",
+        "canonical_to_governed_recall_current_visible", "canonical_to_context_current_visible",
+        "request_to_quiescence"
+      ],
+      "properties": {
+        "request_to_canonical_durable": { "$ref": "#/$defs/duration" },
+        "canonical_to_required_projections_current": { "$ref": "#/$defs/duration" },
+        "canonical_to_governed_recall_current_visible": { "$ref": "#/$defs/duration" },
+        "canonical_to_context_current_visible": { "$ref": "#/$defs/duration" },
+        "request_to_quiescence": { "$ref": "#/$defs/duration" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "duration": {
+      "type": "object",
+      "required": ["value_ns", "reason"],
+      "properties": {
+        "value_ns": { "type": ["integer", "null"], "minimum": 0 },
+        "reason": { "enum": ["observed", "phase_missing", "not_applicable", "cross_restart_monotonic_segments", "required_obligation_failed"] }
+      },
+      "additionalProperties": false
+    }
+  }
+}

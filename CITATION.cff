@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use Agent Memory in research, architecture work, or an implementation, please cite the repository and preserve the relevant doctrine/provenance references."
+title: "Agent Memory: A Reference Architecture for Governed Agentic Memory"
+type: software
+authors:
+  - family-names: Knapp
+    given-names: Kevin R.
+repository-code: "https://github.com/MythologIQ-Labs-LLC/agent-memory"
+url: "https://github.com/MythologIQ-Labs-LLC/agent-memory"
+license: Apache-2.0
+abstract: >-
+  Agent Memory is a reference architecture for governed memory in autonomous
+  and agentic systems, spanning memory theory, lifecycle, provenance,
+  uncertainty, forgetting, recall governance, PAMA mutation authority,
+  schemas, conformance fixtures, and implementation evidence.
+keywords:
+  - agentic memory
+  - AI agents
+  - memory governance
+  - PAMA
+  - provenance
+  - conformance
+  - long-term memory
+  - forgetting

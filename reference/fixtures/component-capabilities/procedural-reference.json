@@ -1,0 +1,23 @@
+{
+  "component_id": "agent-memory-reference-procedural",
+  "component_version": "0.1.0",
+  "profile_version": "component-capability-v1",
+  "enabled": true,
+  "runtime_ref": "reference/agentmem_ref/procedural_memory.py",
+  "failure_posture": "fail_closed",
+  "provenance_refs": ["issue:#295", "adr:ADR-034"],
+  "capabilities": [
+    {
+      "capability_id": "procedural_skill_memory",
+      "capability_version": "1.0",
+      "maturity": "runtime_wired",
+      "state_posture": "canonical",
+      "scope_posture": "enforces_agent_memory_scope",
+      "failure_posture": "fail_closed",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": ["reference:test_procedural_memory"],
+      "limitations": ["reference_runtime_only", "process_restart_durability_not_claimed"]
+    }
+  ]
+}

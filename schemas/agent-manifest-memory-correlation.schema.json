@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mythologiq-labs-llc.github.io/agent-memory/schemas/agent-manifest-memory-correlation.schema.json",
+  "title": "Agent Memory / Agent Manifest Memory Correlation",
+  "description": "Content-free correlation between portable Agent Memory governance evidence and an externally verified Agent Manifest v0.2 memory checkpoint delta.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "correlation_type",
+    "version",
+    "correlation_integrity",
+    "binding_failures",
+    "agent_memory",
+    "agent_manifest"
+  ],
+  "properties": {
+    "correlation_type": {"const": "agent-memory-agent-manifest-correlation"},
+    "version": {"const": "1.0.0"},
+    "correlation_integrity": {"enum": ["valid", "invalid"]},
+    "binding_failures": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "agent_memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "portable_evidence_ref",
+        "canonical_receipt_ref",
+        "action_ref",
+        "memory_action",
+        "governance_disposition",
+        "lifecycle_satisfaction"
+      ],
+      "properties": {
+        "portable_evidence_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "canonical_receipt_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "action_ref": {"type": "string", "minLength": 1},
+        "memory_action": {"type": "string", "minLength": 1},
+        "governance_disposition": {
+          "enum": ["permitted", "denied", "deferred", "review_required", "committed", "unverifiable"]
+        },
+        "lifecycle_satisfaction": {
+          "enum": ["satisfied", "residual", "incomplete", "unverifiable", "not_applicable"]
+        }
+      }
+    },
+    "agent_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spec_version",
+        "sdk_version",
+        "upstream_commit",
+        "representation",
+        "checkpoint_ref",
+        "previous_checkpoint",
+        "new_checkpoint",
+        "delta_verification",
+        "delta_reason"
+      ],
+      "properties": {
+        "spec_version": {"const": "0.2"},
+        "sdk_version": {"const": "0.11.2"},
+        "upstream_commit": {"const": "9d26ac84461e829dba8ff97ca35748eeb874debe"},
+        "representation": {"enum": ["kv", "vector", "graph"]},
+        "checkpoint_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "previous_checkpoint": {"$ref": "#/$defs/checkpoint"},
+        "new_checkpoint": {"$ref": "#/$defs/checkpoint"},
+        "delta_verification": {"enum": ["accepted", "rejected"]},
+        "delta_reason": {"enum": ["accepted", "drift", "rollback", "expired", "budget"]}
+      }
+    }
+  },
+  "$defs": {
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memory_root", "tree_size", "seq", "approved_at", "ttl_seconds"],
+      "properties": {
+        "memory_root": {"type": "string", "pattern": "^(sha256|shake256):[0-9a-f]{64}$"},
+        "tree_size": {"type": "integer", "minimum": 0},
+        "seq": {"type": "integer", "minimum": 0},
+        "approved_at": {"type": "string", "format": "date-time"},
+        "ttl_seconds": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

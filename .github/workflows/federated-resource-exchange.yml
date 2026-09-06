@@ -1,0 +1,243 @@
+name: Federated Resource Exchange
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/federated-resource-exchange.yml"
+      - "reference/agentmem_ref/resource_exchange.py"
+      - "reference/agentmem_ref/resource_provider_substitution.py"
+      - "reference/run_federated_resource_exchange_fixture.py"
+      - "reference/run_federated_resource_exchange.py"
+      - "reference/run_memos_local_v2017_exchange_endpoint.mjs"
+      - "reference/tests/test_resource_exchange.py"
+      - "reference/fixtures/component-capabilities/hindsight-v0.9.0.json"
+      - "reference/fixtures/component-capabilities/memos-local-plugin-v2.0.17.json"
+      - "reference/fixtures/component-qualification/hindsight-v0.9.0-resource-artifact-qualified-v12.json"
+      - "reference/fixtures/component-qualification/memos-local-plugin-v2.0.17-resource-artifact-qualified-v12.json"
+      - "schemas/resource-exchange-receipt.schema.json"
+      - "schemas/boundary-crossing-receipt.schema.json"
+      - "schemas/component-capability-qualification.schema.json"
+      - "docs/programs/memory-modules/federated-resource-exchange.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  federated-resource-exchange:
+    name: prove-bidirectional-resource-exchange
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONPATH: reference
+      AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      HINDSIGHT_COMMIT: b12646f49ec512136b9f709e608524ffed969668
+      HINDSIGHT_VERSION: 0.9.0
+      MEMOS_TAG: memos-local-plugin-v2.0.17
+      MEMOS_COMMIT: d3d1bcfaff65f31b621d58bc236ece6d1e0da5ab
+      MEMOS_VERSION: 2.0.17
+      MEMOS_PACKAGE: "@memtensor/memos-local-plugin"
+      RAW_ROOT: artifacts/federated-resource-exchange
+    steps:
+      - name: Checkout Agent Memory exact head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.AGENT_MEMORY_COMMIT }}
+
+      - name: Verify Agent Memory exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$AGENT_MEMORY_COMMIT"
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install Agent Memory validation dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Prepare isolated evidence directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/federated-hindsight-home /tmp/federated-memos-h2m /tmp/federated-memos-m2h /tmp/memos-runtime
+          mkdir -p "$RAW_ROOT" /tmp/federated-hindsight-home /tmp/federated-memos-h2m /tmp/federated-memos-m2h /tmp/memos-runtime
+
+      - name: Verify exact Hindsight v0.9.0 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/hindsight-source
+          git init -q /tmp/hindsight-source
+          git -C /tmp/hindsight-source remote add origin https://github.com/vectorize-io/hindsight.git
+          git -C /tmp/hindsight-source fetch -q --depth 1 origin refs/tags/v0.9.0
+          git -C /tmp/hindsight-source checkout -q FETCH_HEAD
+          test "$(git -C /tmp/hindsight-source rev-parse HEAD)" = "$HINDSIGHT_COMMIT"
+          grep -q "MIT License" /tmp/hindsight-source/LICENSE
+          grep -q 'version = "0.9.0"' /tmp/hindsight-source/hindsight-embed/pyproject.toml
+          grep -q 'version = "0.9.0"' /tmp/hindsight-source/hindsight-api/pyproject.toml
+          grep -q '"chunks"' /tmp/hindsight-source/hindsight-api-slim/hindsight_api/config.py
+
+      - name: Verify exact MemOS v2.0.17 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/memos-source
+          git init -q /tmp/memos-source
+          git -C /tmp/memos-source remote add origin https://github.com/MemTensor/MemOS.git
+          git -C /tmp/memos-source fetch -q --depth 1 origin "refs/tags/$MEMOS_TAG"
+          git -C /tmp/memos-source checkout -q FETCH_HEAD
+          test "$(git -C /tmp/memos-source rev-parse HEAD)" = "$MEMOS_COMMIT"
+          grep -q "Apache License" /tmp/memos-source/LICENSE
+          grep -q "Version 2.0" /tmp/memos-source/LICENSE
+          node - <<'NODE'
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('/tmp/memos-source/apps/memos-local-plugin/package.json', 'utf8'));
+          if (pkg.name !== process.env.MEMOS_PACKAGE) throw new Error(`unexpected package name: ${pkg.name}`);
+          if (pkg.version !== process.env.MEMOS_VERSION) throw new Error(`unexpected package version: ${pkg.version}`);
+          if (pkg.license !== 'MIT') throw new Error(`expected retained package metadata discrepancy, got ${pkg.license}`);
+          NODE
+
+      - name: Install exact Hindsight embedded runtime
+        run: |
+          python -m pip install --disable-pip-version-check \
+            "hindsight-embed==$HINDSIGHT_VERSION" \
+            "hindsight-api==$HINDSIGHT_VERSION"
+          python - <<'PY'
+          from importlib import metadata
+          for package in ('hindsight-embed', 'hindsight-api', 'hindsight-api-slim'):
+              actual = metadata.version(package)
+              if actual != '0.9.0':
+                  raise SystemExit(f'unexpected {package} version: {actual}')
+              print(f'{package}={actual}')
+          PY
+
+      - name: Install exact MemOS package and bind installed source
+        working-directory: /tmp/memos-runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null
+          npm view "$MEMOS_PACKAGE@$MEMOS_VERSION" version license dist.integrity dist.shasum --json > "$GITHUB_WORKSPACE/$RAW_ROOT/memos-registry-metadata.json"
+          npm install --no-audit --no-fund "$MEMOS_PACKAGE@$MEMOS_VERSION"
+          PACKAGE_ROOT="/tmp/memos-runtime/node_modules/@memtensor/memos-local-plugin"
+          test -f "$PACKAGE_ROOT/dist/core/index.js"
+          test -f "$PACKAGE_ROOT/core/pipeline/memory-core.ts"
+          cmp /tmp/memos-source/apps/memos-local-plugin/core/pipeline/memory-core.ts "$PACKAGE_ROOT/core/pipeline/memory-core.ts"
+          cmp /tmp/memos-source/apps/memos-local-plugin/agent-contract/memory-core.ts "$PACKAGE_ROOT/agent-contract/memory-core.ts"
+
+      - name: Execute focused exchange and qualification tests
+        run: |
+          python -m unittest \
+            reference/tests/test_resource_exchange.py \
+            reference/tests/test_component_qualification_v12.py
+
+      - name: Execute exact bidirectional provider fixture
+        shell: bash
+        env:
+          HOME: /tmp/federated-hindsight-home
+          HF_HOME: /tmp/federated-hindsight-home/hf
+          TRANSFORMERS_CACHE: /tmp/federated-hindsight-home/hf
+        run: |
+          set -euo pipefail
+          python reference/run_federated_resource_exchange_fixture.py \
+            --memos-package-root /tmp/memos-runtime/node_modules/@memtensor/memos-local-plugin \
+            --memos-h2m-home /tmp/federated-memos-h2m \
+            --memos-m2h-home /tmp/federated-memos-m2h \
+            --hindsight-source-commit "$HINDSIGHT_COMMIT" \
+            --memos-source-commit "$MEMOS_COMMIT" \
+            --output "$RAW_ROOT/raw-provider-exchange.json"
+
+      - name: Emit invariant-bound exchange receipts
+        run: |
+          python reference/run_federated_resource_exchange.py \
+            --raw-evidence "$RAW_ROOT/raw-provider-exchange.json" \
+            --hindsight-component reference/fixtures/component-capabilities/hindsight-v0.9.0.json \
+            --hindsight-qualification reference/fixtures/component-qualification/hindsight-v0.9.0-resource-artifact-qualified-v12.json \
+            --memos-component reference/fixtures/component-capabilities/memos-local-plugin-v2.0.17.json \
+            --memos-qualification reference/fixtures/component-qualification/memos-local-plugin-v2.0.17-resource-artifact-qualified-v12.json \
+            --output "$RAW_ROOT/exchange.json"
+
+      - name: Validate exact qualifications and exchange receipts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import jsonschema
+          from agentmem_ref.resource_provider_substitution import load_component, load_qualification_snapshot
+
+          root = Path('.')
+          h_component = load_component(root / 'reference/fixtures/component-capabilities/hindsight-v0.9.0.json')
+          m_component = load_component(root / 'reference/fixtures/component-capabilities/memos-local-plugin-v2.0.17.json')
+          hq = load_qualification_snapshot(root / 'reference/fixtures/component-qualification/hindsight-v0.9.0-resource-artifact-qualified-v12.json')
+          mq = load_qualification_snapshot(root / 'reference/fixtures/component-qualification/memos-local-plugin-v2.0.17-resource-artifact-qualified-v12.json')
+          hq.assert_current_declaration(h_component)
+          mq.assert_current_declaration(m_component)
+          assert hq.use_posture == mq.use_posture == 'runtime_allowed'
+          assert hq.authority_effect == mq.authority_effect == 'none'
+
+          value = json.loads((root / 'artifacts/federated-resource-exchange/exchange.json').read_text())
+          assert value['eligible'] is True
+          assert value['authority_effect'] == 'none'
+          assert value['invariants']['bidirectional'] is True
+          assert value['invariants']['source_retained'] is True
+          assert value['invariants']['destructive_cutover'] is False
+          schema = json.loads((root / 'schemas/resource-exchange-receipt.schema.json').read_text())
+          validator = jsonschema.Draft202012Validator(schema)
+          directions = value['directions']
+          for name in ('hindsight_to_memos', 'memos_to_hindsight'):
+              receipt = directions[name]
+              validator.validate(receipt)
+              assert receipt['content_digest'] == receipt['target_readback_digest']
+              assert receipt['source_retained'] is True
+              assert receipt['destructive_cutover'] is False
+              assert receipt['authority_effect'] == 'none'
+              assert receipt['logical_resource_id'] not in {
+                  receipt['source_provider']['native_resource_id'],
+                  receipt['target_provider']['native_resource_id'],
+              }
+          assert directions['hindsight_to_memos']['source_provider']['component_id'] == 'hindsight-v0.9.0'
+          assert directions['hindsight_to_memos']['target_provider']['component_id'] == 'memos-local-plugin-v2.0.17'
+          assert directions['memos_to_hindsight']['source_provider']['component_id'] == 'memos-local-plugin-v2.0.17'
+          assert directions['memos_to_hindsight']['target_provider']['component_id'] == 'hindsight-v0.9.0'
+          PY
+
+      - name: Publish federated exchange summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Federated resource exchange"
+            echo
+            if [ -f "$RAW_ROOT/exchange.json" ]; then
+              python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('artifacts/federated-resource-exchange/exchange.json').read_text())
+          print(f"- eligible: `{str(value.get('eligible')).lower()}`")
+          print(f"- authority effect: `{value.get('authority_effect')}`")
+          for name, receipt in value.get('directions', {}).items():
+              print(f"- {name}: `{receipt.get('source_provider', {}).get('component_id')}` -> `{receipt.get('target_provider', {}).get('component_id')}`")
+              print(f"  - target digest equals source: `{receipt.get('target_readback_digest') == receipt.get('content_digest')}`")
+              print(f"  - source retained: `{receipt.get('source_retained')}`")
+          PY
+            else
+              echo "- exchange evidence was not emitted"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload raw and normalized exchange evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: federated-resource-exchange-${{ env.AGENT_MEMORY_COMMIT }}
+          path: artifacts/federated-resource-exchange
+          if-no-files-found: warn

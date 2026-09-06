@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/external-enforcement-decision-projection.schema.json",
+  "title": "Agent Memory External Enforcement Decision Projection",
+  "description": "Content-minimized projection of a current Agent Memory mutation and PAMA boundary for optional external policy/enforcement consumers.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "projection_version",
+    "projection_id",
+    "input_identity",
+    "proposal_id",
+    "memory_id",
+    "operation",
+    "actor_id",
+    "scope",
+    "state_snapshot",
+    "risk_class",
+    "reversibility",
+    "pama_decision_ref",
+    "pama_outcome",
+    "permitted_actions",
+    "prohibited_actions",
+    "policy_version",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "projection_version": { "const": "0.1.0" },
+    "projection_id": { "type": "string", "minLength": 1 },
+    "input_identity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "proposal_id": { "type": "string", "minLength": 1 },
+    "memory_id": { "type": "string", "minLength": 1 },
+    "operation": { "type": "string", "minLength": 1 },
+    "actor_id": { "type": "string", "minLength": 1 },
+    "scope": { "type": "string", "minLength": 1 },
+    "tenant_ref": { "type": "string" },
+    "purpose": { "type": "string" },
+    "isolation_domain_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "required_isolation_domain_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "state_snapshot": { "type": "string", "minLength": 1 },
+    "risk_class": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "reversibility": {
+      "type": "string",
+      "enum": ["ephemeral", "reversible", "versioned_revocable", "compensatable", "irreversible", "unknown"]
+    },
+    "pama_decision_ref": { "type": "string", "minLength": 1 },
+    "pama_outcome": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "allow_with_ledger",
+        "require_review",
+        "require_external_verification",
+        "block",
+        "abstain",
+        "quarantine",
+        "collect_more_evidence"
+      ]
+    },
+    "permitted_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "prohibited_actions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "policy_version": { "type": "string", "minLength": 1 },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "receipt_ref": { "type": "string", "minLength": 1 }
+  }
+}

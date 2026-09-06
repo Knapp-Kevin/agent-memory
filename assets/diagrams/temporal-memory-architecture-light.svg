@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="2500" viewBox="0 0 540 2500" role="img" aria-labelledby="title desc">
+<title id="title">Agent Memory temporal architecture</title>
+<desc id="desc">Mobile-first architecture showing canonical Agent Memory state flowing through a deterministic temporal commitment, optional UOR exact identity, signer attestation and trust evidence, external timestamp or transparency evidence, separate currentness, a governed projection compatibility gate, Dogwood temporal policy or Cedar and Cedarling authorization consumers, then external policy evidence composed monotonically with PAMA. The diagram emphasizes that identity, signature validity, signer trust, witnessed time, historical truth, currentness, policy compatibility, and authority are separate claims.</desc>
+<style>
+:root{--bg:#ffffff;--border:#d0d7de;--text:#1f2328;--muted:#59636e;--blue:#0969da;--purple:#8250df;--green:#1a7f37;--amber:#9a6700;--red:#cf222e;--neutral:#f6f8fa;--blueBox:#f0f6fc;--purpleBox:#f6f2ff;--greenBox:#effaf1;--amberBox:#fff8c5}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--text)}
+.frame{fill:var(--bg);stroke:var(--border)}.neutral{fill:var(--neutral);stroke:var(--border)}.blueBox{fill:var(--blueBox);stroke:var(--blue);stroke-width:1.2}.purpleBox{fill:var(--purpleBox);stroke:var(--purple);stroke-width:1.2}.greenBox{fill:var(--greenBox);stroke:var(--green);stroke-width:1.2}.amberBox{fill:var(--amberBox);stroke:var(--amber);stroke-width:1.2}
+.title{font-size:26px;font-weight:700}.sub{font-size:15px;fill:var(--muted)}.eyebrow{font-size:14px;font-weight:700;letter-spacing:1px}.cardTitle{font-size:18px;font-weight:700}.body{font-size:14px}.strong{font-size:14px;font-weight:700}.small{font-size:13px}.tiny{font-size:12px}.muted{fill:var(--muted)}.blue{fill:var(--blue)}.purple{fill:var(--purple)}.green{fill:var(--green)}.amber{fill:var(--amber)}.red{fill:var(--red);font-weight:700}
+.lineB{stroke:var(--blue);stroke-width:2.3}.lineP{stroke:var(--purple);stroke-width:2.3}.lineA{stroke:var(--amber);stroke-width:2.3}.lineG{stroke:var(--green);stroke-width:2.3}
+</style>
+<defs>
+<marker id="ab" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="#0969da"/></marker>
+<marker id="ap" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="#8250df"/></marker>
+<marker id="aa" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="#9a6700"/></marker>
+<marker id="ag" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0 0L0 6L8 3z" fill="#1a7f37"/></marker>
+</defs>
+<rect x="1" y="1" width="538" height="2498" rx="18" class="frame"/>
+<text x="28" y="44" class="title">Temporal memory architecture</text>
+<text x="28" y="70" class="sub">Preserve history, prove what can be proved, and keep present authority separate.</text>
+
+<rect x="28" y="94" width="484" height="192" rx="11" class="neutral"/>
+<text x="46" y="122" class="eyebrow red">THE CLAIMS THAT MUST STAY SEPARATE</text>
+<text x="46" y="151" class="strong">content identity != truth</text>
+<text x="46" y="177" class="strong">signature validity != signer trust</text>
+<text x="46" y="203" class="strong">witnessed existence time != event occurrence time</text>
+<text x="46" y="229" class="strong">historical truth != current truth</text>
+<text x="46" y="255" class="strong">policy compatibility != permission != PAMA authority</text>
+<text x="46" y="278" class="tiny muted">Each layer strengthens a different statement about memory.</text>
+
+<line x1="270" y1="286" x2="270" y2="320" class="lineB" marker-end="url(#ab)"/>
+<text x="28" y="354" class="eyebrow blue">01  CANONICAL AGENT MEMORY</text>
+<rect x="28" y="372" width="484" height="218" rx="11" class="blueBox"/>
+<text x="48" y="405" class="cardTitle">Memory semantics remain here</text>
+<text x="48" y="438" class="small muted">identity · provenance · claimed / observed / validity time</text>
+<text x="48" y="462" class="small muted">scope · isolation · schema · correction · supersession</text>
+<text x="48" y="486" class="small muted">revocation · deletion · derivation · currentness · PAMA</text>
+<text x="48" y="524" class="strong">Historical state and current applicability are both representable.</text>
+<text x="48" y="554" class="tiny red">External peers strengthen or consume memory; they do not own its canonical meaning.</text>
+
+<line x1="270" y1="590" x2="270" y2="624" class="lineB" marker-end="url(#ab)"/>
+<text x="28" y="658" class="eyebrow blue">02  DETERMINISTIC TEMPORAL COMMITMENT</text>
+<rect x="28" y="676" width="484" height="208" rx="11" class="blueBox"/>
+<text x="48" y="709" class="cardTitle">Commit the temporal meaning itself</text>
+<text x="48" y="742" class="small muted">payload / subject · event time · observed time · validity interval</text>
+<text x="48" y="766" class="small muted">scope · schema/profile · stream · sequence · predecessor</text>
+<text x="48" y="804" class="strong">Material mutation -> different exact content identity.</text>
+<text x="48" y="834" class="body muted">The historical object remains immutable even when currentness later changes.</text>
+<text x="48" y="864" class="tiny red">Tamper evidence is not truth evidence and grants no authority.</text>
+
+<line x1="270" y1="884" x2="270" y2="918" class="lineB" marker-end="url(#ab)"/>
+<text x="28" y="952" class="eyebrow blue">03  OPTIONAL UOR EXACT IDENTITY</text>
+<rect x="28" y="970" width="484" height="154" rx="11" class="blueBox"/>
+<text x="48" y="1003" class="cardTitle">Portable reference to the exact committed object</text>
+<text x="48" y="1036" class="body">Optional first profile: UOR-Addr content addressing.</text>
+<text x="48" y="1066" class="small muted">Useful for cross-runtime identity and replay references.</text>
+<text x="48" y="1102" class="tiny red">UOR identity != signer identity != truth != authority</text>
+
+<line x1="270" y1="1124" x2="270" y2="1158" class="lineP" marker-end="url(#ap)"/>
+<text x="28" y="1192" class="eyebrow purple">04  SIGNER ATTESTATION + TRUST EVIDENCE</text>
+<rect x="28" y="1210" width="484" height="214" rx="11" class="purpleBox"/>
+<text x="48" y="1243" class="cardTitle">Two questions, two evidence layers</text>
+<text x="48" y="1276" class="strong">Key possession:</text><text x="156" y="1276" class="body muted">did this key sign this exact commitment?</text>
+<text x="48" y="1306" class="strong">Signer trust:</text><text x="146" y="1306" class="body muted">is this exact key material trusted now?</text>
+<text x="48" y="1342" class="small muted">trust binds key ref + public-key digest + source + verification + validity</text>
+<text x="48" y="1376" class="body">Valid historical signature can coexist with revoked or expired trust.</text>
+<text x="48" y="1406" class="tiny red">A friendly key name cannot transfer trust to different key material.</text>
+
+<line x1="270" y1="1424" x2="270" y2="1458" class="lineA" marker-end="url(#aa)"/>
+<text x="28" y="1492" class="eyebrow amber">05  EXTERNAL TIME + TRANSPARENCY EVIDENCE</text>
+<rect x="28" y="1510" width="484" height="238" rx="11" class="amberBox"/>
+<text x="48" y="1543" class="cardTitle">Independent evidence about existence and history</text>
+<text x="48" y="1576" class="small muted">RFC 3161 timestamp evidence -> existed by externally verified time T</text>
+<text x="48" y="1600" class="small muted">inclusion receipt -> exact subject included under declared VDS profile</text>
+<text x="48" y="1624" class="small muted">consistency proof -> bounded append-only transition between tree states</text>
+<text x="48" y="1662" class="strong">Stronger history evidence remains bounded evidence.</text>
+<text x="48" y="1692" class="body muted">No single receipt proves complete history or global non-equivocation.</text>
+<text x="48" y="1722" class="tiny red">Witnessed existence time != event occurrence time != currentness</text>
+
+<line x1="270" y1="1748" x2="270" y2="1782" class="lineG" marker-end="url(#ag)"/>
+<text x="28" y="1816" class="eyebrow green">06  CURRENTNESS + LIFECYCLE</text>
+<rect x="28" y="1834" width="484" height="168" rx="11" class="greenBox"/>
+<text x="48" y="1867" class="cardTitle">What does this historical object mean now?</text>
+<text x="48" y="1900" class="small muted">current · superseded · disputed · revoked · deleted · unknown</text>
+<text x="48" y="1934" class="body">Currentness evidence can change without rewriting signed history.</text>
+<text x="48" y="1972" class="tiny red">Historical integrity != current applicability</text>
+
+<line x1="270" y1="2002" x2="270" y2="2036" class="lineG" marker-end="url(#ag)"/>
+<text x="28" y="2070" class="eyebrow green">07  GOVERNED PROJECTION + COMPATIBILITY GATE</text>
+<rect x="28" y="2088" width="484" height="190" rx="11" class="greenBox"/>
+<text x="48" y="2121" class="cardTitle">Export the smallest truthful representation needed</text>
+<text x="48" y="2154" class="small muted">versioned projection · source currentness · schema/policy identity</text>
+<text x="48" y="2178" class="small muted">temporal horizon · isolation · actually evaluated context</text>
+<text x="48" y="2214" class="strong">current · migration_required · incompatible · unknown</text>
+<text x="48" y="2250" class="tiny red">Serializable context can still be semantically stale.</text>
+
+<line x1="270" y1="2278" x2="270" y2="2312" class="lineA" marker-end="url(#aa)"/>
+<text x="28" y="2346" class="eyebrow amber">08  ALIGNED POLICY CONSUMERS</text>
+<rect x="28" y="2364" width="484" height="86" rx="11" class="amberBox"/>
+<text x="48" y="2394" class="strong">Dogwood:</text><text x="126" y="2394" class="small muted">bounded temporal policy over governed event/context projection</text>
+<text x="48" y="2422" class="strong">Cedar / Cedarling:</text><text x="181" y="2422" class="small muted">authorization and embedded PDP/runtime surfaces</text>
+
+<text x="28" y="2478" class="tiny muted">External policy decisions return as evidence and compose monotonically with PAMA; external ALLOW cannot silently widen Agent Memory authority.</text>
+</svg>

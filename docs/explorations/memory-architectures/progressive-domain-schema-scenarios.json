@@ -1,0 +1,211 @@
+{
+  "scenario_set_version": "1.0.0",
+  "status": "exploratory_research",
+  "canonical_authority": "none",
+  "issue": 226,
+  "scenarios": [
+    {
+      "id": "additive-local-entity-type",
+      "kind": "domain_schema_mutation",
+      "proposal_kind": "add_entity_type",
+      "scope": "project-a",
+      "source_refs": ["source:customer-handbook"],
+      "root_source_refs": ["source:customer-handbook"],
+      "estimator_ref": "estimator:schema-discovery-v1",
+      "affects_existing_objects": false,
+      "widens_scope": false,
+      "privileged_semantics": false,
+      "source_state": "current",
+      "requires_migration": false,
+      "derived_projection_residue": false,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": false,
+        "classification": "domain_schema_mutation",
+        "operation_gap": true,
+        "minimum_posture": "require_review"
+      }
+    },
+    {
+      "id": "privileged-entity-from-untrusted-input",
+      "kind": "domain_schema_mutation",
+      "proposal_kind": "add_entity_type",
+      "scope": "project-a",
+      "source_refs": ["source:untrusted-upload"],
+      "root_source_refs": ["source:untrusted-upload"],
+      "estimator_ref": "estimator:schema-discovery-v1",
+      "affects_existing_objects": false,
+      "widens_scope": false,
+      "privileged_semantics": true,
+      "source_state": "current",
+      "requires_migration": false,
+      "derived_projection_residue": false,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": false,
+        "classification": "authority_bearing_schema_mutation",
+        "operation_gap": false,
+        "minimum_posture": "require_external_verification"
+      }
+    },
+    {
+      "id": "cross-tenant-relation-widening",
+      "kind": "domain_schema_mutation",
+      "proposal_kind": "widen_relation_scope",
+      "scope": "tenant-a/project-a",
+      "source_refs": ["source:project-a", "source:project-b"],
+      "root_source_refs": ["source:project-a", "source:project-b"],
+      "estimator_ref": "estimator:schema-discovery-v1",
+      "affects_existing_objects": true,
+      "widens_scope": true,
+      "privileged_semantics": false,
+      "source_state": "current",
+      "requires_migration": true,
+      "derived_projection_residue": true,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": false,
+        "classification": "scope_expanding_schema_mutation",
+        "operation_gap": false,
+        "minimum_posture": "block"
+      }
+    },
+    {
+      "id": "semantic-merge-by-similarity",
+      "kind": "domain_schema_mutation",
+      "proposal_kind": "merge_types",
+      "scope": "project-a",
+      "source_refs": ["source:crm-schema", "source:billing-schema"],
+      "root_source_refs": ["source:crm-schema", "source:billing-schema"],
+      "estimator_ref": "estimator:semantic-similarity-v3",
+      "affects_existing_objects": true,
+      "widens_scope": false,
+      "privileged_semantics": false,
+      "source_state": "current",
+      "requires_migration": true,
+      "derived_projection_residue": true,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": false,
+        "classification": "semantic_reinterpretation",
+        "operation_gap": true,
+        "minimum_posture": "require_review"
+      }
+    },
+    {
+      "id": "replayed-proposal-not-corroboration",
+      "kind": "domain_schema_mutation",
+      "proposal_kind": "add_relation_type",
+      "scope": "project-a",
+      "source_refs": ["source:single-root", "source:single-root", "source:single-root"],
+      "root_source_refs": ["source:single-root"],
+      "estimator_ref": "estimator:schema-discovery-v1",
+      "affects_existing_objects": false,
+      "widens_scope": false,
+      "privileged_semantics": false,
+      "source_state": "current",
+      "requires_migration": false,
+      "derived_projection_residue": false,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": false,
+        "classification": "domain_schema_mutation",
+        "operation_gap": true,
+        "independent_root_count": 1,
+        "minimum_posture": "require_review"
+      }
+    },
+    {
+      "id": "revoked-source-basis",
+      "kind": "domain_schema_mutation",
+      "proposal_kind": "add_relation_type",
+      "scope": "project-a",
+      "source_refs": ["source:revoked-handbook"],
+      "root_source_refs": ["source:revoked-handbook"],
+      "estimator_ref": "estimator:schema-discovery-v1",
+      "affects_existing_objects": false,
+      "widens_scope": false,
+      "privileged_semantics": false,
+      "source_state": "revoked",
+      "requires_migration": false,
+      "derived_projection_residue": false,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": false,
+        "classification": "domain_schema_mutation",
+        "operation_gap": true,
+        "currentness": "revalidation_required",
+        "minimum_posture": "require_review"
+      }
+    },
+    {
+      "id": "migration-with-stale-projection-residue",
+      "kind": "domain_schema_mutation",
+      "proposal_kind": "split_type",
+      "scope": "project-a",
+      "source_refs": ["source:validated-domain-model"],
+      "root_source_refs": ["source:validated-domain-model"],
+      "estimator_ref": "estimator:schema-discovery-v2",
+      "affects_existing_objects": true,
+      "widens_scope": false,
+      "privileged_semantics": false,
+      "source_state": "current",
+      "requires_migration": true,
+      "derived_projection_residue": true,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": false,
+        "classification": "semantic_reinterpretation",
+        "operation_gap": true,
+        "commit_complete": false,
+        "minimum_posture": "require_review"
+      }
+    },
+    {
+      "id": "concurrent-incompatible-proposals",
+      "kind": "domain_schema_mutation",
+      "proposal_kind": "conflicting_type_definitions",
+      "scope": "project-a",
+      "source_refs": ["source:team-a", "source:team-b"],
+      "root_source_refs": ["source:team-a", "source:team-b"],
+      "estimator_ref": "estimator:schema-discovery-v1",
+      "affects_existing_objects": true,
+      "widens_scope": false,
+      "privileged_semantics": false,
+      "source_state": "current",
+      "requires_migration": true,
+      "derived_projection_residue": false,
+      "conflict": true,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": false,
+        "classification": "semantic_conflict",
+        "operation_gap": true,
+        "last_writer_wins_allowed": false,
+        "minimum_posture": "require_review"
+      }
+    },
+    {
+      "id": "index-only-rebuild",
+      "kind": "derived_projection_maintenance",
+      "proposal_kind": "rebuild_vector_index",
+      "scope": "project-a",
+      "source_refs": ["source:unchanged-domain-objects"],
+      "root_source_refs": ["source:unchanged-domain-objects"],
+      "estimator_ref": "estimator:index-maintenance-v1",
+      "affects_existing_objects": false,
+      "widens_scope": false,
+      "privileged_semantics": false,
+      "source_state": "current",
+      "requires_migration": false,
+      "derived_projection_residue": false,
+      "expected": {
+        "proposal_allowed": true,
+        "self_commit_allowed": null,
+        "classification": "derived_projection_maintenance",
+        "operation_gap": false,
+        "minimum_posture": "separate_maintenance_governance"
+      }
+    }
+  ]
+}

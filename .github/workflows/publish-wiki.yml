@@ -1,0 +1,55 @@
+name: Publish GitHub Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'wiki-src/**'
+      - 'scripts/validate_wiki_links.py'
+      - '.github/workflows/publish-wiki.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v7
+
+      - name: Validate Wiki navigation
+        run: python scripts/validate_wiki_links.py wiki-src
+
+      - name: Publish validated Wiki source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          wiki_dir="$RUNNER_TEMP/agent-memory-wiki"
+          wiki_url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+          rm -rf "$wiki_dir"
+
+          git clone "$wiki_url" "$wiki_dir"
+
+          # Treat wiki-src as canonical. Preserve only the Wiki git metadata,
+          # then repopulate the published pages from the validated source tree.
+          find "$wiki_dir" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          find wiki-src -maxdepth 1 -type f -name '*.md' ! -name 'README.md' -exec cp {} "$wiki_dir"/ \;
+
+          cd "$wiki_dir"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Wiki already matches canonical source."
+            exit 0
+          fi
+
+          git commit -m "Publish Wiki from ${GITHUB_SHA::12}"
+          git push origin HEAD:master

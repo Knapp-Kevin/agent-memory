@@ -1,0 +1,35 @@
+name: Agent Memory Runtime Adapter
+
+on:
+  pull_request:
+    paths:
+      - 'integrations/agent-memory-runtime/**'
+      - '.github/workflows/agent-memory-runtime-adapter.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/agent-memory-runtime/**'
+      - '.github/workflows/agent-memory-runtime-adapter.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-adapter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: integrations/agent-memory-runtime
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - name: Syntax check
+        run: npm run check
+
+      - name: Runtime adapter tests
+        run: npm test

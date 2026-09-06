@@ -1,0 +1,58 @@
+name: General issue, idea, or contribution
+description: Share a problem, idea, research lead, integration, or improvement without needing to know the project's governance terminology
+title: "[Community] "
+labels:
+  - agent-memory
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing. You do not need to understand the repository's ADRs, PAMA model, conformance levels, or governance vocabulary to open an issue.
+
+        Tell us what you noticed and why it matters. Maintainers can classify the issue, connect it to relevant doctrine, and request additional evidence if the proposal advances.
+
+        Security vulnerabilities should use the private security reporting path rather than this form.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you bringing to the project?
+      options:
+        - Improvement or feature idea
+        - External project or integration worth evaluating
+        - Research, article, standard, or other evidence
+        - Architecture or doctrine concern
+        - Bug or documentation problem
+        - Question or unclear behavior
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What should we look at?
+      description: Describe the idea, problem, resource, or opportunity in your own words. Links are welcome.
+      placeholder: What did you find, notice, or think should change?
+    validations:
+      required: true
+
+  - type: textarea
+    id: value
+    attributes:
+      label: Why might this matter?
+      description: Explain the potential value, risk, duplication avoided, failure mode, or improvement you see. A short answer is fine.
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: Links or supporting material
+      description: Optional. Add repositories, papers, standards, examples, screenshots, or other useful context.
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else?
+      description: Optional. Include uncertainty, tradeoffs, implementation ideas, or questions for maintainers.

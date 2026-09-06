@@ -1,0 +1,168 @@
+name: CodeGenome Reality Graph Evidence
+
+on:
+  pull_request:
+    paths:
+      - "reference/agentmem_ref/codegenome_cognitive_mesh.py"
+      - "reference/native/codegenome_reality_driver.rs"
+      - "reference/run_codegenome_cognitive_mesh.py"
+      - "reference/tests/test_codegenome_cognitive_mesh.py"
+      - "reference/agentmem_ref/cognitive_mesh.py"
+      - "reference/agentmem_ref/codegenome_profile.py"
+      - "reference/agentmem_ref/code_graph_qualification.py"
+      - "reference/fixtures/component-qualification/**"
+      - "docs/programs/runtime-evidence/codegenome-reality-mesh.md"
+      - ".github/workflows/codegenome-reality-mesh-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CODEGENOME_COMMIT: 43a6b7147ec78ec5c616723fa1dd30f342174860
+  EVIDENCE_ROOT: /tmp/codegenome-reality-mesh
+  STORE_DIR: /tmp/codegenome-reality-store
+
+jobs:
+  codegenome-reality-mesh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Agent Memory reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Run Reality Graph adapter and maturity-boundary tests
+        env:
+          PYTHONPATH: reference
+        run: |
+          python -m unittest \
+            reference/tests/test_codegenome_cognitive_mesh.py \
+            reference/tests/test_cognitive_mesh.py \
+            reference/tests/test_codegenome_multicapability_profile.py \
+            reference/tests/test_code_graph_qualification.py
+
+      - name: Fetch exact CodeGenome provider
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/MythologIQ-Labs-LLC/CodeGenome.git /tmp/codegenome
+          git -C /tmp/codegenome fetch --depth=1 origin "$CODEGENOME_COMMIT"
+          git -C /tmp/codegenome checkout --detach "$CODEGENOME_COMMIT"
+          test "$(git -C /tmp/codegenome rev-parse HEAD)" = "$CODEGENOME_COMMIT"
+
+      - name: Verify provider source and rights boundary
+        working-directory: /tmp/codegenome
+        run: |
+          grep -qi "MIT License" LICENSE
+          test -f codegenome-identity/src/graph/edge.rs
+          test -f codegenome-identity/src/graph/node.rs
+          test -f codegenome-identity/src/graph/query.rs
+          test -f codegenome-identity/src/graph/query_context.rs
+          test -f codegenome-identity/src/graph/traversal.rs
+          test -f codegenome-identity/src/store/ondisk.rs
+          mkdir -p "$EVIDENCE_ROOT/source-rights"
+          cp LICENSE "$EVIDENCE_ROOT/source-rights/CodeGenome-LICENSE"
+
+      - name: Build native CodeGenome CLI and index evidence fixture
+        run: |
+          cargo build --manifest-path /tmp/codegenome/Cargo.toml -p codegenome-cli
+          /tmp/codegenome/target/debug/codegenome index \
+            --source-dir "${{ github.workspace }}/reference/fixtures/component-qualification/v2" \
+            --store-dir "$STORE_DIR" \
+            > "$EVIDENCE_ROOT/index.txt"
+
+      - name: Build provider-native Reality Graph driver
+        run: |
+          mkdir -p /tmp/codegenome-reality-driver/src
+          cp reference/native/codegenome_reality_driver.rs /tmp/codegenome-reality-driver/src/main.rs
+          cat > /tmp/codegenome-reality-driver/Cargo.toml <<'EOF'
+          [package]
+          name = "codegenome-reality-driver"
+          version = "0.1.0"
+          edition = "2021"
+
+          [dependencies]
+          codegenome-identity = { path = "/tmp/codegenome/codegenome-identity" }
+          serde_json = "1"
+          EOF
+          cargo build --manifest-path /tmp/codegenome-reality-driver/Cargo.toml
+
+      - name: Execute native CodeGenome traversal and retain raw relation evidence
+        run: |
+          mkdir -p "$EVIDENCE_ROOT"
+          /tmp/codegenome-reality-driver/target/debug/codegenome-reality-driver \
+            "$STORE_DIR" main.rs 6 \
+            > "$EVIDENCE_ROOT/native-relation.json"
+          cat "$EVIDENCE_ROOT/native-relation.json"
+
+      - name: Carry native Reality Graph output through Cognitive Mesh
+        env:
+          PYTHONPATH: reference
+        run: |
+          python reference/run_codegenome_cognitive_mesh.py \
+            --raw "$EVIDENCE_ROOT/native-relation.json" \
+            --output "$EVIDENCE_ROOT/codegenome-reality-mesh.json"
+
+      - name: Validate exact evidence and authority boundary
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ["EVIDENCE_ROOT"])
+          raw = json.loads((root / "native-relation.json").read_text())
+          report = json.loads((root / "codegenome-reality-mesh.json").read_text())
+          expected = os.environ["CODEGENOME_COMMIT"]
+
+          assert raw["provider"] == "codegenome"
+          assert raw["provider_version"] == expected
+          assert raw["operation"] == "code_graph_traversal"
+          assert raw["relation"]["kind"] == "Calls"
+          assert len(raw["relation"]["source_uor"]) == 64
+          assert len(raw["relation"]["target_uor"]) == 64
+          assert 0.0 <= raw["relation"]["confidence"] <= 1.0
+          assert raw["relation"]["provenance"]["source"]
+          assert raw["relation"]["provenance"]["actor"]
+
+          assert report["provider"]["component_id"] == "codegenome"
+          assert report["provider"]["component_version"] == expected
+          assert report["normalized_signal"]["module_role"] == "reality_graph"
+          assert report["normalized_signal"]["source_component"] == "codegenome"
+          assert report["normalized_signal"]["signal_type"] == "code_relation_observation"
+          assert report["normalized_signal"]["confidence"] == raw["relation"]["confidence"]
+          assert report["normalized_signal"]["provider_verdict"] == ""
+          assert report["adapter"]["capability_id"] == "code_graph_traversal"
+          assert report["adapter"]["authority_effect"] == "none"
+          assert report["adapter"]["maturity_change"] == "none"
+          assert report["governed_positive_path"]["committed"] is True
+          assert report["governed_positive_path"]["identity_independent"] is True
+          assert report["governed_positive_path"]["active_object_refs"] == ["reality:code:native-call-relation"]
+          assert report["authority_containment"]["pama_outcome"] == "require_review"
+          assert report["authority_containment"]["committed"] is False
+          PY
+
+      - name: Record evidence digests
+        run: |
+          sha256sum \
+            "$EVIDENCE_ROOT/native-relation.json" \
+            "$EVIDENCE_ROOT/codegenome-reality-mesh.json" \
+            "$EVIDENCE_ROOT/index.txt" \
+            > "$EVIDENCE_ROOT/SHA256SUMS"
+          cat "$EVIDENCE_ROOT/SHA256SUMS"
+
+      - name: Upload CodeGenome Reality Graph evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: codegenome-reality-mesh-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/codegenome-reality-mesh
+          if-no-files-found: error

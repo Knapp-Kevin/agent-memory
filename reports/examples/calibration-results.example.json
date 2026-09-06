@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0.0",
+  "implementation": "EvolveAI-reference",
+  "version": "v0.0.0-example",
+  "doctrine_version": "v0.3",
+  "estimator_version": "mts-saturation-example-v2",
+  "calibration_version": "cal-2026-08-example",
+  "sigma_is_probabilistic": false,
+  "threshold": 0.8,
+  "review_band": { "lower": 0.7, "upper": 0.85 },
+  "durability_dimensions_tested": [
+    "corroboration",
+    "cross_reference",
+    "verification",
+    "meaningful_reuse"
+  ],
+  "scope_of_validity": {
+    "memory_types": ["project_decision", "code_relation"],
+    "consequence_classes": ["candidate_routing", "pending_verification"],
+    "excluded": ["permanent_deletion", "cross_tenant_scope_expansion"]
+  },
+  "known_exemptions": [
+    "human preference memories require explicit approval regardless of sigma"
+  ],
+  "cases": [
+    {
+      "case_id": "persist-corroborated-decision",
+      "class": "persist",
+      "sigma": 0.91,
+      "observed_outcome": "crystallized",
+      "boundary_stable": true
+    },
+    {
+      "case_id": "persist-verified-code-relation",
+      "class": "persist",
+      "sigma": 0.88,
+      "observed_outcome": "retained",
+      "boundary_stable": true
+    },
+    {
+      "case_id": "persist-approved-preference",
+      "class": "persist",
+      "sigma": 0.86,
+      "observed_outcome": "retained"
+    },
+    {
+      "case_id": "persist-policy-with-provenance",
+      "class": "persist",
+      "sigma": 0.84,
+      "observed_outcome": "review",
+      "notes": "Inside review band; retained pending certification."
+    },
+    {
+      "case_id": "persist-recurring-cross-referenced",
+      "class": "persist",
+      "sigma": 0.82,
+      "observed_outcome": "retained",
+      "estimator_disagreement": false
+    },
+    {
+      "case_id": "evaporate-one-time-context",
+      "class": "evaporate",
+      "sigma": 0.22,
+      "observed_outcome": "evaporated"
+    },
+    {
+      "case_id": "evaporate-single-source-assertion",
+      "class": "evaporate",
+      "sigma": 0.41,
+      "observed_outcome": "evaporated",
+      "estimator_disagreement": false
+    },
+    {
+      "case_id": "evaporate-stale-runtime-trace",
+      "class": "evaporate",
+      "sigma": 0.35,
+      "observed_outcome": "evaporated"
+    },
+    {
+      "case_id": "evaporate-contradicted-observation",
+      "class": "evaporate",
+      "sigma": 0.68,
+      "observed_outcome": "abstained",
+      "boundary_stable": false,
+      "notes": "Near review band under perturbation; abstained to review."
+    },
+    {
+      "case_id": "trap-access-spam-junk",
+      "class": "trap",
+      "sigma": 0.79,
+      "observed_outcome": "evaporated",
+      "boundary_stable": true
+    },
+    {
+      "case_id": "trap-confidently-wrong",
+      "class": "trap",
+      "sigma": 0.83,
+      "observed_outcome": "review",
+      "estimator_disagreement": true,
+      "notes": "High sigma with estimator disagreement; routed to review, not promoted."
+    },
+    {
+      "case_id": "trap-threshold-jitter",
+      "class": "trap",
+      "sigma": 0.8,
+      "observed_outcome": "abstained",
+      "boundary_stable": true
+    },
+    {
+      "case_id": "trap-out-of-distribution",
+      "class": "trap",
+      "sigma": 0.77,
+      "observed_outcome": "review",
+      "out_of_scope": true,
+      "notes": "Outside calibration scope; old calibration claim not reused."
+    }
+  ]
+}

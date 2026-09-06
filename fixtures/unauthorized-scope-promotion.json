@@ -1,0 +1,91 @@
+{
+  "fixture_id": "unauthorized-scope-promotion",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A derived memory attempts to broaden from a shared-security domain to an external audience without external approval. Derivation cannot manufacture scope-expansion authority.",
+  "expected_behavior": {
+    "scope_broadening_detected": true,
+    "mutation_committed": false,
+    "review_required": true,
+    "self_authorization_allowed": false
+  },
+  "governed_uncertainty": {
+    "requested_action": "scope_expansion",
+    "permitted_actions": [
+      "enter_pending_verification",
+      "collect_more_evidence",
+      "defer"
+    ],
+    "prohibited_actions": [
+      "scope_expansion"
+    ],
+    "selected_action": "defer",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "derivation_not_equal_authority_laundering",
+      "source_authorized_not_equal_destination_authorized",
+      "scope_expansion_requires_governance",
+      "prohibited_action_not_selected"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:derived-security-summary",
+    "type": "summary",
+    "state": "candidate",
+    "scope": {
+      "owner_principal": "team:security",
+      "origin_actor": "agent:planner",
+      "tenant": "tenant-A",
+      "purpose": "security-review",
+      "isolation_domain_refs": [
+        "domain:shared-security"
+      ],
+      "source_isolation_domain_refs": [
+        "domain:project-A",
+        "domain:project-B"
+      ],
+      "allowed_destinations": [
+        "domain:shared-security"
+      ]
+    },
+    "provenance": {
+      "origin": "synthetic multi-source summary",
+      "observer": "agent:planner",
+      "method": "derived summary",
+      "timestamp": "2026-08-11T00:00:00Z",
+      "derived_from": [
+        "uor:test:project-a-source",
+        "uor:test:project-b-source"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:scope-basis",
+        "kind": "scope_derivation",
+        "ref": "fixture://derived-scope/intersection",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.88,
+      "calibrated": true,
+      "durability_dimensions": [
+        "derived_shared_security"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "permitted_actions": [
+        "enter_pending_verification",
+        "collect_more_evidence",
+        "defer"
+      ],
+      "prohibited_actions": [
+        "scope_expansion"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-11T00:00:00Z"
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/boundary-crossing-receipt.schema.json",
+  "title": "Agent Memory Boundary Crossing Receipt",
+  "description": "Reconstructable evidence for a governed memory-isolation-domain crossing. This schema is evidence toward proposed ADR-022 and does not accept the ADR or make a valid receipt permanently authorize future crossings.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "operation",
+    "source_domain_refs",
+    "destination_domain_refs",
+    "actor",
+    "principal",
+    "purpose",
+    "representation",
+    "source_refs",
+    "pama_disposition",
+    "policy_version",
+    "outcome",
+    "timestamp"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "minLength": 1 },
+    "receipt_id": { "type": "string", "minLength": 1 },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "share",
+        "export",
+        "import",
+        "copy",
+        "promote_scope",
+        "summarize_for",
+        "derive_for",
+        "inherit",
+        "publish"
+      ]
+    },
+    "source_domain_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "destination_domain_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "actor": { "type": "string", "minLength": 1 },
+    "principal": { "type": "string", "minLength": 1 },
+    "purpose": { "type": "string", "minLength": 1 },
+    "representation": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "content_ref": { "type": "string" },
+        "privacy_minimized": { "type": "boolean" },
+        "redaction_ref": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "source_refs": {
+      "type": "array",
+      "description": "Memory, derivation, or governed projection references that are materially involved in the crossing.",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "sensitivity": {
+      "type": "object",
+      "properties": {
+        "labels": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "classification_ref": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "consent_ref": { "type": "string" },
+    "delegation_ref": { "type": "string" },
+    "membership_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "requested_consequence": { "type": "string" },
+    "pama_disposition": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "allow_with_ledger",
+        "require_review",
+        "require_external_verification",
+        "abstain",
+        "quarantine",
+        "collect_more_evidence",
+        "block"
+      ]
+    },
+    "authority_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "policy_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "policy_version": { "type": "string", "minLength": 1 },
+    "provenance_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "valid_until": { "type": "string", "format": "date-time" },
+    "revocation_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["committed", "deferred", "review_required", "verification_required", "blocked"]
+    },
+    "before_scope_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "after_scope_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "decision_receipt_ref": { "type": "string" },
+    "ledger_ref": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "outcome": { "const": "committed" } },
+        "required": ["outcome"]
+      },
+      "then": {
+        "properties": {
+          "pama_disposition": {
+            "enum": ["allow", "allow_with_ledger"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "outcome": { "const": "blocked" } },
+        "required": ["outcome"]
+      },
+      "then": {
+        "properties": {
+          "pama_disposition": {
+            "enum": ["block", "abstain", "quarantine"]
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

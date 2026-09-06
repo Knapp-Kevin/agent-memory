@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "fixture_id": "evolveai-public-facade-v1",
+  "provider": {
+    "component_id": "evolveai",
+    "component_version": "21161ce7b88dbffeb7ed59757b4d02d24a9c2acd",
+    "implementation_ref": "MythologIQ-Labs-LLC/EvolveAI@21161ce7b88dbffeb7ed59757b4d02d24a9c2acd"
+  },
+  "adapter": {
+    "adapter_id": "evolveai-public-facade-adapter",
+    "adapter_version": "1.0.0",
+    "qualification_profile_id": "evolveai-public-facade-behavior",
+    "qualification_profile_version": "1.0.0"
+  },
+  "runtime": {
+    "engine": "MockEngine",
+    "dimensions": 384,
+    "lifecycle_synthesis_threshold": 3,
+    "real_embedding_path_exercised": false
+  },
+  "scope_binding": {
+    "agent_memory_scope": "qualification://tenant-a/project-evolveai",
+    "provider_scope": "evolveai://qualification-store",
+    "requires_exact_component_version": true,
+    "requires_exact_component_profile_digest": true
+  },
+  "workload": {
+    "l2_inputs": ["alpha memory", "beta memory", "gamma memory"],
+    "shadow_failure_intent": "danger-intent",
+    "l3_sensitive_content": "qualification sensitive durable memory"
+  },
+  "claim_boundaries": {
+    "native_shadow_block_is_agent_memory_authority": false,
+    "native_l3_delete_proves_transitive_forgetting": false,
+    "mock_vector_quality_represents_real_embedding_quality": false,
+    "graph_storage_and_traversal_prove_graphrag": false
+  }
+}

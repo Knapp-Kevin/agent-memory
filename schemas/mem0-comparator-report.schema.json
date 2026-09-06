@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/mem0-comparator-report.schema.json",
+  "title": "Agent Memory P6 Mem0 Comparator Report",
+  "type": "object",
+  "required": [
+    "report_type",
+    "version",
+    "agent_memory_commit",
+    "comparator",
+    "execution",
+    "classification_vocabulary",
+    "scenarios",
+    "execution_success",
+    "known_limits"
+  ],
+  "properties": {
+    "report_type": {"const": "agent-memory-p6-mem0-comparator"},
+    "version": {"type": "string"},
+    "agent_memory_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "comparator": {
+      "type": "object",
+      "required": ["repository", "package", "package_version", "release", "license"],
+      "properties": {
+        "repository": {"const": "mem0ai/mem0"},
+        "package": {"const": "mem0ai"},
+        "package_version": {"const": "2.0.18"},
+        "release": {"const": "v2.0.18"},
+        "license": {"const": "Apache-2.0"}
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": [
+        "memory_implementation",
+        "vector_store",
+        "history_store",
+        "inference",
+        "embedder_boundary",
+        "llm_boundary",
+        "telemetry",
+        "external_credentials_required"
+      ],
+      "properties": {
+        "memory_implementation": {"type": "string"},
+        "vector_store": {"type": "string"},
+        "history_store": {"type": "string"},
+        "inference": {"type": "string"},
+        "embedder_boundary": {"type": "string"},
+        "llm_boundary": {"type": "string"},
+        "telemetry": {"type": "string"},
+        "external_credentials_required": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "classification_vocabulary": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/classification"}
+    },
+    "scenarios": {
+      "type": "object",
+      "required": [
+        "scoped_accumulation_and_retrieval",
+        "metadata_identity_laundering",
+        "correction_and_update_history",
+        "deletion_and_history",
+        "direct_id_boundary",
+        "scoped_bulk_deletion"
+      ],
+      "properties": {
+        "scoped_accumulation_and_retrieval": {"$ref": "#/$defs/scenario"},
+        "metadata_identity_laundering": {"$ref": "#/$defs/scenario"},
+        "correction_and_update_history": {"$ref": "#/$defs/scenario"},
+        "deletion_and_history": {"$ref": "#/$defs/scenario"},
+        "direct_id_boundary": {"$ref": "#/$defs/scenario"},
+        "scoped_bulk_deletion": {"$ref": "#/$defs/scenario"}
+      },
+      "additionalProperties": false
+    },
+    "execution_success": {"type": "boolean"},
+    "known_limits": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "classification": {
+      "enum": [
+        "NATIVE",
+        "CONFIGURABLE",
+        "WRAPPER_REQUIRED",
+        "NOT_REPRESENTABLE",
+        "UNKNOWN_NEEDS_TEST"
+      ]
+    },
+    "scenario": {
+      "type": "object",
+      "required": ["classification", "passed", "observations", "agent_memory_wrapper_implication"],
+      "properties": {
+        "classification": {"$ref": "#/$defs/classification"},
+        "passed": {"type": "boolean"},
+        "observations": {"type": "object", "additionalProperties": true},
+        "agent_memory_wrapper_implication": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

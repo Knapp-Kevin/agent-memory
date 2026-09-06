@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/external-evidence-normalized.schema.json",
+  "title": "Agent Memory Normalized External Evidence",
+  "description": "Vendor-neutral, content-minimized evidence candidate produced from a peer adapter/verifier result. Verification and applicability are evidence facts only and never create Agent Memory authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_version",
+    "evidence_id",
+    "source",
+    "issuer",
+    "verification",
+    "claim",
+    "freshness",
+    "revocation",
+    "applicability",
+    "evidence_digest",
+    "evidence_refs",
+    "interpretation"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "profile_version": { "const": "0.1.0" },
+    "evidence_id": { "type": "string", "pattern": "^external-evidence:sha256:[0-9a-f]{64}$" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["peer", "version", "release_ref", "record_ref", "adapter_id", "adapter_version", "parse_status"],
+      "properties": {
+        "peer": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "release_ref": { "type": "string", "minLength": 1 },
+        "record_ref": { "type": "string", "minLength": 1 },
+        "adapter_id": { "type": "string", "minLength": 1 },
+        "adapter_version": { "type": "string", "minLength": 1 },
+        "parse_status": { "const": "parsed" }
+      }
+    },
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "signer_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "verifier_id", "method"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["verified", "failed", "unknown", "not_performed", "unavailable"]
+        },
+        "verifier_id": { "type": "string", "minLength": 1 },
+        "method": { "type": "string", "minLength": 1 }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "source_claim_type", "scope", "subject_ref", "limitations"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["identity", "attestation", "runtime_configuration", "decision", "enforcement", "execution", "delegation", "other"]
+        },
+        "source_claim_type": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 1 },
+        "subject_ref": { "type": "string", "minLength": 1 },
+        "tenant_ref": { "type": "string", "minLength": 1 },
+        "resource_ref": { "type": "string", "minLength": 1 },
+        "action_ref": { "type": "string", "minLength": 1 },
+        "runtime_ref": { "type": "string", "minLength": 1 },
+        "configuration_ref": { "type": "string", "minLength": 1 },
+        "policy_ref": { "type": "string", "minLength": 1 },
+        "decision_ref": { "type": "string", "minLength": 1 },
+        "decision_disposition": { "type": "string", "minLength": 1 },
+        "enforcement_posture": { "type": "string", "minLength": 1 },
+        "execution_posture": { "type": "string", "minLength": 1 },
+        "attestation_mode": { "type": "string", "minLength": 1 },
+        "delegation_ref": { "type": "string", "minLength": 1 },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issued_at", "observed_at", "status"],
+      "properties": {
+        "issued_at": { "type": "string", "format": "date-time" },
+        "observed_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["current", "expired", "not_yet_valid"] }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["not_revoked", "revoked", "unknown"] },
+        "evidence_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reasons"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["applicable", "mismatch", "stale", "unsupported", "insufficient_evidence", "invalid"]
+        },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "evidence_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_effect", "memory_authority", "semantic_correctness", "lifecycle_satisfaction"],
+      "properties": {
+        "authority_effect": { "const": "none" },
+        "memory_authority": { "const": "not_established" },
+        "semantic_correctness": { "const": "not_established" },
+        "lifecycle_satisfaction": { "const": "not_established" }
+      }
+    }
+  }
+}

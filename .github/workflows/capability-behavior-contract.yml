@@ -1,0 +1,83 @@
+name: Capability Behavior Contract
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute targeted behavior-contract tests
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_capability_behavior_contract.py'
+
+      - name: Execute full reference regression suite
+        run: python -m unittest discover -s reference/tests -t reference
+
+      - name: Emit exact-head behavior-contract evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_capability_behavior_contract.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output capability-behavior-contract.json
+
+      - name: Validate emitted behavior evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("capability-behavior-contract.json").read_text())
+          if len(report["agent_memory_commit"]) != 40:
+              raise SystemExit("behavior evidence is not exact-head bound")
+          invariants = report["structural_invariants"]
+          non_boolean = [name for name, value in invariants.items() if type(value) is not bool]
+          if non_boolean:
+              raise SystemExit(f"behavior invariants are not JSON booleans: {non_boolean}")
+          failed = [name for name, passed in invariants.items() if not passed]
+          if failed:
+              raise SystemExit(f"capability behavior invariants failed: {failed}")
+          if report["authority_effect"] != "none":
+              raise SystemExit("behavior metadata must not create authority")
+          if report["component_profile_contract"] != "component-capability-v2":
+              raise SystemExit("expected v2 capability behavior profile")
+          print(f"validated {len(invariants)} capability behavior invariants")
+          PY
+
+      - name: Upload capability behavior evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: capability-behavior-contract
+          path: capability-behavior-contract.json
+          if-no-files-found: error
+
+      - name: Publish behavior summary
+        if: always()
+        run: |
+          {
+            echo "## Capability behavior contract"
+            echo ""
+            echo "component-capability-v2 declares operation, currentness/invalidation, correction, deletion/residue, migration/rebuild, and structural-mutation requirements without granting authority."
+            echo ""
+            echo "Legacy component-capability-v1 remains readable but cannot satisfy an explicit v2 behavior requirement."
+            echo ""
+            echo '```'
+            echo "python -m unittest discover -s reference/tests -t reference -p 'test_capability_behavior_contract.py'"
+            echo "python reference/run_capability_behavior_contract.py --agent-memory-commit <exact-40-hex-commit> --output capability-behavior-contract.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

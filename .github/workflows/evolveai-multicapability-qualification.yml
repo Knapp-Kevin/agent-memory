@@ -1,0 +1,172 @@
+name: EvolveAI Multi-Capability Qualification
+
+on:
+  pull_request:
+    paths:
+      - 'reference/agentmem_ref/evolveai_profile.py'
+      - 'reference/fixtures/component-capabilities/evolveai.example.json'
+      - 'reference/fixtures/evolveai-qualification.json'
+      - 'reference/fixtures/evolveai-qualification-driver/**'
+      - 'reference/run_evolveai_multicapability_qualification.py'
+      - 'reference/run_evolveai_failure_probe.py'
+      - 'reference/tests/test_evolveai_profile.py'
+      - 'docs/programs/memory-modules/evolveai-multicapability-profile.md'
+      - '.github/workflows/evolveai-multicapability-qualification.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'reference/agentmem_ref/evolveai_profile.py'
+      - 'reference/fixtures/component-capabilities/evolveai.example.json'
+      - 'reference/fixtures/evolveai-qualification.json'
+      - 'reference/fixtures/evolveai-qualification-driver/**'
+      - 'reference/run_evolveai_multicapability_qualification.py'
+      - 'reference/run_evolveai_failure_probe.py'
+      - 'reference/tests/test_evolveai_profile.py'
+      - 'docs/programs/memory-modules/evolveai-multicapability-profile.md'
+      - '.github/workflows/evolveai-multicapability-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify-evolveai:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Checkout exact repaired EvolveAI
+        uses: actions/checkout@v7
+        with:
+          repository: MythologIQ-Labs-LLC/EvolveAI
+          ref: 21161ce7b88dbffeb7ed59757b4d02d24a9c2acd
+          path: _evolveai
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Verify exact provider and source rights
+        run: |
+          test "$(git -C _evolveai rev-parse HEAD)" = "21161ce7b88dbffeb7ed59757b4d02d24a9c2acd"
+          test -f _evolveai/vendor/GG-CORE/core-runtime/Cargo.toml
+          grep -q "Apache License" _evolveai/LICENSE
+          grep -q "Version 2.0" _evolveai/LICENSE
+          grep -q 'const OP_DELETE: &str = "delete"' _evolveai/crates/evolve-core/src/tiers/l3_vault.rs
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Validate EvolveAI profile regressions
+        env:
+          PYTHONPATH: reference
+        run: python -m unittest reference/tests/test_evolveai_profile.py
+
+      - name: Reproduce EvolveAI native deletion regression suite
+        run: cargo test --manifest-path _evolveai/Cargo.toml -p evolve-core delete_tests
+
+      - name: Build public-facade qualification driver
+        run: cargo build --manifest-path reference/fixtures/evolveai-qualification-driver/Cargo.toml
+
+      - name: Execute public-facade workload
+        run: |
+          mkdir -p /tmp/evolveai-qualification
+          reference/fixtures/evolveai-qualification-driver/target/debug/agent-memory-evolveai-qualification-driver \
+            > /tmp/evolveai-qualification/evolveai-native-observation.json
+          cat /tmp/evolveai-qualification/evolveai-native-observation.json
+
+      - name: Normalize and qualify capabilities through common contract
+        env:
+          PYTHONPATH: reference
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python reference/run_evolveai_multicapability_qualification.py \
+            --profile reference/fixtures/component-capabilities/evolveai.example.json \
+            --fixture reference/fixtures/evolveai-qualification.json \
+            --raw /tmp/evolveai-qualification/evolveai-native-observation.json \
+            --output-dir /tmp/evolveai-qualification/evidence \
+            --agent-memory-commit "$HEAD_SHA"
+
+      - name: Reproduce real adapter-unavailable evidence
+        env:
+          PYTHONPATH: reference
+        run: |
+          driver=reference/fixtures/evolveai-qualification-driver/target/debug/agent-memory-evolveai-qualification-driver
+          mv "$driver" "${driver}.available"
+          python reference/run_evolveai_failure_probe.py \
+            --executable "$driver" \
+            --raw-output /tmp/evolveai-qualification/evolveai-unavailable-raw.json \
+            --normalized-output /tmp/evolveai-qualification/evolveai-unavailable-normalized.json \
+            --trace-ref trace://evolveai/provider-unavailable/1.0.0
+          mv "${driver}.available" "$driver"
+
+      - name: Validate qualification records and exact-head evidence
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from jsonschema import Draft202012Validator
+          import os
+
+          root = Path('/tmp/evolveai-qualification/evidence')
+          schema = json.loads(Path('schemas/component-capability-qualification.schema.json').read_text())
+          validator = Draft202012Validator(schema)
+          records = sorted(root.glob('qualification-*.json'))
+          assert len(records) == 13, len(records)
+          for path in records:
+              value = json.loads(path.read_text())
+              errors = sorted(validator.iter_errors(value), key=lambda error: list(error.path))
+              assert not errors, (path, [error.message for error in errors])
+              assert value['subject']['component_version'] == '21161ce7b88dbffeb7ed59757b4d02d24a9c2acd'
+              assert value['result']['qualification_current'] is True
+              assert value['result']['authority_effect'] == 'none'
+
+          summary = json.loads((root / 'evolveai-qualification-summary.json').read_text())
+          assert summary['agent_memory_commit'] == os.environ['HEAD_SHA']
+          assert summary['provider_commit'] == '21161ce7b88dbffeb7ed59757b4d02d24a9c2acd'
+          assert all(type(value) is bool and value for value in summary['invariants'].values())
+          assert summary['authority_effect'] == 'none'
+
+          unavailable = json.loads(Path('/tmp/evolveai-qualification/evolveai-unavailable-normalized.json').read_text())
+          assert unavailable['failure_result'] == 'provider_unavailable'
+          assert unavailable['currentness'] == 'unavailable'
+          assert unavailable['authority_effect'] == 'none'
+          PY
+
+      - name: Run full Agent Memory reference regression
+        env:
+          PYTHONPATH: reference
+        run: python -m unittest discover -s reference/tests -p 'test_*.py'
+
+      - name: Record evidence digests
+        run: |
+          sha256sum /tmp/evolveai-qualification/evolveai-native-observation.json \
+            | tee /tmp/evolveai-qualification/evolveai-native-observation.sha256
+          find /tmp/evolveai-qualification/evidence -type f -name '*.json' -print0 \
+            | sort -z | xargs -0 sha256sum \
+            | tee /tmp/evolveai-qualification/evidence.sha256
+          cat /tmp/evolveai-qualification/evolveai-native-observation.sha256 >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/evolveai-qualification/evidence.sha256 >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload exact-head EvolveAI qualification evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: evolveai-multicapability-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/evolveai-qualification/evolveai-native-observation.json
+            /tmp/evolveai-qualification/evolveai-native-observation.sha256
+            /tmp/evolveai-qualification/evolveai-unavailable-raw.json
+            /tmp/evolveai-qualification/evolveai-unavailable-normalized.json
+            /tmp/evolveai-qualification/evidence/
+            /tmp/evolveai-qualification/evidence.sha256
+          if-no-files-found: error
+          retention-days: 30

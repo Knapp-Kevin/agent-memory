@@ -1,0 +1,69 @@
+{
+  "fixture_id": "irreversible-deletion-under-uncertain-utility",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A learned utility estimator predicts very low future value and proposes permanent deletion.",
+  "expected_behavior": {
+    "utility_grants_deletion_authority": false,
+    "purged": false,
+    "retention_and_dependency_checks_required": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "purge",
+    "permitted_actions": [
+      "archive",
+      "require_review",
+      "deprioritize"
+    ],
+    "prohibited_actions": [
+      "purge"
+    ],
+    "selected_action": "archive",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "utility_not_equal_deletion_authority",
+      "irreversible_action_requires_stronger_authority",
+      "prohibited_action_not_selected"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:uncertain-utility-delete",
+    "type": "fact",
+    "state": "stale",
+    "provenance": {
+      "origin": "synthetic retention fixture",
+      "observer": "future-utility-estimator",
+      "method": "learned utility prediction",
+      "timestamp": "2026-08-10T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:low-utility",
+        "kind": "utility_prediction",
+        "ref": "fixture://utility/0.02",
+        "confidence": 0.9
+      }
+    ],
+    "saturation": {
+      "sigma": 0.2,
+      "calibrated": true,
+      "durability_dimensions": [
+        "future_utility"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "critical",
+      "permitted_actions": [
+        "archive",
+        "require_review",
+        "deprioritize"
+      ],
+      "prohibited_actions": [
+        "purge"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-10T00:00:00Z"
+  }
+}

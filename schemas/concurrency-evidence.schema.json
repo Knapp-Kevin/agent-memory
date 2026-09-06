@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/concurrency-evidence.schema.json",
+  "title": "Agent Memory Concurrency Evidence",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "agent_memory_commit",
+    "fixture_id",
+    "fixture_version",
+    "scenario",
+    "outcomes",
+    "conflict_record",
+    "expected_behavior",
+    "observed_behavior",
+    "passed",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "agent_memory_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "fixture_id": { "const": "concurrent-conflicting-mutation" },
+    "fixture_version": { "type": "string" },
+    "scenario": {
+      "type": "object",
+      "required": ["target_ref", "initial_state", "proposal_a_snapshot", "proposal_b_snapshot"],
+      "properties": {
+        "target_ref": { "type": "string" },
+        "initial_state": { "type": "string" },
+        "proposal_a_snapshot": { "type": "string" },
+        "proposal_b_snapshot": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "outcomes": {
+      "type": "object",
+      "required": ["proposal_a", "proposal_b", "final_state", "substrate_write_count", "surviving_fact_count"],
+      "properties": {
+        "proposal_a": { "$ref": "#/$defs/committedProposal" },
+        "proposal_b": { "$ref": "#/$defs/rejectedProposal" },
+        "final_state": { "type": "string" },
+        "substrate_write_count": { "type": "integer", "minimum": 0 },
+        "surviving_fact_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "conflict_record": {
+      "type": "object",
+      "required": [
+        "winning_proposal_id",
+        "rejected_proposal_id",
+        "rejected_receipt_ref",
+        "expected_state",
+        "observed_state",
+        "resolution",
+        "reason"
+      ],
+      "properties": {
+        "winning_proposal_id": { "type": "string" },
+        "rejected_proposal_id": { "type": "string" },
+        "rejected_receipt_ref": { "type": "string" },
+        "expected_state": { "type": "string" },
+        "observed_state": { "type": "string" },
+        "resolution": { "type": "string" },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "expected_behavior": { "$ref": "#/$defs/behavior" },
+    "observed_behavior": { "$ref": "#/$defs/behavior" },
+    "passed": { "type": "boolean" },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "behavior": {
+      "type": "object",
+      "required": ["silent_last_writer_wins", "conflict_recorded", "state_version_revalidated"],
+      "properties": {
+        "silent_last_writer_wins": { "type": "boolean" },
+        "conflict_recorded": { "type": "boolean" },
+        "state_version_revalidated": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "committedProposal": {
+      "type": "object",
+      "required": ["proposal_id", "committed", "receipt_ref", "before_state", "after_state"],
+      "properties": {
+        "proposal_id": { "type": "string" },
+        "committed": { "const": true },
+        "receipt_ref": { "type": "string" },
+        "before_state": { "type": "string" },
+        "after_state": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "rejectedProposal": {
+      "type": "object",
+      "required": [
+        "proposal_id",
+        "committed",
+        "receipt_ref",
+        "requested_state",
+        "observed_state",
+        "after_state",
+        "selected_action",
+        "refusal"
+      ],
+      "properties": {
+        "proposal_id": { "type": "string" },
+        "committed": { "const": false },
+        "receipt_ref": { "type": "string" },
+        "requested_state": { "type": "string" },
+        "observed_state": { "type": "string" },
+        "after_state": { "type": "string" },
+        "selected_action": { "type": "string" },
+        "refusal": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

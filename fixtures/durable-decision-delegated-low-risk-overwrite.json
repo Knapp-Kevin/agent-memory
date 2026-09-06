@@ -1,0 +1,93 @@
+{
+  "fixture_id": "durable-decision-delegated-low-risk-overwrite",
+  "fixture_version": "1.0.0",
+  "class": "positive_control",
+  "description": "A non-human-confirmed low-risk durable decision resolves a bounded delegated-policy grant correctly, and still PARKS pending verification: the grant answers the authority question, not the evidence question, so it cannot itself discharge review (ADR-037 step 4b-2, operator ruling 2026-09-05). Authority resolution and evidence sufficiency are separate axes.",
+  "expected_behavior": {
+    "commit_status": "pending",
+    "commit_reason": "parked_pending_verification",
+    "target_status": "active",
+    "replacement_status": "absent",
+    "supersession_journal_count": 0,
+    "pama_outcome": "require_review",
+    "authority_kind": "delegated_policy",
+    "authority_resolved": true,
+    "parked_pending_verification": true
+  },
+  "memory_unit": {
+    "id": "decision:original",
+    "content_ref": "fixture://durable-decision/original-low-risk",
+    "type": "decision",
+    "state": "reinforced",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "durable-decision-delegated-positive-control",
+      "timestamp": "2026-08-12T16:00:00Z",
+      "source_refs": [
+        "fixture://durable-decision/original-source"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:decision-delegated",
+        "kind": "decision_record",
+        "ref": "fixture://durable-decision/delegated-evidence",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.5,
+      "calibrated": false,
+      "durability_dimensions": [
+        "durable_decision_fixture"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "low",
+      "policy_refs": [
+        "ADR-004",
+        "ADR-025"
+      ],
+      "permitted_actions": [
+        "decision_overwrite",
+        "collect_more_evidence",
+        "defer"
+      ],
+      "prohibited_actions": [],
+      "selection_mode": "external"
+    },
+    "created_at": "2026-08-12T16:00:00Z"
+  },
+  "decision": {
+    "decision_id": "decision:original",
+    "decision_statement": "Use a local reversible cache for this bounded task.",
+    "rationale": "The task is local, reversible, and does not carry governance authority.",
+    "decision_scope": "task:local",
+    "owner": "role:task-owner",
+    "approval_refs": [
+      "policy:original"
+    ],
+    "decided_at": "2026-08-12T16:00:00Z",
+    "human_confirmed": false
+  },
+  "overwrite_proposal": {
+    "proposal_id": "overwrite:fixture-delegated",
+    "proposing_actor": "agent:planner",
+    "target_decision_id": "decision:original",
+    "replacement_decision_id": "decision:replacement",
+    "scope": "task:local",
+    "state_snapshot": "v0",
+    "risk_class": "low"
+  },
+  "authority_grant": {
+    "grant_id": "grant:fixture-delegated",
+    "authority_kind": "delegated_policy",
+    "principal_id": "policy:task-owner-delegation",
+    "issued_at": "2026-08-12T18:00:00Z",
+    "expires_at": "2026-08-12T19:00:00Z",
+    "max_risk_class": "medium"
+  },
+  "adr_037_note": "Changed by ADR-037 step 4b-2 (ledger entry #24). Previously this fixture expected commit_status=committed and pama_outcome=allow_with_ledger, obtained through review_satisfied=True plus the grant id in approval_refs. That discharge path was removed. The grant still resolves -- delegated_policy remains a valid non-human authority at low risk -- but authority alone no longer commits."
+}

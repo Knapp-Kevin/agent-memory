@@ -1,0 +1,153 @@
+name: DashClaw External Verdict Provider
+
+on:
+  pull_request:
+    paths:
+      - "reference/agentmem_ref/dashclaw_external_verdict.py"
+      - "reference/agentmem_ref/dashclaw_authority.py"
+      - "reference/agentmem_ref/dashclaw_governed_commit.py"
+      - "reference/run_dashclaw_provider.py"
+      - "reference/run_dashclaw_external_verdict.py"
+      - "reference/tests/test_dashclaw_external_verdict.py"
+      - "reference/tests/test_dashclaw_project_authority.py"
+      - "reference/tests/test_dashclaw_target_scope_recovery.py"
+      - "reference/tests/test_dashclaw_cloudflare_packaging.py"
+      - "examples/cloudflare-dashclaw-provider/**"
+      - "docs/programs/runtime-evidence/dashclaw-external-verdict.md"
+      - "docs/programs/runtime-evidence/dashclaw-live-cloudflare-conformance-plan.md"
+      - ".github/workflows/dashclaw-external-verdict.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DASHCLAW_RELEASE: v5.24.0
+  DASHCLAW_COMMIT: 082b704262bebe0e86ef66d98c97f42d6358c3c3
+
+jobs:
+  provider-proof:
+    runs-on: ubuntu-latest
+    env:
+      AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      EVIDENCE_DIR: /tmp/dashclaw-external-verdict
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Compile provider surfaces
+        run: |
+          python -m py_compile \
+            reference/agentmem_ref/dashclaw_external_verdict.py \
+            reference/agentmem_ref/dashclaw_authority.py \
+            reference/agentmem_ref/dashclaw_governed_commit.py \
+            reference/run_dashclaw_provider.py \
+            reference/run_dashclaw_external_verdict.py \
+            examples/cloudflare-dashclaw-provider/prepare.py \
+            examples/cloudflare-dashclaw-provider/src/entry.py
+
+      - name: Run provider contract and adversarial tests
+        env:
+          PYTHONPATH: reference
+        run: |
+          python -m unittest \
+            reference/tests/test_dashclaw_external_verdict.py \
+            reference/tests/test_dashclaw_project_authority.py \
+            reference/tests/test_dashclaw_target_scope_recovery.py \
+            reference/tests/test_dashclaw_cloudflare_packaging.py
+
+      - name: Verify portable Cloudflare provider source preparation
+        run: python examples/cloudflare-dashclaw-provider/prepare.py --check
+
+      - name: Dry-run Cloudflare Python Worker bundle
+        run: |
+          python -m pip install --disable-pip-version-check uv
+          python examples/cloudflare-dashclaw-provider/prepare.py
+          cd examples/cloudflare-dashclaw-provider
+          uvx --from workers-py pywrangler deploy --dry-run --outdir dist
+          test -d dist
+
+      - name: Execute governed durable-memory workload
+        env:
+          PYTHONPATH: reference
+        run: |
+          mkdir -p "$EVIDENCE_DIR"
+          python reference/run_dashclaw_external_verdict.py > "$EVIDENCE_DIR/provider-workload.json"
+
+      - name: Verify workload invariants
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report = json.loads((Path(os.environ["EVIDENCE_DIR"]) / "provider-workload.json").read_text())
+          assert report["dashclaw_contract"] == "external-verdict-v1@v5.24.0"
+          assert report["provider_scope"] == ["agent_memory.mutation"]
+          assert report["cross_session_not_restart"] is True
+          assert report["authority_boundary"]["identity_only_decision"] == "deny"
+          assert report["authority_boundary"]["identity_only_authority_resolved"] is False
+          assert report["authority_boundary"]["resolved_authority_evidence"] == "authority-grant:fixture-release-agent"
+          assert report["initial"]["provider_decision"] == "allow"
+          assert report["initial"]["provider_identity_echo"] is True
+          assert report["initial"]["provider_execution_evidence"] is False
+          assert report["initial"]["committed"] is True
+          assert report["correction"]["provider_decision"] == "escalate"
+          assert report["correction"]["unapproved_refusal"] == "approval_required"
+          assert report["correction"]["wrong_identity_refusal"] == "approval_identity_mismatch"
+          assert report["correction"]["self_approval_refusal"] == "self_approval_forbidden"
+          assert report["correction"]["committed"] is True
+          assert report["correction"]["current_value"] == "release branch main"
+          assert report["correction"]["old_value_event_invalid"] is True
+          assert report["stale_replay"] == {"committed": False, "refusal": "stale_authorization"}
+          assert report["scope_attack"]["provider_decision"] == "deny"
+          assert report["scope_attack"]["committed"] is False
+          assert report["scope_attack"]["substrate_untouched"] is True
+          assert report["unauthorized_project"]["provider_decision"] == "deny"
+          assert report["unauthorized_project"]["authority_resolved"] is False
+          assert report["unauthorized_project"]["authority_reason"] == "authority_grant_not_found"
+          assert report["unauthorized_project"]["committed"] is False
+          assert report["unauthorized_project"]["refusal"] == "requested_scope_authority_unresolved"
+          assert report["unauthorized_project"]["substrate_untouched"] is True
+          assert report["cross_target_scope"]["seed_provider_decision"] == "allow"
+          assert report["cross_target_scope"]["seed_committed"] is True
+          assert report["cross_target_scope"]["attack_provider_decision"] == "escalate"
+          assert report["cross_target_scope"]["attack_committed"] is False
+          assert report["cross_target_scope"]["attack_refusal"] == "target_scope_authority_unresolved"
+          assert report["cross_target_scope"]["substrate_untouched"] is True
+          assert report["cross_target_scope"]["other_current_value"] == "other release branch release"
+          assert report["cross_project_recall"]["admitted"]
+          PY
+
+      - name: Pin and verify DashClaw v1 contract source
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/ucsandman/DashClaw.git /tmp/dashclaw
+          git -C /tmp/dashclaw fetch --depth=1 origin "$DASHCLAW_COMMIT"
+          git -C /tmp/dashclaw fetch --depth=1 origin "refs/tags/$DASHCLAW_RELEASE:refs/tags/$DASHCLAW_RELEASE"
+          test "$(git -C /tmp/dashclaw rev-list -n1 "$DASHCLAW_RELEASE")" = "$DASHCLAW_COMMIT"
+          git -C /tmp/dashclaw checkout --detach "$DASHCLAW_COMMIT"
+          test "$(git -C /tmp/dashclaw rev-parse HEAD)" = "$DASHCLAW_COMMIT"
+          grep -F 'decision` MUST be one of `allow | warn | escalate | deny`' /tmp/dashclaw/docs/external-verdict-provider.md
+          grep -F 'EXTERNAL_VERDICT_ACTION_TYPES' /tmp/dashclaw/docs/external-verdict-provider.md
+          grep -F 'dashclaw.connection_test' /tmp/dashclaw/docs/external-verdict-provider.md
+          cp /tmp/dashclaw/docs/external-verdict-provider.md "$EVIDENCE_DIR/dashclaw-external-verdict-provider-v1.md"
+
+      - name: Bind evidence to exact Agent Memory head
+        run: |
+          printf '%s\n' "$AGENT_MEMORY_COMMIT" > "$EVIDENCE_DIR/agent-memory-head.txt"
+          printf '%s\n' "$DASHCLAW_COMMIT" > "$EVIDENCE_DIR/dashclaw-head.txt"
+
+      - name: Upload provider evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: dashclaw-external-verdict-${{ env.AGENT_MEMORY_COMMIT }}
+          path: /tmp/dashclaw-external-verdict
+          if-no-files-found: error

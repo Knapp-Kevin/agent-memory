@@ -1,0 +1,224 @@
+name: MemOS v2.0.17 Provider Substitution
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/memos-v2017-substitution.yml"
+      - "reference/agentmem_ref/memos_qualification.py"
+      - "reference/agentmem_ref/resource_provider_substitution.py"
+      - "reference/run_memos_local_v2017_fixture.mjs"
+      - "reference/run_memos_local_v2017_qualification.py"
+      - "reference/run_resource_artifact_substitution.py"
+      - "reference/tests/test_memos_qualification.py"
+      - "reference/fixtures/component-capabilities/memos-local-plugin-v2.0.17.json"
+      - "reference/fixtures/component-capabilities/hindsight-v0.9.0.json"
+      - "reference/fixtures/component-qualification/hindsight-v0.9.0-resource-artifact-qualified-v12.json"
+      - "reference/agentmem_ref/qualification.py"
+      - "reference/agentmem_ref/capabilities.py"
+      - "schemas/component-capability-profile.schema.json"
+      - "schemas/component-capability-qualification.schema.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify-and-substitute:
+    name: qualify-and-substitute-memos-v2017
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      PYTHONPATH: reference
+      AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      MEMOS_TAG: memos-local-plugin-v2.0.17
+      MEMOS_COMMIT: d3d1bcfaff65f31b621d58bc236ece6d1e0da5ab
+      MEMOS_VERSION: 2.0.17
+      MEMOS_PACKAGE: "@memtensor/memos-local-plugin"
+      RAW_ROOT: artifacts/memos-v2017
+    steps:
+      - name: Checkout Agent Memory exact head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.AGENT_MEMORY_COMMIT }}
+
+      - name: Verify Agent Memory exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$AGENT_MEMORY_COMMIT"
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install Agent Memory validation dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Prepare evidence directories
+        shell: bash
+        run: mkdir -p "$RAW_ROOT" /tmp/memos-runtime /tmp/memos-qualification-home
+
+      - name: Verify exact MemOS source and preserve license discrepancy
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/memos-source
+          git init -q /tmp/memos-source
+          git -C /tmp/memos-source remote add origin https://github.com/MemTensor/MemOS.git
+          git -C /tmp/memos-source fetch -q --depth 1 origin "refs/tags/$MEMOS_TAG"
+          git -C /tmp/memos-source checkout -q FETCH_HEAD
+          test "$(git -C /tmp/memos-source rev-parse HEAD)" = "$MEMOS_COMMIT"
+          grep -q "Apache License" /tmp/memos-source/LICENSE
+          grep -q "Version 2.0" /tmp/memos-source/LICENSE
+          node - <<'NODE'
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('/tmp/memos-source/apps/memos-local-plugin/package.json', 'utf8'));
+          if (pkg.name !== process.env.MEMOS_PACKAGE) throw new Error(`unexpected package name: ${pkg.name}`);
+          if (pkg.version !== process.env.MEMOS_VERSION) throw new Error(`unexpected package version: ${pkg.version}`);
+          if (pkg.license !== 'MIT') throw new Error(`expected package metadata license discrepancy, got: ${pkg.license}`);
+          NODE
+          cp /tmp/memos-source/LICENSE "$RAW_ROOT/source-LICENSE"
+          cp /tmp/memos-source/apps/memos-local-plugin/package.json "$RAW_ROOT/source-package.json"
+
+      - name: Capture registry metadata and install exact MemOS package
+        working-directory: /tmp/memos-runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null
+          npm view "$MEMOS_PACKAGE@$MEMOS_VERSION" version license dist.integrity dist.shasum --json > "$GITHUB_WORKSPACE/$RAW_ROOT/npm-registry-metadata.json"
+          npm install --no-audit --no-fund "$MEMOS_PACKAGE@$MEMOS_VERSION"
+          PACKAGE_ROOT="/tmp/memos-runtime/node_modules/@memtensor/memos-local-plugin"
+          test -f "$PACKAGE_ROOT/dist/core/index.js"
+          test -f "$PACKAGE_ROOT/core/pipeline/memory-core.ts"
+          node - <<'NODE'
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('/tmp/memos-runtime/node_modules/@memtensor/memos-local-plugin/package.json', 'utf8'));
+          if (pkg.name !== process.env.MEMOS_PACKAGE) throw new Error(`unexpected installed package: ${pkg.name}`);
+          if (pkg.version !== process.env.MEMOS_VERSION) throw new Error(`unexpected installed version: ${pkg.version}`);
+          if (pkg.license !== 'MIT') throw new Error(`installed package license metadata drifted: ${pkg.license}`);
+          NODE
+          cmp /tmp/memos-source/apps/memos-local-plugin/core/pipeline/memory-core.ts "$PACKAGE_ROOT/core/pipeline/memory-core.ts"
+          cmp /tmp/memos-source/apps/memos-local-plugin/agent-contract/memory-core.ts "$PACKAGE_ROOT/agent-contract/memory-core.ts"
+          cp "$PACKAGE_ROOT/package.json" "$GITHUB_WORKSPACE/$RAW_ROOT/installed-package.json"
+
+      - name: Execute focused qualification and substitution tests
+        run: |
+          python -m unittest \
+            reference/tests/test_memos_qualification.py \
+            reference/tests/test_component_qualification_v12.py
+
+      - name: Execute exact MemOS SQLite lifecycle fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/memos-qualification-home
+          mkdir -p /tmp/memos-qualification-home
+          node reference/run_memos_local_v2017_fixture.mjs \
+            --package-root /tmp/memos-runtime/node_modules/@memtensor/memos-local-plugin \
+            --home /tmp/memos-qualification-home \
+            --source-commit "$MEMOS_COMMIT" \
+            --license-path /tmp/memos-source/LICENSE \
+            --output "$RAW_ROOT/raw-provider-evidence.json"
+
+      - name: Emit MemOS Capability Qualification v1.2 evidence
+        run: |
+          python reference/run_memos_local_v2017_qualification.py \
+            --agent-memory-commit "$AGENT_MEMORY_COMMIT" \
+            --raw-evidence "$RAW_ROOT/raw-provider-evidence.json" \
+            --component-profile reference/fixtures/component-capabilities/memos-local-plugin-v2.0.17.json \
+            --output "$RAW_ROOT/qualification.json"
+
+      - name: Validate MemOS qualification schema and current declaration
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import jsonschema
+          from agentmem_ref.memos_qualification import load_component_profile
+          from agentmem_ref.resource_provider_substitution import qualification_record_from_dict
+
+          root = Path('.')
+          report = json.loads((root / 'artifacts/memos-v2017/qualification.json').read_text())
+          assert report['eligible'] is True
+          qualification = report['qualification']
+          schema = json.loads((root / 'schemas/component-capability-qualification.schema.json').read_text())
+          jsonschema.Draft202012Validator(schema).validate(qualification)
+          record = qualification_record_from_dict(qualification)
+          component = load_component_profile(root / 'reference/fixtures/component-capabilities/memos-local-plugin-v2.0.17.json')
+          record.assert_current_declaration(component)
+          assert record.use_posture == 'runtime_allowed'
+          assert record.license_id == 'Apache-2.0'
+          assert record.authority_effect == 'none'
+          PY
+
+      - name: Prove Hindsight to MemOS substitution against one requirement
+        run: |
+          python reference/run_resource_artifact_substitution.py \
+            --primary-component reference/fixtures/component-capabilities/hindsight-v0.9.0.json \
+            --primary-qualification reference/fixtures/component-qualification/hindsight-v0.9.0-resource-artifact-qualified-v12.json \
+            --replacement-component reference/fixtures/component-capabilities/memos-local-plugin-v2.0.17.json \
+            --replacement-qualification "$RAW_ROOT/qualification.json" \
+            --output "$RAW_ROOT/substitution.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('artifacts/memos-v2017/substitution.json').read_text())
+          assert value['authority_effect'] == 'none'
+          evidence = value['substitution']
+          assert evidence['primary_component'] == 'hindsight-v0.9.0'
+          assert evidence['replacement_component'] == 'memos-local-plugin-v2.0.17'
+          assert evidence['capability_id'] == 'resource_artifact_memory'
+          assert evidence['capability_version'] == '1.0'
+          assert evidence['authority_effect'] == 'none'
+          PY
+
+      - name: Publish qualification and substitution summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## MemOS v2.0.17 qualification and substitution"
+            echo
+            if [ -f "$RAW_ROOT/qualification.json" ]; then
+              python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('artifacts/memos-v2017/qualification.json').read_text())
+          print(f"- MemOS eligible: `{str(value.get('eligible')).lower()}`")
+          print(f"- authority effect: `{value.get('authority_effect')}`")
+          for observation in value.get('observations', []):
+              marker = 'PASS' if observation.get('passed') else 'FAIL'
+              print(f"- {marker}: `{observation.get('check_id')}`")
+          PY
+            else
+              echo "- MemOS qualification was not emitted"
+            fi
+            if [ -f "$RAW_ROOT/substitution.json" ]; then
+              python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('artifacts/memos-v2017/substitution.json').read_text())
+          sub = value['substitution']
+          print(f"- substitution: `{sub['primary_component']}` -> `{sub['replacement_component']}`")
+          print(f"- substitution authority: `{sub['authority_effect']}`")
+          PY
+            else
+              echo "- substitution evidence was not emitted"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload raw, qualification, and substitution evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: memos-v2017-substitution-${{ env.AGENT_MEMORY_COMMIT }}
+          path: artifacts/memos-v2017
+          if-no-files-found: warn

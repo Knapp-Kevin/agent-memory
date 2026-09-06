@@ -1,0 +1,9 @@
+name = "agent-memory-dashclaw-provider-proving"
+main = "src/entry.py"
+compatibility_date = "2026-09-04"
+compatibility_flags = ["python_workers"]
+workers_dev = true
+
+# Deliberately no routes, cron, R2, D1, Durable Objects, Workflows, Queues,
+# Workers AI, service bindings, or other account resources. The sole runtime
+# configuration is the encrypted DASHCLAW_PROVIDER_CONFIG secret.

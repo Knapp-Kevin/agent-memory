@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/derivation-currentness-evaluation.schema.json",
+  "title": "Agent Memory Derivation Currentness Evaluation",
+  "description": "Append-only evaluation of whether historical derived evidence remains currently applicable given current root-source and scope state.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evaluation_id",
+    "derivation_id",
+    "root_origin_refs",
+    "source_observations",
+    "unexpected_source_refs",
+    "scope_observation",
+    "applicability",
+    "evidence_character",
+    "evaluated_at",
+    "interpretation"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "evaluation_id": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "derivation_id": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "root_origin_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "source_observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["origin_ref", "observed", "state", "evidence_class", "evidence_refs"],
+        "properties": {
+          "origin_ref": { "type": "string", "minLength": 1 },
+          "observed": { "type": "boolean" },
+          "state": {
+            "type": "string",
+            "enum": ["current", "disputed", "revoked", "superseded", "tombstoned", "deleted", "unknown"]
+          },
+          "evidence_class": {
+            "type": "string",
+            "enum": ["ordinary", "negative", "adversarial", "correction", "incident"]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "unexpected_source_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "scope_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "current_scope_ref", "tenant_ref", "project_ref", "evidence_refs"],
+      "properties": {
+        "status": { "type": "string", "enum": ["unchanged", "reduced", "revoked", "unknown"] },
+        "current_scope_ref": { "type": "string", "minLength": 1 },
+        "tenant_ref": { "type": "string", "minLength": 1 },
+        "project_ref": { "type": "string", "minLength": 1 },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "revalidation_required", "reasons"],
+      "properties": {
+        "status": { "type": "string", "enum": ["current", "revalidation_required", "unknown"] },
+        "revalidation_required": { "type": "boolean" },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "evidence_character": {
+      "type": "string",
+      "enum": ["ordinary", "negative_or_adversarial", "correction_or_incident"]
+    },
+    "evaluated_at": { "type": "string", "minLength": 1 },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_effect",
+        "memory_admission",
+        "certification_claim",
+        "remote_mutation",
+        "historical_derivation_mutated",
+        "prior_authorization_reusable",
+        "currentness_evidence_authority"
+      ],
+      "properties": {
+        "authority_effect": { "const": "none" },
+        "memory_admission": { "const": "not_established" },
+        "certification_claim": { "const": "none" },
+        "remote_mutation": { "const": "not_established" },
+        "historical_derivation_mutated": { "const": false },
+        "prior_authorization_reusable": { "const": false },
+        "currentness_evidence_authority": { "const": "none" }
+      }
+    }
+  }
+}
