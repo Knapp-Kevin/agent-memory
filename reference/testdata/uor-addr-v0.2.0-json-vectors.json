@@ -1,0 +1,22 @@
+{
+  "profile": "agent-memory/uor-addr-json-content-reference",
+  "uor_release": "v0.2.0",
+  "uor_source_commit": "d78f82f26034880e91b1d54c21900a33ab73f695",
+  "vectors": [
+    {"id": "object-canonical", "json_text": "{\"a\":1,\"b\":2}"},
+    {"id": "object-reordered-whitespace", "json_text": "{ \"b\" : 2 , \"a\" : 1 }"},
+    {"id": "unicode-nfc", "json_text": "{\"name\":\"café\"}"},
+    {"id": "unicode-nfd", "json_text": "{\"name\":\"café\"}"},
+    {"id": "number-42", "json_text": "42"},
+    {"id": "string-42", "json_text": "\"42\""},
+    {"id": "material-difference", "json_text": "{\"a\":1,\"b\":3}"}
+  ],
+  "equivalent_pairs": [
+    ["object-canonical", "object-reordered-whitespace"],
+    ["unicode-nfc", "unicode-nfd"]
+  ],
+  "distinct_pairs": [
+    ["number-42", "string-42"],
+    ["object-canonical", "material-difference"]
+  ]
+}

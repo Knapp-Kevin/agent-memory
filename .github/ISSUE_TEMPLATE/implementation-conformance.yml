@@ -1,0 +1,122 @@
+name: Implementation or conformance evidence
+description: Map a real implementation, adapter, benchmark run, or runtime behavior against Agent Memory contracts
+title: "[Conformance] "
+labels:
+  - agent-memory
+  - conformance
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for concrete implementation evidence. A repository link, architecture diagram, or passing schema validation is not by itself runtime conformance. Pin the implementation and distinguish declared support from observed behavior.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I have identified an exact implementation version, commit, release, or reproducible environment.
+          required: true
+        - label: I understand that structural fixture/schema validity does not prove runtime behavior.
+          required: true
+
+  - type: input
+    id: implementation
+    attributes:
+      label: Implementation or system
+      placeholder: Repository, adapter, runtime, benchmark harness, etc.
+    validations:
+      required: true
+
+  - type: input
+    id: implementation_ref
+    attributes:
+      label: Exact version or commit
+      placeholder: commit SHA, tag, release, image digest, or equivalent
+    validations:
+      required: true
+
+  - type: input
+    id: implementation_url
+    attributes:
+      label: Source or evidence URL
+      placeholder: https://...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: evidence_type
+    attributes:
+      label: Evidence type
+      options:
+        - Doctrine-to-implementation mapping
+        - Adapter implementation
+        - Runtime positive-path result
+        - Runtime negative/adversarial result
+        - Benchmark result
+        - Security or privacy behavior
+        - Deletion/forgetting behavior
+        - Replay/recovery behavior
+        - Interoperability/import-export result
+        - Other runtime evidence
+    validations:
+      required: true
+
+  - type: textarea
+    id: contract_mapping
+    attributes:
+      label: Contract mapping
+      description: Name the relevant Agent Memory docs, ADRs, schemas, fixtures, PAMA classes, or conformance levels.
+    validations:
+      required: true
+
+  - type: textarea
+    id: setup
+    attributes:
+      label: Reproduction setup
+      description: Include environment, dependencies, policy version, estimator version, fixture/version, configuration, and commands needed to reproduce the result.
+    validations:
+      required: true
+
+  - type: textarea
+    id: result
+    attributes:
+      label: Observed result
+      description: State what actually happened, including failures and unsupported behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence_artifacts
+    attributes:
+      label: Evidence artifacts
+      description: Link receipts, logs, reports, traces, screenshots, benchmark outputs, or other reconstructable evidence. Avoid exposing secrets or sensitive memory content.
+
+  - type: textarea
+    id: negative_paths
+    attributes:
+      label: Negative paths tested
+      description: List governance, scope, poisoning, stale-authority, stochastic-containment, correction, deletion-residue, or other adversarial paths exercised.
+
+  - type: dropdown
+    id: maturity
+    attributes:
+      label: Claimed maturity
+      options:
+        - Mapping only
+        - Declared support
+        - Partial observed support
+        - Reproducible observed support
+        - Candidate conformance evidence
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: claim_boundary
+    attributes:
+      label: Claim boundary
+      options:
+        - label: I have not generalized product-specific behavior into universal doctrine without separate evidence.
+          required: true
+        - label: Unsupported or untested behavior is labeled as such rather than inferred as passing.
+          required: true

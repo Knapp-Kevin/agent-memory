@@ -1,0 +1,426 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/pama-decision.schema.json",
+  "title": "Proportional Adaptive Mutation Authority Decision",
+  "description": "Doctrine-level compatibility contract for PAMA authority evaluations. PAMA decision 1.1.0 adds decision_overwrite, 1.2.0 adds domain_schema_mutation, and 1.3.0 adds explicit ADR-032 structural-impact bindings for deterministic S1 delegation while preserving historical 1.2.0 behavior.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "proposal_id",
+    "proposing_actor",
+    "target",
+    "mutation",
+    "basis",
+    "policy",
+    "decision"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "proposal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "proposing_actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "charter_version"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "role": {"type": "string", "minLength": 1},
+        "charter_version": {"type": "string", "minLength": 1},
+        "authority_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference", "class", "scope"],
+      "properties": {
+        "reference": {"type": "string", "minLength": 1},
+        "domain": {"type": "string", "minLength": 1},
+        "class": {
+          "type": "string",
+          "enum": [
+            "M0_EXECUTION_LOCAL_CONTEXT",
+            "M1_LOW_RISK_PERSONAL_PREFERENCE",
+            "M2_OPERATIONAL_ASSOCIATION",
+            "M3_REUSABLE_PROCEDURE_OR_CAPABILITY",
+            "M4_SHARED_OR_IDENTITY_BEARING_STATE",
+            "M5_GOVERNANCE_SECURITY_OR_AUTONOMOUS_AUTHORITY"
+          ]
+        },
+        "scope": {"type": "string", "minLength": 1},
+        "tenant_ref": {"type": "string", "minLength": 1},
+        "purpose": {"type": "string", "minLength": 1}
+      }
+    },
+    "mutation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "current_strength",
+        "proposed_strength",
+        "downstream_authority",
+        "reversibility",
+        "risk_class"
+      ],
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "runtime_assembly",
+            "score_adjustment",
+            "link_creation",
+            "link_deletion",
+            "correction",
+            "decision_overwrite",
+            "domain_schema_mutation",
+            "promotion",
+            "crystallization",
+            "pruning",
+            "permanent_deletion",
+            "scope_expansion",
+            "policy_mutation",
+            "capability_promotion",
+            "authority_change",
+            "other"
+          ]
+        },
+        "current_strength": {
+          "type": "string",
+          "enum": [
+            "observed",
+            "tentative",
+            "reinforced",
+            "promoted",
+            "canonical",
+            "decaying",
+            "archived",
+            "deprecated",
+            "blocked",
+            "not_applicable"
+          ]
+        },
+        "proposed_strength": {
+          "type": "string",
+          "enum": [
+            "observed",
+            "tentative",
+            "reinforced",
+            "promoted",
+            "canonical",
+            "decaying",
+            "archived",
+            "deprecated",
+            "blocked",
+            "not_applicable"
+          ]
+        },
+        "downstream_authority": {
+          "type": "string",
+          "enum": [
+            "A0_RETRIEVAL_ONLY",
+            "A1_RECOMMENDATION_INFLUENCE",
+            "A2_DRAFT_GENERATION",
+            "A3_LOCAL_WORKFLOW_MUTATION",
+            "A4_EXTERNAL_ACTION",
+            "A5_GOVERNANCE_CHANGE"
+          ]
+        },
+        "reversibility": {
+          "type": "string",
+          "enum": [
+            "ephemeral",
+            "reversible",
+            "versioned_revocable",
+            "compensatable",
+            "irreversible",
+            "unknown"
+          ]
+        },
+        "risk_class": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "requested_scope_change": {"type": "string"}
+      }
+    },
+    "basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_refs"],
+      "properties": {
+        "justification": {"type": "string"},
+        "evidence_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "validation_result_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "correction_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "estimator_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "estimator_versions": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "calibration_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "uncertainty_summary": {"type": "string"},
+        "freshness_requirement": {"type": "string"},
+        "sensitivity": {"type": "string"},
+        "structural_impact_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "structural_class": {"enum": ["S1", "S2", "S3"]},
+        "structural_classifier_id": {"type": "string", "minLength": 1},
+        "structural_classifier_version": {"type": "string", "minLength": 1},
+        "structural_state_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "structural_dependency_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_version"],
+      "properties": {
+        "policy_version": {"type": "string", "minLength": 1},
+        "policy_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "required_review_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "structural_policy_id": {"type": "string", "minLength": 1},
+        "structural_policy_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "permitted_actions",
+        "prohibited_actions"
+      ],
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "allow",
+            "allow_with_ledger",
+            "require_review",
+            "require_external_verification",
+            "block",
+            "abstain",
+            "quarantine",
+            "collect_more_evidence"
+          ]
+        },
+        "permitted_actions": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "prohibited_actions": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "selected_action": {"type": ["string", "null"]},
+        "selection_mode": {
+          "type": ["string", "null"],
+          "enum": ["deterministic", "stochastic", "human", "external", null]
+        },
+        "decision_receipt_ref": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mutation": {
+            "properties": {
+              "downstream_authority": {"const": "A5_GOVERNANCE_CHANGE"}
+            },
+            "required": ["downstream_authority"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "require_review",
+                  "require_external_verification",
+                  "block",
+                  "abstain",
+                  "quarantine",
+                  "collect_more_evidence"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mutation": {
+            "properties": {
+              "operation": {"const": "decision_overwrite"}
+            },
+            "required": ["operation"]
+          }
+        }
+      },
+      "then": {
+        "required": ["schema_version"],
+        "properties": {
+          "schema_version": {"const": "1.1.0"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mutation": {
+            "properties": {
+              "operation": {"const": "domain_schema_mutation"}
+            },
+            "required": ["operation"]
+          }
+        }
+      },
+      "then": {
+        "required": ["schema_version"],
+        "properties": {
+          "schema_version": {"enum": ["1.2.0", "1.3.0"]}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {"const": "1.3.0"},
+          "mutation": {
+            "properties": {"operation": {"const": "domain_schema_mutation"}},
+            "required": ["operation"]
+          }
+        },
+        "required": ["schema_version", "mutation"]
+      },
+      "then": {
+        "properties": {
+          "basis": {
+            "required": [
+              "structural_impact_ref",
+              "structural_class",
+              "structural_classifier_id",
+              "structural_classifier_version",
+              "structural_state_digest",
+              "structural_dependency_digest"
+            ]
+          },
+          "policy": {
+            "required": ["structural_policy_id", "structural_policy_version"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {"const": "1.3.0"},
+          "basis": {
+            "properties": {"structural_class": {"const": "S1"}},
+            "required": ["structural_class"]
+          },
+          "decision": {
+            "properties": {"outcome": {"enum": ["allow", "allow_with_ledger"]}},
+            "required": ["outcome"]
+          }
+        },
+        "required": ["schema_version", "basis", "decision"]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "required": ["selection_mode"],
+            "properties": {
+              "outcome": {"const": "allow_with_ledger"},
+              "selection_mode": {"const": "deterministic"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {"const": "1.3.0"},
+          "basis": {
+            "properties": {"structural_class": {"enum": ["S2", "S3"]}},
+            "required": ["structural_class"]
+          },
+          "decision": {
+            "properties": {"outcome": {"enum": ["allow", "allow_with_ledger"]}},
+            "required": ["outcome"]
+          }
+        },
+        "required": ["schema_version", "basis", "decision"]
+      },
+      "then": {
+        "properties": {
+          "policy": {
+            "required": ["required_review_refs"],
+            "properties": {
+              "required_review_refs": {"minItems": 1}
+            }
+          },
+          "decision": {
+            "required": ["selection_mode"],
+            "properties": {
+              "outcome": {"const": "allow_with_ledger"},
+              "selection_mode": {"enum": ["human", "external"]}
+            }
+          }
+        }
+      }
+    }
+  ]
+}

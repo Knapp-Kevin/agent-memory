@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/structural-mutation-impact.schema.json",
+  "title": "Agent Memory Structural Mutation Impact Record",
+  "description": "Deterministic structural-impact classification evidence under ADR-032. Estimator evidence may explain why a change was proposed but cannot classify or authorize it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "proposal_id",
+    "current_schema",
+    "proposed_schema",
+    "impact",
+    "snapshot",
+    "evidence",
+    "classifier",
+    "classification",
+    "authority_effect"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "proposal_id": {"type": "string", "minLength": 1},
+    "current_schema": {"$ref": "#/$defs/schemaRef"},
+    "proposed_schema": {"$ref": "#/$defs/schemaRef"},
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layer",
+        "change_kind",
+        "semantic_diff",
+        "tenant_ref",
+        "isolation_domain_refs",
+        "preserves_semantics",
+        "optional_additive",
+        "migration_required",
+        "information_loss",
+        "historical_interpretation_preserved",
+        "scope_posture",
+        "authority_posture",
+        "isolation_posture",
+        "affected_memory_count",
+        "dependent_refs",
+        "incompatible_dependency_refs",
+        "live_dependency_refs",
+        "reversibility",
+        "rollback_ref",
+        "rebuild_obligations",
+        "residue_obligations"
+      ],
+      "properties": {
+        "layer": {"enum": ["derived", "domain", "canonical"]},
+        "change_kind": {"enum": ["rebuild_only", "additive_extension", "semantic_change", "destructive_retirement"]},
+        "semantic_diff": {"$ref": "#/$defs/nonEmptyUniqueStrings"},
+        "tenant_ref": {"type": ["string", "null"], "minLength": 1},
+        "isolation_domain_refs": {"$ref": "#/$defs/nonEmptyUniqueStrings"},
+        "preserves_semantics": {"type": "boolean"},
+        "optional_additive": {"type": "boolean"},
+        "migration_required": {"type": "boolean"},
+        "information_loss": {"enum": ["none", "possible", "certain", "unknown"]},
+        "historical_interpretation_preserved": {"type": "boolean"},
+        "scope_posture": {"enum": ["unchanged", "narrowed", "widened", "unknown"]},
+        "authority_posture": {"enum": ["unchanged", "widened", "governance_bearing", "unknown"]},
+        "isolation_posture": {"enum": ["preserved", "changed", "unknown"]},
+        "affected_memory_count": {"type": "integer", "minimum": 0},
+        "dependent_refs": {"$ref": "#/$defs/uniqueStrings"},
+        "incompatible_dependency_refs": {"$ref": "#/$defs/uniqueStrings"},
+        "live_dependency_refs": {"$ref": "#/$defs/uniqueStrings"},
+        "reversibility": {"enum": ["reversible", "versioned_revocable", "compensatable", "irreversible", "unknown"]},
+        "rollback_ref": {"type": ["string", "null"], "minLength": 1},
+        "rebuild_obligations": {"$ref": "#/$defs/uniqueStrings"},
+        "residue_obligations": {"$ref": "#/$defs/uniqueStrings"}
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state_digest", "dependency_digest"],
+      "properties": {
+        "state_digest": {"$ref": "#/$defs/sha256"},
+        "dependency_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_refs", "estimator_refs", "estimator_versions", "confidence"],
+      "properties": {
+        "evidence_refs": {"$ref": "#/$defs/nonEmptyUniqueStrings"},
+        "estimator_refs": {"$ref": "#/$defs/uniqueStrings"},
+        "estimator_versions": {"$ref": "#/$defs/uniqueStrings"},
+        "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+      }
+    },
+    "classifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classifier_id", "classifier_version", "policy_id", "policy_version", "s1_allowed_scopes", "s1_max_affected_memories"],
+      "properties": {
+        "classifier_id": {"type": "string", "minLength": 1},
+        "classifier_version": {"type": "string", "minLength": 1},
+        "policy_id": {"type": "string", "minLength": 1},
+        "policy_version": {"type": "string", "minLength": 1},
+        "s1_allowed_scopes": {"$ref": "#/$defs/nonEmptyUniqueStrings"},
+        "s1_max_affected_memories": {"type": "integer", "minimum": 0}
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["structural_class", "autonomous_eligible", "required_authority", "reasons"],
+      "properties": {
+        "structural_class": {"enum": ["S0", "S1", "S2", "S3"]},
+        "autonomous_eligible": {"type": "boolean"},
+        "required_authority": {"enum": ["deterministic_policy", "human_review", "external_human_verification", "blocked"]},
+        "reasons": {"$ref": "#/$defs/nonEmptyUniqueStrings"}
+      }
+    },
+    "authority_effect": {"const": "none"}
+  },
+  "$defs": {
+    "schemaRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "schema_version", "scope"],
+      "properties": {
+        "schema_id": {"type": "string", "minLength": 1},
+        "schema_version": {"type": "string", "minLength": 1},
+        "scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "uniqueStrings": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "nonEmptyUniqueStrings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

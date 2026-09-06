@@ -1,0 +1,56 @@
+{
+  "component_id": "agent-memory-epistemic-reference",
+  "component_version": "0.1.0",
+  "profile_version": "component-capability-v3",
+  "enabled": true,
+  "runtime_ref": "reference/agentmem_ref/epistemic_memory.py",
+  "failure_posture": "fail_closed",
+  "provenance_refs": [
+    "https://github.com/MythologIQ-Labs-LLC/agent-memory/issues/346",
+    "https://github.com/MythologIQ-Labs-LLC/agent-memory/pull/345"
+  ],
+  "capabilities": [
+    {
+      "capability_id": "epistemic_belief_memory",
+      "capability_version": "1.0",
+      "maturity": "runtime_wired",
+      "state_posture": "derived",
+      "scope_posture": "enforces_agent_memory_scope",
+      "failure_posture": "fail_closed",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "reference/agentmem_ref/epistemic_memory.py",
+        "reference/tests/test_epistemic_memory.py",
+        "docs/programs/memory-modules/epistemic-belief-memory-reference.md"
+      ],
+      "limitations": [
+        "Reference revision index is process-local and is not restart reconstructable.",
+        "Belief confidence is retained as epistemic evidence and is not fact certification or authority.",
+        "No automatic promotion from epistemic belief memory to semantic fact memory.",
+        "No predictive/counterfactual world-model behavior is implemented by this component."
+      ],
+      "behavior_contract": {
+        "operation_support": {
+          "write": true,
+          "read": true,
+          "recall_candidate": true
+        },
+        "currentness_model": "basis_versioned",
+        "invalidation_model": "version_relation",
+        "correction_model": "invalidate_derived",
+        "deletion_model": "derived_residue_then_purge",
+        "residue_model": "scan_required",
+        "migration_rebuild_model": "unsupported",
+        "structural_mutation_requirement": "none"
+      },
+      "operational_contract": {
+        "write_atomicity": "process_local",
+        "concurrency_control": "process_local",
+        "idempotency": "process_local",
+        "restart_recovery": "process_local_only",
+        "reconciliation": "process_local_only"
+      }
+    }
+  ]
+}

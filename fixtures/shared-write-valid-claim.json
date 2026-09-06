@@ -1,0 +1,55 @@
+{
+  "fixture_id": "shared-write-valid-claim",
+  "fixture_version": "1.0.0",
+  "class": "positive_control",
+  "description": "An authorized, current, unexpired pre-write claim may coordinate an attempt, but the durable mutation still requires the ordinary PAMA path.",
+  "expected_behavior": {
+    "claim_status": "acquired",
+    "commit_status": "committed",
+    "substrate_write_count": 1,
+    "pama_outcome": "allow_with_ledger"
+  },
+  "memory_unit": {
+    "id": "fixture:shared-write:valid",
+    "content_ref": "fixture://shared-write/valid",
+    "type": "semantic",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "shared-write-claim-positive-control",
+      "timestamp": "2026-08-12T00:00:00Z",
+      "source_refs": ["fixture://shared-write/source"]
+    },
+    "evidence": [
+      {"id": "evidence:shared-write-valid", "kind": "coordination_fixture", "ref": "fixture://shared-write/source", "confidence": 1.0}
+    ],
+    "saturation": {
+      "sigma": 0.1,
+      "calibrated": false,
+      "durability_dimensions": ["coordination_fixture"]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "low",
+      "policy_refs": ["ADR-004", "ADR-024"],
+      "permitted_actions": ["promotion", "collect_more_evidence", "defer"],
+      "prohibited_actions": [],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-12T00:00:00Z"
+  },
+  "write_claim": {
+    "claim_id": "claim:fixture-valid",
+    "actor_id": "agent:a",
+    "task_id": "task:shared",
+    "scope": "shared:test",
+    "target_reference": "memory:shared",
+    "mutation_class": "promotion",
+    "authority_ref": "authority:shared-write",
+    "state_snapshot": "v0",
+    "issued_at": "2026-08-12T17:00:00Z",
+    "expires_at": "2026-08-12T18:00:00Z",
+    "authorized": true
+  }
+}

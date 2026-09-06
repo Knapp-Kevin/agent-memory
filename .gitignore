@@ -1,0 +1,40 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+
+# Test and tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local build and distribution artifacts
+build/
+dist/
+*.egg-info/
+# Build-time copy of schemas/ produced by setup.py build_py; never edit or commit
+reference/agentmem_ref/_schemas/
+
+# Embedded substrate databases created by reference probes
+*.kuzu/
+
+# Local agent tooling settings; never part of the repository
+.claude/
+.failsafe/
+
+# Qor-logic local governance state; never part of the repository
+.agent/
+# Qor-logic working state: development-time toolkit, never part of the package.
+.qor/
+.qor/gates/
+# qor:seed -- do not edit between markers
+.qor/session/
+# qor:seed/end
+.qor/hooks/
+.qor/hooks.log
+.qor/intent-lock/
+docs/PROCESS_SHADOW_GENOME.md.lock

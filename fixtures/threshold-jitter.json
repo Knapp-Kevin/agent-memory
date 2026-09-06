@@ -1,0 +1,70 @@
+{
+  "fixture_id": "threshold-jitter",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A lifecycle estimate repeatedly moves around a promotion threshold under tiny perturbations.",
+  "expected_behavior": {
+    "rapid_state_oscillation": false,
+    "boundary_instability_detected": true,
+    "automatic_crystallization": false
+  },
+  "governed_uncertainty": {
+    "requested_action": "promote",
+    "permitted_actions": [
+      "hold_candidate",
+      "require_review",
+      "collect_more_evidence"
+    ],
+    "prohibited_actions": [
+      "crystallize"
+    ],
+    "selected_action": "hold_candidate",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "threshold_noise_does_not_create_authority",
+      "state_does_not_oscillate_without_policy",
+      "uncertain_boundary_can_abstain"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:threshold-jitter",
+    "type": "observation",
+    "state": "candidate",
+    "provenance": {
+      "origin": "synthetic perturbation fixture",
+      "observer": "saturation-estimator",
+      "method": "boundary perturbation series",
+      "timestamp": "2026-08-10T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:jitter-series",
+        "kind": "calibration_trace",
+        "ref": "fixture://scores/0.79-0.81-0.80-0.79",
+        "confidence": 0.8
+      }
+    ],
+    "saturation": {
+      "sigma": 0.8,
+      "calibrated": true,
+      "threshold": 0.8,
+      "durability_dimensions": [
+        "boundary_stability"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "permitted_actions": [
+        "hold_candidate",
+        "require_review",
+        "collect_more_evidence"
+      ],
+      "prohibited_actions": [
+        "crystallize"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-10T00:00:00Z"
+  }
+}

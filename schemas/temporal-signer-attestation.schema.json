@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/temporal-signer-attestation.schema.json",
+  "title": "Agent Memory Temporal Signer Attestation",
+  "description": "Signer evidence bound to an exact temporal commitment content reference.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "attestation_profile", "attestation_version", "content_reference_profile", "content_ref", "signer", "signature", "interpretation"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "attestation_profile": {"const": "agent-memory/temporal-commitment-attestation"},
+    "attestation_version": {"const": "1.0.0"},
+    "content_reference_profile": {"type": "string", "minLength": 1},
+    "content_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "signer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key_ref", "algorithm"],
+      "properties": {
+        "key_ref": {"type": "string", "minLength": 1},
+        "algorithm": {"const": "Ed25519"}
+      }
+    },
+    "signature": {"type": "string", "minLength": 1},
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_effect", "trusted_time", "currentness", "execution_evidence"],
+      "properties": {
+        "authority_effect": {"const": "none"},
+        "trusted_time": {"const": "not_established"},
+        "currentness": {"const": "not_established"},
+        "execution_evidence": {"const": "not_established"}
+      }
+    }
+  }
+}

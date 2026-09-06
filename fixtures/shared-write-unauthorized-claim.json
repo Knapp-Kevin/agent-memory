@@ -1,0 +1,54 @@
+{
+  "fixture_id": "shared-write-unauthorized-claim",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "A writer without a valid claim authority basis must be rejected before durable mutation.",
+  "expected_behavior": {
+    "claim_status": "rejected",
+    "reason": "unauthorized_claim",
+    "substrate_write_count": 0
+  },
+  "memory_unit": {
+    "id": "fixture:shared-write:unauthorized",
+    "content_ref": "fixture://shared-write/unauthorized",
+    "type": "semantic",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "shared-write-claim-authority-trap",
+      "timestamp": "2026-08-12T00:00:00Z",
+      "source_refs": ["fixture://shared-write/source"]
+    },
+    "evidence": [
+      {"id": "evidence:shared-write-unauthorized", "kind": "coordination_fixture", "ref": "fixture://shared-write/source", "confidence": 1.0}
+    ],
+    "saturation": {
+      "sigma": 0.1,
+      "calibrated": false,
+      "durability_dimensions": ["coordination_fixture"]
+    },
+    "authority": {
+      "pama_outcome": "block",
+      "risk_class": "medium",
+      "policy_refs": ["ADR-004", "ADR-024"],
+      "permitted_actions": [],
+      "prohibited_actions": ["promotion", "enter_pending_verification", "request_external_verification"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T00:00:00Z"
+  },
+  "write_claim": {
+    "claim_id": "claim:fixture-unauthorized",
+    "actor_id": "agent:a",
+    "task_id": "task:shared",
+    "scope": "shared:test",
+    "target_reference": "memory:shared",
+    "mutation_class": "promotion",
+    "authority_ref": "authority:not-granted",
+    "state_snapshot": "v0",
+    "issued_at": "2026-08-12T17:00:00Z",
+    "expires_at": "2026-08-12T18:00:00Z",
+    "authorized": false
+  }
+}

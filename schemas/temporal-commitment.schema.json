@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/temporal-commitment.schema.json",
+  "title": "Agent Memory Temporal Commitment",
+  "description": "Immutable semantic and temporal claims whose mutation must change historical content identity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile_id", "profile_version", "event", "temporal_claims", "ordering", "semantics", "scope_ref"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "profile_id": {"const": "agent-memory/temporal-commitment"},
+    "profile_version": {"const": "1.0.0"},
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_type", "subject_ref", "payload_digest"],
+      "properties": {
+        "event_type": {"type": "string", "minLength": 1},
+        "subject_ref": {"type": "string", "minLength": 1},
+        "payload_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "temporal_claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "event_time": {"type": "string", "minLength": 1},
+        "observed_at": {"type": "string", "minLength": 1},
+        "valid_from": {"type": ["string", "null"]},
+        "valid_to": {"type": ["string", "null"]}
+      }
+    },
+    "ordering": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "stream_ref", "sequence", "predecessor_reference_profile", "predecessor_refs"],
+      "properties": {
+        "mode": {"type": "string", "enum": ["none", "linear_stream"]},
+        "stream_ref": {"type": ["string", "null"]},
+        "sequence": {"type": ["integer", "null"], "minimum": 0},
+        "predecessor_reference_profile": {"type": ["string", "null"]},
+        "predecessor_refs": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "uniqueItems": true,
+          "maxItems": 1
+        }
+      }
+    },
+    "semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain_schema_ref", "domain_schema_digest", "projection_profile", "projection_version"],
+      "properties": {
+        "domain_schema_ref": {"type": "string", "minLength": 1},
+        "domain_schema_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "projection_profile": {"type": ["string", "null"]},
+        "projection_version": {"type": ["string", "null"]}
+      }
+    },
+    "scope_ref": {"type": "string", "minLength": 1}
+  }
+}

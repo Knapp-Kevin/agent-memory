@@ -1,0 +1,74 @@
+{
+  "fixture_id": "shared-memory-revocation-propagation",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A principal is removed from a governed shared-memory domain after a derived downstream memory was created while membership was valid. Future shared recall is blocked and the downstream derived authority must be recomputed rather than grandfathered.",
+  "expected_behavior": {
+    "shared_membership_revoked": true,
+    "future_shared_recall_admitted": false,
+    "downstream_scope_recomputed": true,
+    "old_downstream_scope_current": false,
+    "remote_mutation_implied": false
+  },
+  "governed_uncertainty": {
+    "requested_action": "admit_to_context",
+    "permitted_actions": [
+      "narrow_derived_scope",
+      "rebuild_under_current_scope",
+      "defer"
+    ],
+    "prohibited_actions": [
+      "admit_to_context"
+    ],
+    "selected_action": "defer",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "shared_membership_is_current_authority_state",
+      "revocation_blocks_future_shared_recall",
+      "revocation_propagates_as_authority_obligation_not_remote_command",
+      "prior_shared_membership_not_equal_permanent_downstream_permission",
+      "prohibited_action_not_selected"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:revoked-shared-derived-memory",
+    "type": "summary",
+    "state": "candidate",
+    "scope": {
+      "owner_principal": "team:security",
+      "origin_actor": "agent:planner",
+      "tenant": "tenant-a",
+      "purpose": "security-review",
+      "isolation_domain_refs": ["domain:shared-security"],
+      "source_isolation_domain_refs": ["domain:shared-security"]
+    },
+    "provenance": {
+      "origin": "synthetic shared-memory derivation before membership revocation",
+      "observer": "shared-revocation-reconciler",
+      "method": "membership revocation plus derived-scope recomputation",
+      "timestamp": "2026-08-12T00:00:00Z",
+      "derived_from": ["uor:test:shared-source"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:membership-revocation",
+        "kind": "authority_change",
+        "ref": "fixture://shared-membership/revoked-user-alice",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.8,
+      "calibrated": true,
+      "durability_dimensions": ["shared_derived_scope"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "high",
+      "permitted_actions": ["narrow_derived_scope", "rebuild_under_current_scope", "defer"],
+      "prohibited_actions": ["admit_to_context"],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-12T00:00:00Z"
+  }
+}

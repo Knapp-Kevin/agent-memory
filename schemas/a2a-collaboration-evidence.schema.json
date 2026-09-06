@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/a2a-collaboration-evidence.schema.json",
+  "title": "Agent Memory A2A Collaboration Evidence",
+  "description": "Content-minimized evidence for non-authority-bearing Agent2Agent collaboration. Agent Cards, peer identity, task state, messages, artifacts, and transport success do not establish delegated Agent Memory authority, memory admission, semantic correctness, execution proof, or lifecycle satisfaction.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_version",
+    "collaboration_id",
+    "protocol",
+    "direction",
+    "interaction_kind",
+    "local_agent_ref",
+    "remote_agent_ref",
+    "agent_card_digest",
+    "export_classification",
+    "memory_evidence_status",
+    "task_state",
+    "governance_status",
+    "governance_alignment",
+    "binding_status",
+    "binding_reasons",
+    "payload_digest",
+    "observed_at",
+    "evidence_refs",
+    "interpretation"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "profile_version": { "const": "0.1.0" },
+    "collaboration_id": { "type": "string", "minLength": 1 },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "release", "source_ref", "source_commit"],
+      "properties": {
+        "name": { "const": "a2a" },
+        "release": { "const": "v1.0.1" },
+        "source_ref": { "type": "string", "minLength": 1 },
+        "source_commit": { "const": "3303592588e388e62e0f69f701af531d2f4e3991" }
+      }
+    },
+    "direction": { "type": "string", "enum": ["outbound", "inbound"] },
+    "interaction_kind": {
+      "type": "string",
+      "enum": ["task_request", "task_status", "message", "artifact"]
+    },
+    "local_agent_ref": { "type": "string", "minLength": 1 },
+    "remote_agent_ref": { "type": "string", "minLength": 1 },
+    "agent_card_ref": { "type": "string", "minLength": 1 },
+    "agent_card_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "task_ref": { "type": "string", "minLength": 1 },
+    "context_ref": { "type": "string", "minLength": 1 },
+    "message_ref": { "type": "string", "minLength": 1 },
+    "artifact_ref": { "type": "string", "minLength": 1 },
+    "export_classification": {
+      "type": "string",
+      "enum": ["explicit_non_memory", "context_projection", "memory_candidate"]
+    },
+    "memory_evidence_status": {
+      "type": "string",
+      "enum": ["current", "historical", "stale", "revoked", "unknown", "not_applicable"]
+    },
+    "task_state": {
+      "type": "string",
+      "enum": [
+        "unspecified",
+        "submitted",
+        "working",
+        "completed",
+        "failed",
+        "canceled",
+        "input_required",
+        "rejected",
+        "auth_required",
+        "unavailable",
+        "not_observed"
+      ]
+    },
+    "governance_status": {
+      "type": "string",
+      "enum": ["available", "unavailable", "not_required"]
+    },
+    "effective_decision": {
+      "type": "string",
+      "enum": ["allow", "warn", "require_approval", "deny"]
+    },
+    "governance_alignment": {
+      "type": "string",
+      "enum": [
+        "within_governance",
+        "remote_result_under_deny",
+        "approval_not_established",
+        "blocked_governance_unavailable",
+        "binding_mismatch",
+        "historical_only",
+        "not_applicable",
+        "not_evaluated"
+      ]
+    },
+    "binding_status": {
+      "type": "string",
+      "enum": ["exact", "mismatch", "not_evaluated"]
+    },
+    "binding_reasons": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "action_ref": { "type": "string", "minLength": 1 },
+    "input_identity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "scope_ref": { "type": "string", "minLength": 1 },
+    "tenant_ref": { "type": "string", "minLength": 1 },
+    "project_ref": { "type": "string", "minLength": 1 },
+    "pama_decision_ref": { "type": "string", "minLength": 1 },
+    "composition_ref": { "type": "string", "minLength": 1 },
+    "approval_evidence_ref": { "type": "string", "minLength": 1 },
+    "execution_witness_ref": { "type": "string", "minLength": 1 },
+    "trace_correlation_ref": { "type": "string", "minLength": 1 },
+    "external_evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "correction_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "revocation_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "payload_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_effect",
+        "delegated_memory_authority",
+        "memory_admission",
+        "semantic_correctness",
+        "execution_claim",
+        "lifecycle_satisfaction",
+        "agent_card_authority",
+        "task_completion_authority"
+      ],
+      "properties": {
+        "authority_effect": { "const": "none" },
+        "delegated_memory_authority": { "const": "not_established" },
+        "memory_admission": { "const": "not_established" },
+        "semantic_correctness": { "const": "not_established" },
+        "execution_claim": { "const": "not_established" },
+        "lifecycle_satisfaction": { "const": "not_established" },
+        "agent_card_authority": { "const": "none" },
+        "task_completion_authority": { "const": "none" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "interaction_kind": { "const": "task_request" } },
+        "required": ["interaction_kind"]
+      },
+      "then": { "properties": { "direction": { "const": "outbound" } } }
+    },
+    {
+      "if": {
+        "properties": { "interaction_kind": { "const": "artifact" } },
+        "required": ["interaction_kind"]
+      },
+      "then": { "required": ["artifact_ref"] }
+    },
+    {
+      "if": {
+        "properties": { "interaction_kind": { "const": "message" } },
+        "required": ["interaction_kind"]
+      },
+      "then": { "required": ["message_ref"] }
+    },
+    {
+      "if": {
+        "properties": { "export_classification": { "const": "context_projection" } },
+        "required": ["export_classification"]
+      },
+      "then": { "required": ["action_ref", "input_identity", "scope_ref"] }
+    },
+    {
+      "if": {
+        "properties": { "governance_status": { "const": "available" } },
+        "required": ["governance_status"]
+      },
+      "then": { "required": ["effective_decision"] }
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+name: CLI Doctor Boundary
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install full reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Install Agent Memory distribution from repository
+        run: python -m pip install --disable-pip-version-check .
+
+      - name: Smoke-test installed console command
+        run: |
+          agent-memory --help
+          agent-memory config validate \
+            --config reference/fixtures/runtime-configuration/reference-composed-runtime.json \
+            --json > installed-config-validation.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("installed-config-validation.json").read_text())
+          if report["valid"] is not True:
+              raise SystemExit("installed console command did not validate reference configuration")
+          if report["authority_effect"] != "none":
+              raise SystemExit("installed configuration command cannot create authority")
+          PY
+
+      - name: Smoke-test attach-to-existing-stack configuration
+        run: |
+          agent-memory config validate \
+            --config reference/fixtures/runtime-configuration/attached-existing-stack.json \
+            --qualifications reference/fixtures/runtime-configuration/qualification-bindings.json \
+            --json > attached-config-validation.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("attached-config-validation.json").read_text())
+          if report["entry_mode"] != "attach_existing_stack":
+              raise SystemExit("expected attach_existing_stack reference validation")
+          if report["qualification_binding_count"] != 2:
+              raise SystemExit("independent qualification bindings were not consumed")
+          PY
+
+      - name: Execute targeted CLI/doctor tests
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_cli_doctor.py'
+
+      - name: Execute full reference regression suite
+        run: python -m unittest discover -s reference/tests -t reference
+
+      - name: Emit exact-head CLI/doctor evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_cli_doctor.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output cli-doctor-evidence.json
+
+      - name: Validate emitted CLI/doctor evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("cli-doctor-evidence.json").read_text())
+          if len(report["agent_memory_commit"]) != 40:
+              raise SystemExit("CLI/doctor evidence is not exact-head bound")
+          invariants = report["structural_invariants"]
+          non_boolean = [name for name, value in invariants.items() if type(value) is not bool]
+          if non_boolean:
+              raise SystemExit(f"CLI/doctor invariants are not JSON booleans: {non_boolean}")
+          failed = [name for name, passed in invariants.items() if not passed]
+          if failed:
+              raise SystemExit(f"CLI/doctor invariants failed: {failed}")
+          if report["authority_effect"] != "none":
+              raise SystemExit("CLI/doctor boundary cannot create authority")
+          if report["doctor_examples"]["state_recovered"]["provider_availability"]["status"] != "not_probed":
+              raise SystemExit("doctor must not fabricate live provider health")
+          print(f"validated {len(invariants)} CLI/doctor invariants")
+          PY
+
+      - name: Upload CLI/doctor evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: cli-doctor-evidence
+          path: |
+            cli-doctor-evidence.json
+            installed-config-validation.json
+            attached-config-validation.json
+          if-no-files-found: error
+
+      - name: Publish CLI/doctor summary
+        if: always()
+        run: |
+          {
+            echo "## Installed Agent Memory command boundary"
+            echo ""
+            echo "Repository installation exposes agent-memory config validate and agent-memory doctor over the same portable configuration/recovery contracts."
+            echo ""
+            echo "doctor distinguishes configuration, durable recovery, currentness, and unprobed provider availability rather than emitting a generic healthy flag."
+            echo ""
+            echo '```'
+            echo "python -m pip install ."
+            echo "agent-memory config validate --config <config.json>"
+            echo "agent-memory doctor --config <config.json> --state-dir <state-dir>"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  wheel-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check build
+      - run: python -m build --outdir dist .
+      - run: python -m venv /tmp/wheel-venv && /tmp/wheel-venv/bin/python -m pip install --disable-pip-version-check dist/*.whl
+      - name: Installed package resolves canonical schemas
+        working-directory: /tmp
+        run: |
+          /tmp/wheel-venv/bin/python - <<'PY'
+          import sys
+          import agentmem_ref.receipts as receipts
+          try:
+              receipts.validate("decision-receipt.schema.json", {})
+          except ValueError as exc:
+              if "decision-receipt.schema.json at" in str(exc):
+                  print("schema resolved from wheel:", exc)
+                  sys.exit(0)
+              print("unexpected ValueError:", exc)
+              sys.exit(1)
+          except FileNotFoundError as exc:
+              print("schema NOT resolved from wheel:", exc)
+              sys.exit(1)
+          print("validate returned without error; empty receipt should not validate")
+          sys.exit(1)
+          PY
+      - name: Installed evidence modules import
+        working-directory: /tmp
+        run: /tmp/wheel-venv/bin/python -c "import agentmem_ref.portable_evidence"
+      - name: Installed console command
+        working-directory: /tmp
+        run: /tmp/wheel-venv/bin/agent-memory --help

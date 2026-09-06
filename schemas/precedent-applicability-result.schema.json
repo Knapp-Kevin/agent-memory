@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/precedent-applicability-result.schema.json",
+  "title": "Agent Memory Precedent Applicability Result",
+  "description": "Deterministic advisory classification of whether governed decision precedent is materially applicable to a current action. This result is context, not permission or a standing grant.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "projection_id",
+    "applicability",
+    "supporting_precedent_refs",
+    "cautionary_precedent_refs",
+    "material_matches",
+    "material_differences",
+    "unknown_conditions",
+    "stale_or_invalid_reasons",
+    "independent_human_evidence_count",
+    "policy_or_derived_evidence_count",
+    "incident_or_negative_evidence_present",
+    "recommended_handling",
+    "authority_effect",
+    "can_authorize_execution"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "projection_id": { "type": "string", "minLength": 1 },
+    "applicability": {
+      "type": "string",
+      "enum": [
+        "exact_match",
+        "materially_equivalent",
+        "materially_different",
+        "stale",
+        "conflicting",
+        "insufficient_evidence"
+      ]
+    },
+    "supporting_precedent_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "cautionary_precedent_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "material_matches": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/materialObservation" }
+    },
+    "material_differences": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/materialObservation" }
+    },
+    "unknown_conditions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/materialObservation" }
+    },
+    "stale_or_invalid_reasons": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "independent_human_evidence_count": { "type": "integer", "minimum": 0 },
+    "policy_or_derived_evidence_count": { "type": "integer", "minimum": 0 },
+    "incident_or_negative_evidence_present": { "type": "boolean" },
+    "recommended_handling": {
+      "type": "string",
+      "enum": [
+        "reduce_redundant_review",
+        "normal_review",
+        "escalate",
+        "block_proposal_not_authority"
+      ]
+    },
+    "authority_effect": { "const": "none" },
+    "can_authorize_execution": { "const": false }
+  },
+  "$defs": {
+    "materialObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["precedent_ref", "condition", "comparison"],
+      "properties": {
+        "precedent_ref": { "type": "string", "minLength": 1 },
+        "condition": { "type": "string", "minLength": 1 },
+        "comparison": { "type": "string", "enum": ["match", "mismatch", "unknown", "not_compared"] },
+        "precedent_value": {},
+        "current_value": {}
+      }
+    }
+  }
+}

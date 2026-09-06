@@ -1,0 +1,72 @@
+{
+  "fixture_id": "stale-projection-rebuild",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A stale estimator-mediated projection must not be rebuilt automatically: staleness detection is not a write authorization, and invalidation must not become an estimator's write channel.",
+  "expected_behavior": {
+    "staleness_detected": true,
+    "automatic_rebuild_committed": false,
+    "rebuild_requires_authority_decision": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "auto_rebuild_projection",
+    "permitted_actions": [
+      "propose_rebuild",
+      "report_stale_projection",
+      "defer"
+    ],
+    "prohibited_actions": [
+      "auto_rebuild_projection"
+    ],
+    "selected_action": "propose_rebuild",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "staleness_is_computed_not_flagged",
+      "estimator_rebuild_requires_authority",
+      "refusal_is_recorded_not_silent"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:stale-projection-rebuild",
+    "type": "summary",
+    "state": "stale",
+    "provenance": {
+      "origin": "synthetic projection fixture",
+      "observer": "projection-registry",
+      "method": "estimator_mediated summarization",
+      "timestamp": "2026-08-11T00:00:00Z",
+      "derived_from": [
+        "uor:test:corrected-canonical-memory"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:basis-version-mismatch",
+        "kind": "staleness_relation",
+        "ref": "fixture://basis-v1-canonical-v2",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": true,
+      "durability_dimensions": [
+        "projection_freshness"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "permitted_actions": [
+        "propose_rebuild",
+        "report_stale_projection",
+        "defer"
+      ],
+      "prohibited_actions": [
+        "auto_rebuild_projection"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-11T00:00:00Z"
+  }
+}

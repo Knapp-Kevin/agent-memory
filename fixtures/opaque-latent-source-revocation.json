@@ -1,0 +1,111 @@
+{
+  "fixture_id": "opaque-latent-source-revocation",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "An opaque predictive representation remains statistically useful after one of its source memories is revoked. Predictive quality does not preserve currentness, scope, recall admission, or downstream action authority.",
+  "expected_behavior": {
+    "initial_prediction_influence_eligible": true,
+    "revocation_requires_revalidation": true,
+    "predictive_quality_preserves_authority": false,
+    "planning_influence_equals_action_authority": false,
+    "historical_derivation_rewritten": false,
+    "deleted_source_requires_revalidation": true,
+    "scope_reduction_requires_revalidation": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "execute_plan_from_latent_prediction",
+    "permitted_actions": [
+      "block_execution",
+      "revalidate_latent_state",
+      "rebuild_under_current_sources",
+      "defer"
+    ],
+    "prohibited_actions": [
+      "execute_plan_from_latent_prediction"
+    ],
+    "selected_action": "revalidate_latent_state",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "predictive_confidence_not_equal_truth_or_authority",
+      "source_revocation_invalidates_current_applicability",
+      "scope_change_propagates_to_derived_state",
+      "historical_derivation_remains_immutable",
+      "planning_influence_requires_separate_action_authorization",
+      "latent_representation_remains_derived_residue_until_revalidated_or_rebuilt"
+    ]
+  },
+  "scenario": {
+    "latent_ref": "derived:latent:planner-state-v1",
+    "model_ref": "model:opaque-predictor",
+    "model_version": "fixture-v1",
+    "source_refs": [
+      "uor:test:latent-source-a",
+      "uor:test:latent-source-b"
+    ],
+    "prediction_quality_before": 0.94,
+    "prediction_quality_after_revocation": 0.94,
+    "changed_source": "uor:test:latent-source-b",
+    "changed_source_state": "revoked"
+  },
+  "memory_unit": {
+    "id": "uor:test:opaque-latent-source-revocation",
+    "type": "model",
+    "state": "stale",
+    "scope": {
+      "owner_principal": "user:alice",
+      "origin_actor": "agent:world-model",
+      "tenant": "tenant-a",
+      "purpose": "planning",
+      "isolation_domain_refs": [
+        "domain:project-a"
+      ]
+    },
+    "provenance": {
+      "origin": "synthetic opaque predictive representation",
+      "observer": "latent-state-harness",
+      "method": "probabilistic opaque transformation",
+      "timestamp": "2026-08-13T06:20:00Z",
+      "derived_from": [
+        "uor:test:latent-source-a",
+        "uor:test:latent-source-b"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:latent-source-revocation",
+        "kind": "source_currentness_change",
+        "ref": "uor:test:latent-source-b#revoked",
+        "confidence": 1.0
+      },
+      {
+        "id": "evidence:latent-prediction-quality",
+        "kind": "estimator_output",
+        "ref": "model:opaque-predictor@fixture-v1",
+        "confidence": 0.94
+      }
+    ],
+    "saturation": {
+      "sigma": 0.94,
+      "calibrated": true,
+      "durability_dimensions": [
+        "opaque_derived_state",
+        "planning_influence_candidate"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "block",
+      "risk_class": "high",
+      "permitted_actions": [
+        "block_execution",
+        "revalidate_latent_state",
+        "rebuild_under_current_sources",
+        "defer"
+      ],
+      "prohibited_actions": [
+        "execute_plan_from_latent_prediction"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-13T06:20:00Z"
+  }
+}

@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="2670" viewBox="0 0 540 2670" role="img" aria-labelledby="title desc">
+  <title id="title">PAMA mutation authority decision flow</title>
+  <desc id="desc">A mobile-first decision flow for Proportional Adaptive Mutation Authority. A proposed mutation is classified across separate target, lifecycle, operation, downstream authority, risk, scope, reversibility, actor, evidence, uncertainty, and policy dimensions. Foundational class floors and the operation-risk decision table establish a minimum authority outcome, defined modifiers may escalate or narrowly relax that minimum, and the resulting authority envelope constrains the permitted action set. High confidence, high saturation, repetition, or capability validation never create authority. Block is absorbing, and deferred outcomes do not grant authority.</desc>
+<style>
+:root{--bg:#0d1117;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--purple:#a371f7;--green:#3fb950;--red:#f85149;--amber:#d29922;--line:#6e7681;--neutral:#161b22;--blueBox:#101b2a;--purpleBox:#171321;--greenBox:#0f1d14;--amberBox:#211a0b;--redBox:#211416;}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--text)}
+.frame{fill:var(--bg);stroke:var(--border)}.neutral{fill:var(--neutral);stroke:var(--border)}.blueBox{fill:var(--blueBox);stroke:var(--blue);stroke-width:1.2}.purpleBox{fill:var(--purpleBox);stroke:var(--purple);stroke-width:1.2}.greenBox{fill:var(--greenBox);stroke:var(--green);stroke-width:1.2}.amberBox{fill:var(--amberBox);stroke:var(--amber);stroke-width:1.2}.redBox{fill:var(--redBox);stroke:var(--red);stroke-width:1.2}
+.title{font-size:25px;font-weight:700}.sub{font-size:15px;fill:var(--muted)}.eyebrow{font-size:14px;font-weight:700;letter-spacing:1px}.cardTitle{font-size:18px;font-weight:700}.body{font-size:14px}.bodyStrong{font-size:14px;font-weight:700}.small{font-size:13.4px}.tiny{font-size:12.8px}.muted{fill:var(--muted)}.blueText{fill:var(--blue)}.purpleText{fill:var(--purple)}.greenText{fill:var(--green)}.amberText{fill:var(--amber)}.redText{fill:var(--red)}.redStrong{fill:var(--red);font-weight:700}.purpleStrong{fill:var(--purple);font-weight:700}.greenStrong{fill:var(--green);font-weight:700}
+.line{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.purpleLine{fill:none;stroke:var(--purple);stroke-width:2.4;stroke-linecap:round}.greenLine{fill:none;stroke:var(--green);stroke-width:2.4;stroke-linecap:round}.redLine{fill:none;stroke:var(--red);stroke-width:2.4;stroke-linecap:round}
+</style>
+<defs>
+  <marker id="a" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--line)"/></marker>
+  <marker id="ap" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--purple)"/></marker>
+  <marker id="ag" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--green)"/></marker>
+</defs>
+<rect x="1" y="1" width="538" height="2668" rx="18" class="frame"/>
+<text x="28" y="44" class="title">PAMA mutation authority decision flow</text>
+<text x="28" y="70" class="sub">Learning may be broad. Consequence remains governed.</text>
+
+<rect x="28" y="94" width="484" height="132" rx="11" class="neutral"/>
+<text x="46" y="121" class="eyebrow purpleText">FOUNDATIONAL RULE</text>
+<text x="46" y="148" class="bodyStrong">Adaptation != authority. Capability != authority.</text>
+<text x="46" y="174" class="body muted">PAMA scales mutation authority with consequence rather than forcing</text>
+<text x="46" y="196" class="body muted">human review at every observation boundary.</text>
+<text x="46" y="218" class="tiny redStrong">A proposing or estimating component never grants itself more authority.</text>
+
+<line x1="270" y1="226" x2="270" y2="258" class="line" marker-end="url(#a)"/>
+<text x="28" y="292" class="eyebrow blueText">01  MUTATION PROPOSAL</text>
+<rect x="28" y="310" width="484" height="144" rx="11" class="blueBox"/>
+<text x="48" y="342" class="cardTitle">Describe the requested change</text>
+<text x="48" y="370" class="body muted">Identify the target, current state, requested operation, proposed</text>
+<text x="48" y="392" class="body muted">state or effect, evidence, scope, and requested downstream authority.</text>
+<text x="48" y="422" class="bodyStrong">Missing classification is not evidence of low consequence.</text>
+<text x="48" y="446" class="tiny redStrong">proposal != commit</text>
+
+<line x1="270" y1="454" x2="270" y2="486" class="line" marker-end="url(#a)"/>
+<text x="28" y="520" class="eyebrow blueText">02  CLASSIFY SEPARATE DIMENSIONS</text>
+<rect x="28" y="538" width="484" height="330" rx="11" class="blueBox"/>
+<text x="48" y="570" class="cardTitle">Do not collapse PAMA into one score</text>
+<text x="48" y="600" class="bodyStrong blueText">Target class</text>
+<text x="178" y="600" class="body muted">M0–M5: what kind of state changes?</text>
+<text x="48" y="628" class="bodyStrong blueText">Lifecycle strength</text>
+<text x="178" y="628" class="body muted">how established is retained state?</text>
+<text x="48" y="656" class="bodyStrong blueText">Operation</text>
+<text x="178" y="656" class="body muted">promotion, correction, pruning, deletion, etc.</text>
+<text x="48" y="684" class="bodyStrong blueText">Authority class</text>
+<text x="178" y="684" class="body muted">A0–A5: what may resulting state influence?</text>
+<text x="48" y="712" class="bodyStrong blueText">Consequence</text>
+<text x="178" y="712" class="body muted">risk · scope · reversibility · blast radius</text>
+<text x="48" y="740" class="bodyStrong blueText">Actor</text>
+<text x="178" y="740" class="body muted">principal · adaptive charter · delegation</text>
+<text x="48" y="768" class="bodyStrong blueText">Evidence</text>
+<text x="178" y="768" class="body muted">quality · certification · contradiction</text>
+<text x="48" y="796" class="bodyStrong blueText">Uncertainty</text>
+<text x="178" y="796" class="body muted">disagreement · calibration · OOD/drift</text>
+<text x="48" y="824" class="bodyStrong blueText">Policy</text>
+<text x="178" y="824" class="body muted">version · scope · prohibited-action rules</text>
+<text x="48" y="854" class="tiny redStrong">Lifecycle strength and downstream authority are different dimensions.</text>
+
+<line x1="270" y1="868" x2="270" y2="900" class="line" marker-end="url(#a)"/>
+<text x="28" y="934" class="eyebrow purpleText">03  RESOLVE THE MINIMUM AUTHORITY FLOOR</text>
+<rect x="28" y="952" width="484" height="244" rx="11" class="purpleBox"/>
+<text x="48" y="984" class="cardTitle">Two policy inputs compose</text>
+<text x="48" y="1014" class="bodyStrong purpleText">Foundational PAMA floors</text>
+<text x="48" y="1038" class="small muted">M0–M5 target semantics and A0–A5 downstream-authority semantics</text>
+<text x="48" y="1068" class="bodyStrong purpleText">Operation × operational-risk table</text>
+<text x="48" y="1092" class="small muted">produces a minimum outcome for the requested operation and risk class</text>
+<text x="48" y="1124" class="bodyStrong">If one is stricter, the stricter floor wins.</text>
+<text x="48" y="1152" class="small muted">The decision table is one policy projection of PAMA, not PAMA itself.</text>
+<text x="48" y="1182" class="tiny redStrong">A4 external action and A5 governance never appear merely because state is reliable.</text>
+
+<line x1="270" y1="1196" x2="270" y2="1228" class="line" marker-end="url(#a)"/>
+<text x="28" y="1262" class="eyebrow amberText">04  APPLY DEFINED MODIFIERS</text>
+<rect x="28" y="1280" width="484" height="326" rx="11" class="amberBox"/>
+<text x="48" y="1312" class="cardTitle">Escalation is broad; relaxation is narrow</text>
+<text x="48" y="1342" class="bodyStrong amberText">Escalate for conditions such as</text>
+<text x="48" y="1366" class="small muted">stricter target/authority floor · irreversibility · weak evidence · dispute</text>
+<text x="48" y="1388" class="small muted">estimator disagreement · out-of-scope calibration · missing certification</text>
+<text x="48" y="1410" class="small muted">unreconstructable actor authority · ambiguous policy/scope · evidence hold</text>
+<text x="48" y="1442" class="bodyStrong greenText">Relax only where policy explicitly permits</text>
+<text x="48" y="1466" class="small muted">verified reversibility or valid delegation may lower selected cells by</text>
+<text x="48" y="1488" class="small muted">defined steps; never below the policy floor and never for prohibited lanes</text>
+<text x="48" y="1520" class="bodyStrong redText">Never a relaxing modifier</text>
+<text x="48" y="1544" class="small muted">high confidence · high saturation · repetition/access · validated capability</text>
+<text x="48" y="1566" class="small muted">prior similar approval</text>
+<text x="48" y="1596" class="tiny redStrong">block is absorbing · a score cannot relax a blocked or review-bound mutation</text>
+
+<line x1="270" y1="1606" x2="270" y2="1638" class="purpleLine" marker-end="url(#ap)"/>
+<text x="28" y="1672" class="eyebrow purpleText">05  AUTHORITY OUTCOME</text>
+<rect x="28" y="1690" width="484" height="252" rx="11" class="purpleBox"/>
+<text x="48" y="1722" class="cardTitle">Strictness ordering</text>
+<text x="48" y="1752" class="bodyStrong">allow</text>
+<text x="120" y="1752" class="body muted">&lt; allow_with_ledger</text>
+<text x="286" y="1752" class="body muted">&lt; require_review</text>
+<text x="48" y="1780" class="body muted">&lt; require_external_verification</text>
+<text x="287" y="1780" class="bodyStrong redText">&lt; block</text>
+<text x="48" y="1814" class="bodyStrong">Lateral deferral outcomes may include:</text>
+<text x="48" y="1838" class="small muted">abstain · quarantine · collect_more_evidence</text>
+<text x="48" y="1868" class="body muted">A deferral does not satisfy review or verification and grants no authority.</text>
+<text x="48" y="1898" class="bodyStrong">The outcome defines an authority envelope, not automatic execution.</text>
+<text x="48" y="1928" class="tiny redStrong">Other lifecycle, certification, and action gates still apply.</text>
+
+<line x1="270" y1="1942" x2="270" y2="1974" class="purpleLine" marker-end="url(#ap)"/>
+<text x="28" y="2008" class="eyebrow purpleText">06  CONSTRUCT THE PERMITTED ACTION SET</text>
+<rect x="28" y="2026" width="484" height="196" rx="11" class="purpleBox"/>
+<text x="48" y="2058" class="cardTitle">Only authorized next actions enter the set</text>
+<text x="48" y="2088" class="body muted">The requested mutation may be permitted, ledger-bound, deferred to review</text>
+<text x="48" y="2110" class="body muted">or verification, narrowed by scope, or excluded entirely.</text>
+<text x="48" y="2142" class="bodyStrong purpleText">selected_action ∈ permitted_action_set</text>
+<text x="48" y="2172" class="body muted">Any stochastic selection after authorization stays inside this envelope.</text>
+<text x="48" y="2206" class="tiny redStrong">No later model choice may escape the authority decision.</text>
+
+<line x1="270" y1="2222" x2="270" y2="2254" class="greenLine" marker-end="url(#ag)"/>
+<text x="28" y="2288" class="eyebrow greenText">07  COMMIT OR DEFER WITH EVIDENCE</text>
+<rect x="28" y="2306" width="484" height="204" rx="11" class="greenBox"/>
+<text x="48" y="2338" class="cardTitle">Commit only a permitted action</text>
+<text x="48" y="2368" class="body muted">If all required gates are satisfied, commit the authorized transition and</text>
+<text x="48" y="2390" class="body muted">emit a reconstructable decision/audit receipt.</text>
+<text x="48" y="2422" class="body muted">If review, verification, evidence, or authority is unresolved, do not apply</text>
+<text x="48" y="2444" class="body muted">the requested consequential mutation; preserve the pending/blocked result.</text>
+<text x="48" y="2478" class="tiny redStrong">permission != governance · a prior success does not expand future authority</text>
+
+<rect x="28" y="2540" width="484" height="82" rx="11" class="redBox"/>
+<text x="46" y="2568" class="bodyStrong redText">Hard boundaries</text>
+<text x="46" y="2594" class="small muted">M5/A5: no self-approval · A4: reliability alone never grants external action</text>
+<text x="46" y="2616" class="small muted">prohibited action: confidence cannot make it permissible</text>
+
+<text x="28" y="2646" class="tiny muted">Canonical: docs/pama/README.md · docs/04-governance-and-pama.md</text>
+<text x="28" y="2664" class="tiny muted">Policy projection: docs/33-pama-decision-table.md · Accepted boundary: ADR-004</text>
+</svg>

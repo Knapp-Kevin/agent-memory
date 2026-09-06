@@ -1,0 +1,162 @@
+{
+  "fixture_id": "runtime-trace-correlation-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "Privacy-safe runtime trace correlation cases prove that trace identity can bind to Agent Memory evidence without becoming authority, execution proof, or lifecycle satisfaction.",
+  "expected_behavior": {
+    "normalized_cases": 7,
+    "exact_bindings": 2,
+    "mismatched_bindings": 3,
+    "not_evaluated_bindings": 2,
+    "invalid_id_cases": 2,
+    "raw_sensitive_fields_preserved": 0
+  },
+  "memory_unit": {
+    "id": "mem:runtime-trace-correlation",
+    "content_ref": "fixture://runtime-trace-correlation/action",
+    "type": "decision",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "runtime-trace-correlation-matrix",
+      "timestamp": "2026-08-12T21:25:00Z",
+      "source_refs": ["issue://185", "issue://167"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:runtime-trace-correlation",
+        "kind": "trace_correlation_fixture",
+        "ref": "issue://185",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["runtime_correlation", "privacy_minimization"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": ["issue:185", "issue:167"],
+      "permitted_actions": ["collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T21:25:00Z"
+  },
+  "pinned_reference": {
+    "peer": "OpenTelemetry",
+    "semantic_conventions_version": "1.42.0",
+    "reference_date": "2026-06-12",
+    "profile_dependency": "none"
+  },
+  "expected_context": {
+    "action_ref": "action:456",
+    "input_identity": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "scope_ref": "scope:tenant-a/project-a",
+    "tenant_ref": "tenant:opaque-a",
+    "project_ref": "project:opaque-a"
+  },
+  "base_adapter_result": {
+    "telemetry_status": "observed",
+    "sampling_state": "sampled",
+    "trace_id": "0123456789abcdef0123456789abcdef",
+    "span_id": "0123456789abcdef",
+    "parent_span_id": "fedcba9876543210",
+    "runtime_ref": "runtime:service-a",
+    "service_ref": "service:agent-host",
+    "action_ref": "action:456",
+    "input_identity": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "pama_decision_ref": "pama-decision:proposal-456",
+    "composition_ref": "decision-composition:456",
+    "execution_witness_ref": "execution-witness:456",
+    "external_evidence_refs": ["external-evidence:456"],
+    "policy_refs": ["policy:v1"],
+    "scope_ref": "scope:tenant-a/project-a",
+    "tenant_ref": "tenant:opaque-a",
+    "project_ref": "project:opaque-a",
+    "correlated_at": "2026-08-12T21:25:00Z"
+  },
+  "cases": [
+    {
+      "case_id": "observed-sampled-exact",
+      "overrides": {},
+      "remove_fields": [],
+      "expected_binding_status": "exact",
+      "expected_binding_reasons": []
+    },
+    {
+      "case_id": "observed-sampling-unknown-exact",
+      "overrides": {"sampling_state": "unknown"},
+      "remove_fields": [],
+      "expected_binding_status": "exact",
+      "expected_binding_reasons": []
+    },
+    {
+      "case_id": "wrong-action-ref",
+      "overrides": {"action_ref": "action:other"},
+      "remove_fields": [],
+      "expected_binding_status": "mismatch",
+      "expected_binding_reasons": ["action_ref_mismatch"]
+    },
+    {
+      "case_id": "wrong-input-identity",
+      "overrides": {"input_identity": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+      "remove_fields": [],
+      "expected_binding_status": "mismatch",
+      "expected_binding_reasons": ["input_identity_mismatch"]
+    },
+    {
+      "case_id": "cross-scope-tenant-project-mismatch",
+      "overrides": {
+        "scope_ref": "scope:tenant-b/project-b",
+        "tenant_ref": "tenant:opaque-b",
+        "project_ref": "project:opaque-b"
+      },
+      "remove_fields": [],
+      "expected_binding_status": "mismatch",
+      "expected_binding_reasons": ["scope_ref_mismatch", "tenant_ref_mismatch", "project_ref_mismatch"]
+    },
+    {
+      "case_id": "telemetry-not-observed",
+      "overrides": {
+        "telemetry_status": "not_observed",
+        "sampling_state": "unknown"
+      },
+      "remove_fields": ["trace_id", "span_id", "parent_span_id"],
+      "expected_binding_status": "not_evaluated",
+      "expected_binding_reasons": []
+    },
+    {
+      "case_id": "telemetry-unavailable",
+      "overrides": {
+        "telemetry_status": "telemetry_unavailable",
+        "sampling_state": "unknown"
+      },
+      "remove_fields": ["trace_id", "span_id", "parent_span_id"],
+      "expected_binding_status": "not_evaluated",
+      "expected_binding_reasons": []
+    }
+  ],
+  "invalid_cases": [
+    {
+      "case_id": "all-zero-trace-id",
+      "overrides": {"trace_id": "00000000000000000000000000000000"},
+      "expected_error": "trace_id must not be all zero"
+    },
+    {
+      "case_id": "all-zero-span-id",
+      "overrides": {"span_id": "0000000000000000"},
+      "expected_error": "span_id must not be all zero"
+    }
+  ],
+  "raw_sensitive_field_probe": {
+    "memory_content": "must-not-survive",
+    "prompt": "must-not-survive",
+    "system_instructions": "must-not-survive",
+    "tool_request_payload": {"secret": "must-not-survive"},
+    "hidden_reasoning": "must-not-survive"
+  }
+}

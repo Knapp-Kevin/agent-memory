@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/telemetry-projection.schema.json",
+  "title": "Agent Memory Privacy-Minimized Telemetry Projection",
+  "description": "Content-free projection of a canonical memory audit event for external observability systems. Raw memory, actor, principal, payload, signal values, uncertainty, and authority-reference bodies are intentionally excluded.",
+  "type": "object",
+  "required": ["profile", "version", "key_id", "span_name", "timestamp", "attributes"],
+  "properties": {
+    "profile": {"const": "agent-memory-telemetry-minimized"},
+    "version": {"const": "1.0.0"},
+    "key_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Non-secret identifier for the HMAC key generation used to create opaque telemetry references. The key itself is never emitted."
+    },
+    "span_name": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "attributes": {
+      "type": "object",
+      "required": ["am.event_ref", "am.event_type", "am.event_version", "am.component", "am.payload_present", "am.signal_present", "am.authority_present", "am.sensitivity_count"],
+      "properties": {
+        "am.event_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.event_type": {"type": "string", "minLength": 1},
+        "am.event_version": {"type": "string", "minLength": 1},
+        "am.component": {"type": "string", "minLength": 1},
+        "am.memory_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.actor_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.principal_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.correlation_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.causation_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.policy_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.receipt_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.ledger_ref": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"},
+        "am.payload_present": {"type": "boolean"},
+        "am.signal_present": {"type": "boolean"},
+        "am.authority_present": {"type": "boolean"},
+        "am.sensitivity_count": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

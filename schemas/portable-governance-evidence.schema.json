@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mythologiq-labs-llc.github.io/agent-memory/schemas/portable-governance-evidence.schema.json",
+  "title": "Agent Memory Portable Governance Evidence",
+  "description": "Content-free portable projection of a canonical Agent Memory governance receipt. Integrity, governance disposition, runtime execution, and lifecycle satisfaction remain separate verifier dimensions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidence_type",
+    "version",
+    "canonicalization",
+    "issuer",
+    "issued_at",
+    "action_ref",
+    "memory_action",
+    "canonical_receipt_ref",
+    "governance",
+    "scope",
+    "state",
+    "lifecycle_result",
+    "authentication"
+  ],
+  "properties": {
+    "evidence_type": {"const": "agent-memory-governance-evidence"},
+    "version": {"const": "1.0.0"},
+    "canonicalization": {"const": "agent-memory-canonical-json-v1"},
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "key_id", "algorithm"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "key_id": {"type": "string", "minLength": 1},
+        "algorithm": {"const": "Ed25519"}
+      }
+    },
+    "issued_at": {"type": "string", "format": "date-time"},
+    "action_ref": {"type": "string", "minLength": 1},
+    "memory_action": {"type": "string", "minLength": 1},
+    "canonical_receipt_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposition", "policy_ref", "authority_state_ref", "decision_time"],
+      "properties": {
+        "disposition": {
+          "enum": ["permitted", "denied", "deferred", "review_required", "committed"]
+        },
+        "policy_ref": {"type": "string", "minLength": 1},
+        "authority_state_ref": {"type": "string", "minLength": 1},
+        "decision_time": {"type": "string", "format": "date-time"}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_ref"],
+      "properties": {
+        "scope_ref": {"type": "string", "minLength": 1},
+        "source_domain_ref": {"type": "string", "minLength": 1},
+        "destination_domain_ref": {"type": "string", "minLength": 1},
+        "domain_authorization_state_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before_ref", "after_ref"],
+      "properties": {
+        "before_ref": {"type": "string", "minLength": 1},
+        "after_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "lifecycle_result": {
+      "enum": ["satisfied", "residual", "incomplete", "unverifiable", "not_applicable"]
+    },
+    "authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "key_id", "value"],
+      "properties": {
+        "algorithm": {"const": "Ed25519"},
+        "key_id": {"type": "string", "minLength": 1},
+        "value": {
+          "type": "string",
+          "minLength": 88,
+          "maxLength": 88,
+          "pattern": "^[A-Za-z0-9+/]{86}==$"
+        }
+      }
+    }
+  }
+}

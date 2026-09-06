@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/execution-witness.schema.json",
+  "title": "Agent Memory Execution Witness",
+  "description": "Vendor-neutral evidence correlating a composed governance decision to an observed enforcement/execution event. The witness does not establish lifecycle satisfaction.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "witness_version",
+    "witness_id",
+    "input_identity",
+    "composition_id",
+    "action_ref",
+    "witness_ref",
+    "effective_decision",
+    "enforcement_mode",
+    "delivery_status",
+    "enforcement_point_status",
+    "action_status",
+    "decision_alignment",
+    "liveness_status",
+    "approval_evidence_status",
+    "observed_at",
+    "evidence_refs",
+    "non_claims"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "witness_version": { "const": "0.1.0" },
+    "witness_id": { "type": "string", "minLength": 1 },
+    "input_identity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "composition_id": { "type": "string", "minLength": 1 },
+    "action_ref": { "type": "string", "minLength": 1 },
+    "witness_ref": { "type": "string", "minLength": 1 },
+    "effective_decision": {
+      "type": "string",
+      "enum": ["allow", "warn", "require_approval", "deny"]
+    },
+    "enforcement_mode": {
+      "type": "string",
+      "enum": ["mechanical", "cooperative", "unknown"]
+    },
+    "delivery_status": {
+      "type": "string",
+      "enum": ["delivered", "failed", "not_observed"]
+    },
+    "enforcement_point_status": {
+      "type": "string",
+      "enum": ["reached", "unavailable", "not_observed"]
+    },
+    "action_status": {
+      "type": "string",
+      "enum": ["executed", "prevented", "refused", "unknown", "not_observed"]
+    },
+    "decision_alignment": {
+      "type": "string",
+      "enum": ["consistent", "stricter_than_decision", "violation", "unverifiable"]
+    },
+    "liveness_status": {
+      "type": "string",
+      "enum": ["healthy", "degraded", "unavailable", "unknown"]
+    },
+    "approval_evidence_ref": { "type": "string", "minLength": 1 },
+    "approval_evidence_status": {
+      "type": "string",
+      "enum": ["absent", "unverified", "verified_current", "stale", "denied", "invalid", "not_applicable"]
+    },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "non_claims": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  }
+}

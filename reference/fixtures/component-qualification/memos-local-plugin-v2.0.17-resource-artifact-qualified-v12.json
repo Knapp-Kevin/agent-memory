@@ -1,0 +1,153 @@
+{
+  "qualification": {
+    "evidence": {
+      "adapter_results": [
+        {
+          "authority_effect": "none",
+          "currentness": "current",
+          "failure_result": "none",
+          "input_refs": ["memos-local-v2017-trace-lifecycle-v1"],
+          "normalized_refs": ["qualification:memos-local-plugin-v2.0.17:resource_artifact_memory"],
+          "operation": "stable_trace_import_read_candidate",
+          "raw_provider_refs": ["artifacts/memos-v2017/raw-provider-evidence.json"],
+          "runtime_identity": "memos-local-plugin:2.0.17:sqlite",
+          "trace_ref": "qualification:memos:initial-import"
+        },
+        {
+          "authority_effect": "none",
+          "currentness": "replacement_current",
+          "failure_result": "none",
+          "input_refs": ["memos-local-v2017-trace-lifecycle-v1"],
+          "normalized_refs": ["qualification:memos-local-plugin-v2.0.17:resource_artifact_memory"],
+          "operation": "stable_key_repeat_and_update",
+          "raw_provider_refs": ["artifacts/memos-v2017/raw-provider-evidence.json"],
+          "runtime_identity": "memos-local-plugin:2.0.17:sqlite",
+          "trace_ref": "qualification:memos:stable-key-update"
+        },
+        {
+          "authority_effect": "none",
+          "currentness": "reconstructed_current",
+          "failure_result": "none",
+          "input_refs": ["memos-local-v2017-trace-lifecycle-v1"],
+          "normalized_refs": ["qualification:memos-local-plugin-v2.0.17:resource_artifact_memory"],
+          "operation": "restart_readback",
+          "raw_provider_refs": ["artifacts/memos-v2017/raw-provider-evidence.json"],
+          "runtime_identity": "memos-local-plugin:2.0.17:sqlite",
+          "trace_ref": "qualification:memos:restart-readback"
+        },
+        {
+          "authority_effect": "none",
+          "currentness": "deleted_no_candidate_residue",
+          "failure_result": "none",
+          "input_refs": ["memos-local-v2017-trace-lifecycle-v1"],
+          "normalized_refs": ["qualification:memos-local-plugin-v2.0.17:resource_artifact_memory"],
+          "operation": "trace_delete_residue_scan",
+          "raw_provider_refs": ["artifacts/memos-v2017/raw-provider-evidence.json"],
+          "runtime_identity": "memos-local-plugin:2.0.17:sqlite",
+          "trace_ref": "qualification:memos:delete-residue"
+        }
+      ],
+      "artifact_digests": ["sha256:000ff1afa0b499447d3b65d7e62f6d81bee3a157ed84be7abe3e12d847329f4b"],
+      "checks": [
+        {"check_id":"exact-provider-identity","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"source-rights-discrepancy-preserved","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"direct-local-core-no-hosted-secret","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"initial-stable-trace-readback","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"stable-key-repeat-idempotency","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"stable-key-update-currentness","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"restart-reconstruction","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"durable-key-after-restart","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"delete-readback-and-candidate-residue","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true},
+        {"check_id":"provider-identity-is-not-agent-memory-identity","evidence_ref":"artifacts/memos-v2017/raw-provider-evidence.json","passed":true}
+      ],
+      "normalized_refs": [
+        "qualification:memos-local-plugin-v2.0.17:resource_artifact_memory",
+        "qualification:memos-local-plugin-v2.0.17:resource_artifact_memory",
+        "qualification:memos-local-plugin-v2.0.17:resource_artifact_memory",
+        "qualification:memos-local-plugin-v2.0.17:resource_artifact_memory"
+      ],
+      "operations": ["stable_trace_import_read_candidate","stable_key_repeat_and_update","restart_readback","trace_delete_residue_scan"],
+      "raw_provider_refs": [
+        "artifacts/memos-v2017/raw-provider-evidence.json",
+        "artifacts/memos-v2017/raw-provider-evidence.json",
+        "artifacts/memos-v2017/raw-provider-evidence.json",
+        "artifacts/memos-v2017/raw-provider-evidence.json"
+      ]
+    },
+    "qualified_contract": {
+      "authority_effect": "none",
+      "behavior_contract": {
+        "correction_model": "provider_revalidation",
+        "currentness_model": "provider_revalidated",
+        "deletion_model": "provider_revalidation",
+        "invalidation_model": "explicit_signal",
+        "migration_rebuild_model": "requires_requalification",
+        "operation_support": {"read":true,"recall_candidate":true,"write":true},
+        "residue_model": "scan_required",
+        "structural_mutation_requirement": "none"
+      },
+      "component_profile_version": "component-capability-v3",
+      "failure_posture": "fail_closed",
+      "operational_contract": {
+        "concurrency_control": "none",
+        "idempotency": "durable_keyed",
+        "reconciliation": "deterministic_readback",
+        "restart_recovery": "reconstructable",
+        "write_atomicity": "none"
+      },
+      "scope_posture": "external_scope_bridge",
+      "state_posture": "derived"
+    },
+    "result": {
+      "applicability_digest": "sha256:e8596721e6d31f75233af03db6c624fc501bc39593cc9c247cd6e7a4d1299dad",
+      "authority_effect": "none",
+      "earned_maturity": "evidence_proven",
+      "limitations": [
+        "Qualification is exact to @memtensor/memos-local-plugin v2.0.17 and tag commit d3d1bcfaff65f31b621d58bc236ece6d1e0da5ab.",
+        "Only stable-ID trace bundle resource memory is qualified; conversational capture, semantic ranking, L2/L3 state, skills, Hub behavior, and agent adapters remain outside this evidence boundary.",
+        "Write atomicity and concurrent mutation ordering are not fault-injection qualified and remain declared none.",
+        "Candidate lookup uses deterministic listTraces text filtering and carries no Agent Memory recall-admission authority.",
+        "The tagged repository root grants Apache-2.0 while package metadata declares MIT; runtime posture relies on the exact root license grant and retains the metadata discrepancy rather than resolving it by convenience.",
+        "MemOS importBundle collision behavior is idempotent skip, not replacement; replacement is intentionally exercised through updateTrace on the same stable provider-native ID.",
+        "The fixture uses listTraces text filtering as deterministic recall-candidate evidence and does not exercise semantic embedding/ranking."
+      ],
+      "maturity_before": "runtime_wired",
+      "profile_maturity_ceiling": "evidence_proven",
+      "qualification_current": true
+    },
+    "runtime": {
+      "configuration_digest": "sha256:04f039fd3c20c62df4472ef9982d8ef3ac0b97a5c5abcaeb48194c953c711725",
+      "dependency_refs": ["npm:@memtensor/memos-local-plugin@2.0.17","github:MemTensor/MemOS@d3d1bcfaff65f31b621d58bc236ece6d1e0da5ab"],
+      "fixture_digest": "sha256:3772a883f31a69d3945820ffe6d273e2b663d8cbc6ceddff2b9bb68bd4134889",
+      "fixture_id": "memos-local-v2017-trace-lifecycle-v1",
+      "runtime_refs": ["memos-local-plugin:MemoryCore","memos-local-plugin:importBundle","memos-local-plugin:updateTrace","memos-local-plugin:sqlite"]
+    },
+    "schema_version": "1.2.0",
+    "source_rights": {
+      "license_id": "Apache-2.0",
+      "license_ref": "github:MemTensor/MemOS@d3d1bcfaff65f31b621d58bc236ece6d1e0da5ab:LICENSE",
+      "use_posture": "runtime_allowed"
+    },
+    "subject": {
+      "adapter_id": "memos-local-v2017-trace-bundle-adapter",
+      "adapter_version": "1.0.0",
+      "capability_id": "resource_artifact_memory",
+      "capability_version": "1.0",
+      "component_id": "memos-local-plugin-v2.0.17",
+      "component_version": "2.0.17",
+      "implementation_ref": "github:MemTensor/MemOS@d3d1bcfaff65f31b621d58bc236ece6d1e0da5ab:apps/memos-local-plugin",
+      "qualification_profile_id": "memos-local-v2017-trace-resource-artifact",
+      "qualification_profile_version": "1.0.0"
+    }
+  },
+  "source": {
+    "agent_memory_exact_head": "5a87f929ef9a63e212865dbf73b9f7c659dc3a93",
+    "agent_memory_merge": "3c532c1f74492ca86334db25b8fb4c000c7f53be",
+    "agent_memory_pr": 357,
+    "applicability_digest": "sha256:e8596721e6d31f75233af03db6c624fc501bc39593cc9c247cd6e7a4d1299dad",
+    "artifact_digest": "sha256:ae8b766861bec57183918887616391348018c5aeb43f884a29fd9b2b2e53ee25",
+    "provider": "MemTensor/MemOS@memos-local-plugin-v2.0.17",
+    "provider_commit": "d3d1bcfaff65f31b621d58bc236ece6d1e0da5ab",
+    "workflow_run": 33343316829
+  }
+}

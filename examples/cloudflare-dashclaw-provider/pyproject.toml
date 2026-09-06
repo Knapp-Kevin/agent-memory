@@ -1,0 +1,9 @@
+[project]
+name = "agent-memory-dashclaw-provider-proving"
+version = "0.0.0"
+description = "Minimal Cloudflare transport for Agent Memory DashClaw live conformance"
+requires-python = ">=3.13"
+dependencies = []
+
+# Run pywrangler through uvx so this proving example does not inherit the
+# repository root's broader reference-runtime dependency set.

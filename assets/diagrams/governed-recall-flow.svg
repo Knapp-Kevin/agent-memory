@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="2780" viewBox="0 0 540 2780" role="img" aria-labelledby="title desc">
+  <title id="title">Governed recall pipeline</title>
+  <desc id="desc">A mobile-first governed recall pipeline. A query resolves requester, purpose, and scope before candidate generation. Retrieval may be probabilistic, but candidates are normalized with provenance and policy-relevant metadata, then explicitly admitted or rejected using identity, tenancy, purpose, scope, sensitivity, destination, consent or delegation, certification or dispute state, freshness, and policy. Ranking happens only among admitted candidates. Composition risk and context budget checks occur before assembly, and consequential recall emits an explanation or receipt. High relevance is not permission, and a prohibited candidate never becomes admitted through randomness.</desc>
+<style>
+:root{--bg:#0d1117;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--purple:#a371f7;--green:#3fb950;--red:#f85149;--amber:#d29922;--line:#6e7681;--neutral:#161b22;--blueBox:#101b2a;--purpleBox:#171321;--greenBox:#0f1d14;--amberBox:#211a0b;--redBox:#211416;}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--text)}
+.frame{fill:var(--bg);stroke:var(--border)}.neutral{fill:var(--neutral);stroke:var(--border)}.blueBox{fill:var(--blueBox);stroke:var(--blue);stroke-width:1.2}.purpleBox{fill:var(--purpleBox);stroke:var(--purple);stroke-width:1.2}.greenBox{fill:var(--greenBox);stroke:var(--green);stroke-width:1.2}.amberBox{fill:var(--amberBox);stroke:var(--amber);stroke-width:1.2}.redBox{fill:var(--redBox);stroke:var(--red);stroke-width:1.2}
+.title{font-size:26px;font-weight:700}.sub{font-size:15px;fill:var(--muted)}.eyebrow{font-size:14px;font-weight:700;letter-spacing:1px}.cardTitle{font-size:18px;font-weight:700}.body{font-size:14px}.bodyStrong{font-size:14px;font-weight:700}.small{font-size:13.4px}.tiny{font-size:12.8px}.muted{fill:var(--muted)}.blueText{fill:var(--blue)}.purpleText{fill:var(--purple)}.greenText{fill:var(--green)}.amberText{fill:var(--amber)}.redText{fill:var(--red)}.redStrong{fill:var(--red);font-weight:700}.greenStrong{fill:var(--green);font-weight:700}.purpleStrong{fill:var(--purple);font-weight:700}
+.line{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.blueLine{fill:none;stroke:var(--blue);stroke-width:2.3}.purpleLine{fill:none;stroke:var(--purple);stroke-width:2.3}.greenLine{fill:none;stroke:var(--green);stroke-width:2.3}
+</style>
+<defs>
+  <marker id="a" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--line)"/></marker>
+  <marker id="ab" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--blue)"/></marker>
+  <marker id="ap" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--purple)"/></marker>
+  <marker id="ag" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--green)"/></marker>
+</defs>
+<rect x="1" y="1" width="538" height="2778" rx="18" class="frame"/>
+<text x="28" y="44" class="title">Governed recall pipeline</text>
+<text x="28" y="70" class="sub">Retrieval finds candidates. Admission decides what may enter context.</text>
+
+<rect x="28" y="94" width="484" height="132" rx="11" class="neutral"/>
+<text x="46" y="121" class="eyebrow redText">HARD INVARIANT</text>
+<text x="46" y="148" class="bodyStrong">high relevance != authorized recall</text>
+<text x="46" y="174" class="body muted">Candidate generation may be probabilistic. Admission and scope</text>
+<text x="46" y="196" class="body muted">enforcement are explicit and bounded.</text>
+<text x="46" y="218" class="tiny redStrong">A blocked candidate never becomes admitted solely through randomness.</text>
+
+<line x1="270" y1="226" x2="270" y2="258" class="line" marker-end="url(#a)"/>
+<text x="28" y="292" class="eyebrow blueText">01  QUERY / TASK</text>
+<rect x="28" y="310" width="484" height="118" rx="11" class="blueBox"/>
+<text x="48" y="342" class="cardTitle">Resolve the recall request</text>
+<text x="48" y="370" class="body muted">Bind requester identity, agent identity, purpose, tenant, destination,</text>
+<text x="48" y="392" class="body muted">and requested scope before deciding what context is reachable.</text>
+<text x="48" y="418" class="tiny redStrong">Storage permission != universal context permission.</text>
+
+<line x1="270" y1="428" x2="270" y2="460" class="blueLine" marker-end="url(#ab)"/>
+<text x="28" y="494" class="eyebrow blueText">02  CANDIDATE GENERATION</text>
+<rect x="28" y="512" width="484" height="180" rx="11" class="blueBox"/>
+<text x="48" y="544" class="cardTitle">Find potentially useful memory</text>
+<text x="48" y="574" class="body muted">A planner may combine exact identity lookup, graph traversal, temporal</text>
+<text x="48" y="596" class="body muted">lookup, evidence search, semantic/vector retrieval, procedural recall,</text>
+<text x="48" y="618" class="body muted">prospective memory, policy memory, failure memory, and source-aware search.</text>
+<text x="48" y="650" class="bodyStrong">Ordering or retrieval scores may be probabilistic.</text>
+<text x="48" y="680" class="tiny redStrong">No retrieval mode owns truth or authority.</text>
+
+<line x1="270" y1="692" x2="270" y2="724" class="blueLine" marker-end="url(#ab)"/>
+<text x="28" y="758" class="eyebrow blueText">03  CANDIDATE NORMALIZATION</text>
+<rect x="28" y="776" width="484" height="236" rx="11" class="blueBox"/>
+<text x="48" y="808" class="cardTitle">Preserve what policy needs to know</text>
+<text x="48" y="838" class="small muted">memory identity · retrieval method/version · score type/value/uncertainty</text>
+<text x="48" y="862" class="small muted">source scope · memory scope · sensitivity · dispute state</text>
+<text x="48" y="886" class="small muted">certification state · freshness · provenance references</text>
+<text x="48" y="918" class="bodyStrong">A score must say what it means.</text>
+<text x="48" y="946" class="body muted">Similarity, confidence, source trust, saturation, and policy priority</text>
+<text x="48" y="968" class="body muted">remain different signals.</text>
+<text x="48" y="1000" class="tiny redStrong">Normalization must not erase scope, sensitivity, dispute, or provenance.</text>
+
+<line x1="270" y1="1012" x2="270" y2="1044" class="purpleLine" marker-end="url(#ap)"/>
+<text x="28" y="1078" class="eyebrow purpleText">04  RECALL ADMISSION</text>
+<rect x="28" y="1096" width="484" height="352" rx="11" class="purpleBox"/>
+<text x="48" y="1128" class="cardTitle">Permission gate before context inclusion</text>
+<text x="48" y="1158" class="bodyStrong purpleText">Evaluate</text>
+<text x="48" y="1182" class="small muted">requester identity · agent identity · tenant · purpose · memory scope</text>
+<text x="48" y="1206" class="small muted">sensitivity · destination · consent/delegation · certification/dispute</text>
+<text x="48" y="1230" class="small muted">freshness · policy version</text>
+<text x="48" y="1262" class="bodyStrong purpleText">Possible outcomes</text>
+<text x="48" y="1286" class="small muted">admit · admit_with_warning · admit_redacted · admit_summary_only</text>
+<text x="48" y="1310" class="small muted">require_verification · require_review · quarantine · block</text>
+<text x="48" y="1342" class="bodyStrong">Disputed memory may describe disagreement.</text>
+<text x="48" y="1366" class="body muted">It must not be silently presented as canonical.</text>
+<text x="48" y="1398" class="bodyStrong">Uncertain sensitivity is not non-sensitive.</text>
+<text x="48" y="1430" class="tiny redStrong">Wrong-tenant perfect match: block, even at semantic_score = 1.0.</text>
+
+<line x1="270" y1="1448" x2="270" y2="1480" class="purpleLine" marker-end="url(#ap)"/>
+<text x="28" y="1514" class="eyebrow purpleText">05  RANK ONLY ADMITTED CANDIDATES</text>
+<rect x="28" y="1532" width="484" height="166" rx="11" class="purpleBox"/>
+<text x="48" y="1564" class="cardTitle">Utility comes after permission</text>
+<text x="48" y="1594" class="body muted">Ranking may vary across runs and may use probabilistic utility estimates.</text>
+<text x="48" y="1622" class="bodyStrong">Randomness may choose among admitted candidates only.</text>
+<text x="48" y="1650" class="body muted">A stronger score does not reopen a blocked candidate.</text>
+<text x="48" y="1682" class="tiny redStrong">ranking != admission</text>
+
+<line x1="270" y1="1698" x2="270" y2="1730" class="line" marker-end="url(#a)"/>
+<text x="28" y="1764" class="eyebrow amberText">06  COMPOSITION RISK CHECK</text>
+<rect x="28" y="1782" width="484" height="196" rx="11" class="amberBox"/>
+<text x="48" y="1814" class="cardTitle">Safe individually can become unsafe together</text>
+<text x="48" y="1844" class="body muted">Check for secret reconstruction, conflicting instructions, unsafe chains,</text>
+<text x="48" y="1866" class="body muted">scope interaction, aggregate sensitivity, and poisoned multi-memory patterns.</text>
+<text x="48" y="1898" class="bodyStrong">Composition may block, transform, or narrow the candidate set.</text>
+<text x="48" y="1928" class="body muted">Admission of individual memories does not waive this second policy boundary.</text>
+<text x="48" y="1960" class="tiny redStrong">individually admissible != safe composition</text>
+
+<line x1="270" y1="1978" x2="270" y2="2010" class="line" marker-end="url(#a)"/>
+<text x="28" y="2044" class="eyebrow amberText">07  CONTEXT BUDGET</text>
+<rect x="28" y="2062" width="484" height="190" rx="11" class="amberBox"/>
+<text x="48" y="2094" class="cardTitle">Optimize within hard requirements</text>
+<text x="48" y="2124" class="body muted">Budget policy may estimate utility, but it must preserve must-include policy</text>
+<text x="48" y="2146" class="body muted">constraints, required warnings, active correction/dispute state, and critical</text>
+<text x="48" y="2168" class="body muted">procedural prerequisites.</text>
+<text x="48" y="2200" class="bodyStrong">Do not evict the only memory explaining why an action is prohibited.</text>
+<text x="48" y="2234" class="tiny redStrong">context pressure != authority to drop governance state</text>
+
+<line x1="270" y1="2252" x2="270" y2="2284" class="greenLine" marker-end="url(#ag)"/>
+<text x="28" y="2318" class="eyebrow greenText">08  GOVERNED CONTEXT ASSEMBLY</text>
+<rect x="28" y="2336" width="484" height="154" rx="11" class="greenBox"/>
+<text x="48" y="2368" class="cardTitle">Assemble only policy-permitted context</text>
+<text x="48" y="2398" class="body muted">Preserve warnings, redaction or summary-only treatment, temporal state,</text>
+<text x="48" y="2420" class="body muted">dispute/correction semantics, provenance, and destination restrictions.</text>
+<text x="48" y="2452" class="bodyStrong greenText">Context assembly is a governed memory operation.</text>
+<text x="48" y="2480" class="tiny redStrong">It is not a vector-search side effect.</text>
+
+<line x1="270" y1="2490" x2="270" y2="2522" class="greenLine" marker-end="url(#ag)"/>
+<text x="28" y="2556" class="eyebrow greenText">09  RECALL RECEIPT / EXPLANATION</text>
+<rect x="28" y="2574" width="484" height="150" rx="11" class="greenBox"/>
+<text x="48" y="2606" class="cardTitle">Explain consequential recall</text>
+<text x="48" y="2636" class="small muted">why candidate · retrieval method · why admitted · policy version</text>
+<text x="48" y="2660" class="small muted">redaction/transformation · uncertainty/dispute · why stronger scores blocked</text>
+<text x="48" y="2692" class="bodyStrong">The result should make the admission path reconstructable.</text>
+<text x="48" y="2718" class="tiny redStrong">retrieval finds candidates · governed recall decides what enters context</text>
+
+<text x="28" y="2752" class="tiny muted">Canonical: docs/26-governed-recall-planner.md</text>
+<text x="28" y="2770" class="tiny muted">Accepted boundary: ADR-013 Governed Recall Planner Is Required</text>
+</svg>
