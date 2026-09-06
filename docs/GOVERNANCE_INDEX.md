@@ -100,6 +100,8 @@ Live for plan duration; archived at substantiate. Drift signal: plan shipped but
 | Sprint 2n research brief | `docs/research-brief-sprint2n-seal-anchors-2026-09-05.md` | sprint2n-seal-anchors |
 | Sprint 3b plan | `docs/plan-sprint3b-visibility-test-discover.md` | sprint3b-visibility-test-discover |
 | Sprint 3b research brief | `docs/research-brief-sprint3b-visibility-test-discover-2026-09-06.md` | sprint3b-visibility-test-discover |
+| Sprint 3c plan | `docs/plan-sprint3c-dashclaw-park-and-report.md` | sprint3c-dashclaw-park-and-report |
+| Sprint 3c research brief | `docs/research-brief-sprint3c-dashclaw-park-and-report-2026-09-06.md` | sprint3c-dashclaw-park-and-report |
 
 ## Tier 5 — Reference Material
 

@@ -276,6 +276,10 @@ def run() -> dict:
             "wrong_identity_refusal": wrong_identity_approval.refusal,
             "self_approval_refusal": self_approval.refusal,
             "committed": correction_commit.committed,
+            "refusal": correction_commit.refusal,
+            "decision_outcome": correction_commit.adapter_result.decision.outcome if correction_commit.adapter_result else None,
+            "decision_reasons": list(correction_commit.adapter_result.decision.reasons) if correction_commit.adapter_result else [],
+            "receipt_decision_outcome": correction_commit.adapter_result.receipt["decision_outcome"] if correction_commit.adapter_result else None,
             "receipt_id": correction_commit.adapter_result.receipt["receipt_id"] if correction_commit.adapter_result else None,
             "state_version": memory.state_version(MEMORY_ID),
             "current_value": current_fact.fact_text if current_fact else None,
@@ -286,7 +290,14 @@ def run() -> dict:
         "stale_replay": {
             "committed": stale_replay.committed,
             "refusal": stale_replay.refusal,
+            "decision_outcome": stale_replay.adapter_result.decision.outcome if stale_replay.adapter_result else None,
         },
+        # ADR-037 step 4b-2: the approved correction parks, so state never reaches
+        # v2 and the replay is not stale. A committed correction was the
+        # precondition for demonstrating stale_authorization on this path; it is
+        # still asserted at unit level by five non-DashClaw tests, none here.
+        "stale_authorization_reachable": False,
+        "stale_authorization_note": "correction parks under require_review; state stays v1; replay is not stale",
         "scope_attack": {
             "provider_decision": attack_verdict["decision"],
             "committed": attack_commit.committed,
@@ -331,14 +342,22 @@ def run() -> dict:
     assert report["correction"]["unapproved_refusal"] == "approval_required"
     assert report["correction"]["wrong_identity_refusal"] == "approval_identity_mismatch"
     assert report["correction"]["self_approval_refusal"] == "self_approval_forbidden"
-    assert report["correction"]["committed"] is True
-    assert report["correction"]["state_version"] == 2
-    assert report["correction"]["current_value"] == "release branch main"
-    assert report["correction"]["old_value_event_invalid"] is True
+    # ADR-037 step 4b-2 (ledger Entry #24): an approval bound to the exact input
+    # identity satisfies the DashClaw half of the seam and no longer discharges
+    # PAMA's require_review. The correction parks; the park is the evidence.
+    assert report["correction"]["committed"] is False
+    assert report["correction"]["refusal"] is None
+    assert report["correction"]["decision_outcome"] == "require_review"
+    assert "review_requires_qualified_evidence" in report["correction"]["decision_reasons"]
+    assert report["correction"]["receipt_decision_outcome"] == "require_review"
+    assert report["correction"]["state_version"] == 1
+    assert report["correction"]["current_value"] == "release branch release"
+    assert report["correction"]["old_value_event_invalid"] is False
     assert current_uuid in report["correction"]["recall_admitted"]
-    assert initial_commit.adapter_result.fact_uuid in report["correction"]["recall_refusals"]
+    assert initial_commit.adapter_result.fact_uuid not in report["correction"]["recall_refusals"]
 
-    assert report["stale_replay"] == {"committed": False, "refusal": "stale_authorization"}
+    assert report["stale_replay"] == {"committed": False, "refusal": None, "decision_outcome": "require_review"}
+    assert report["stale_authorization_reachable"] is False
     assert report["scope_attack"]["provider_decision"] == "deny"
     assert report["scope_attack"]["committed"] is False
     assert report["scope_attack"]["refusal"] == "pama_blocked"

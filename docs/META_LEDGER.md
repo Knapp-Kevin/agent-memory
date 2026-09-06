@@ -1826,3 +1826,149 @@ invocation it named) is FIXED at this entry.
 Pre-audit `plan_grep_lint` caught four citation defects in plan iteration 2;
 the plan was amended to iteration 3 before the tribunal rendered. Review
 Boundary: staged, not committed; no push, PR, tag or merge.
+---
+
+### Entry #29: RESEARCH BRIEF
+
+**Timestamp**: 2026-09-06T13:20:00-04:00
+**Phase**: RESEARCH
+**Author**: Analyst
+**Risk Grade**: L2 (a CI-invoked governed caller, a workflow invariant step and a runtime-evidence document; no policy, adapter or evaluator change)
+**Session**: 2026-09-06T1300-d8e4a1
+
+**Content Hash**:
+```
+SHA256(docs/research-brief-sprint3c-dashclaw-park-and-report-2026-09-06.md)
+= f64dc012bbfa340ed09237dbb6a9be824891f4191903094d7ed5d84f84d6f329
+```
+
+**Previous Hash**: `321afe6c31532435124e8ee5a2c94e3d04822e269604041f1a8ea3985758c892`
+**Chain Hash**:
+```
+SHA256(content_hash + previous_hash)
+= d1d680e8eed0021485b933afccd058e4959eea2bd007afc9508a4998b87aa960
+```
+
+**Decision**: Loop 18 (Sprint 3c) research complete, on the operator's 2026-09-06 acceptance of park-and-report for the DashClaw correction seam. Measured: since Entry #24 the approved correction in `run_dashclaw_external_verdict.py` parks at the adapter (`committed=False`, `refusal=None`, decision `require_review`, receipt recording that outcome); the runner and the workflow's inline invariant step both assert a commit, so the evidence file is never written; the stale-replay case can no longer reach `stale_authorization` because a committed correction was its precondition. Drift, four findings: Entry #24's statement that `dashclaw_external_verdict` crosses with real evidence was true of the 4b-1 producer and never of the seam, which no caller routes through; DoD 20's "demonstrably park" is unmet because the park is unreported; and the second clause of the recommendation the operator accepted (forward the producer's evidence and still park) is wrong -- at medium risk two `artifact_bound` digests discharge as `delegated_policy`, the circularity 4b-2 rejected. Corrected scope: park-and-report across runner, workflow invariants and runtime-evidence doc; a negative test naming the laundering path; no seam, policy, adapter or producer change; the transition-rule route stays DashClaw-side (R6). Shadow Genome Failure #7 recorded. Next: /qor-plan.
+---
+
+### Entry #30: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-06T13:50:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L2
+**Verdict**: VETO
+**Session**: 2026-09-06T1300-d8e4a1
+**Target**: docs/plan-sprint3c-dashclaw-park-and-report.md (iteration 1; plan content hash a6d83155ac1c12e7d67b0fb1cfec320f7b6d4bb989b893ba2cea266bfcd89eaf)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_3c_attempt1.md) = 847b04bd3ab0e366bd17550993e4fa8fb8dc094550a6bea9dcc68db6a5ac6240
+
+**Previous Hash**: `d1d680e8eed0021485b933afccd058e4959eea2bd007afc9508a4998b87aa960`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 1e7c29494022eba5547ccf8e67bcfefb59934c8b25a5bba050c0cbd5c481162e
+
+**Decision**: VETO, attempt 1 of 5. Option B independent review was mandatory (`audit_risk_score`: high-citation-surface) and performed by a fresh-context reviewer with repository access; every ground was reproduced by the Judge. All pre-audit lints were clean, which is the point: they prove citations true, not tests passable. V1 -- LD4(b) asserts `review_discharge == "delegated_policy"`; the authority lands in `discharge_authority` (`policy.py:562`), `review_discharge` stays empty under `evaluate_with_qualified_evidence`. V2 -- LD4(b)'s "fresh adapter" cannot commit a `state_snapshot="v1"` mutation; it refuses `stale_authorization` unless the initial promotion is seeded first, which the plan does not say. V3 -- LD2's note that `stale_authorization` is asserted in `test_dashclaw_external_verdict.py` is false (zero matches; five non-DashClaw tests assert it); the research brief carried the same sentence and was corrected, with Entry #29 regenerated in the uncommitted draft. V4 -- runner line 339 (`fact_uuid in recall_refusals`) fails once the correction parks and LD1 never addresses it. Advisories A1-A3: the D4 adversarial negative is mis-ordered (a forwarding seam fails test (a) on `committed` first); the adapter's registry is construction-time only and immaterial at medium; the new test is absent from the DashClaw workflow's own test list and paths. Required next action: Governor amends plan text on V1-V4 and A1-A3, re-runs /qor-audit (attempt 2).
+---
+
+### Entry #31: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-06T14:20:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L2
+**Verdict**: PASS
+**Session**: 2026-09-06T1300-d8e4a1
+**Target**: docs/plan-sprint3c-dashclaw-park-and-report.md (iteration 2; plan content hash 847c9137c526c2588fc98e20f6c9a14669aadc8ade6949d7642bfc2049946449)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT.md) = 396548b3c1b85cf28e8446e48e311f44bf5ed1f4854022f2b44522bc52e30743
+
+**Previous Hash**: `1e7c29494022eba5547ccf8e67bcfefb59934c8b25a5bba050c0cbd5c481162e`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = bcc84408a80fa78c0153df01de5af134f61ca7bcf69ca4dc8661f204b2275492
+
+**Decision**: PASS, attempt 2 of 5, Option B independent review repeated on iteration 2. Attempt-1 grounds V1-V4 and advisories A1-A3 all closed with repository evidence: `discharge_authority` is the field `_redecide` sets (`policy.py:562`); the forwarded-evidence test seeds the initial promotion before the `state_snapshot="v1"` correction; the five files asserting `stale_authorization` are named and none is DashClaw; runner line 339 is inverted; the adversarial negative is ordered on `committed`; the registry is construction-time and left empty; the DashClaw workflow lists the new test. Recording-adapter mechanics verified (`evidence` is keyword-only; the seam passes none). One binding condition, C1: `stale_authorization_reachable` is asserted in the runner and mirrored in the workflow, not merely reported. Required next action: /qor-implement.
+---
+
+### Entry #32: SESSION SEAL - Phase 19 (Sprint 3c: the DashClaw approved correction parks, and says so)
+
+**Entry ID**: `b407294d9fcf`
+**Content Hash**: `847c9137c526c2588fc98e20f6c9a14669aadc8ade6949d7642bfc2049946449`
+**Previous Hash**: `bcc84408a80fa78c0153df01de5af134f61ca7bcf69ca4dc8661f204b2275492`
+**Chain Hash**: `dd4d5204ea567f0a2096a930f3732ad2807163ebb318b5523952291b00dc6ed4`
+**Timestamp**: 2026-09-06T14:50:00-04:00
+**Phase**: SUBSTANTIATE
+**Author**: Judge
+**Risk Grade**: L2
+**Verdict**: PASS
+**Session**: 2026-09-06T1300-d8e4a1
+**Plan**: docs/plan-sprint3c-dashclaw-park-and-report.md (iteration 2; change_class hotfix)
+**SSDF Practices**: PS.2.1, RV.2.1
+
+**Merkle Seal** (SHA256 over `git write-tree` of the staged index 9c6078db4ec480403580cff3e479834e69199a6d):
+`9fd14ba7d0b4afb350b5d6a2b128264be8d39169d7f0a6f2884a0be1cc9b2f6f`
+
+**Anchor**: `refs/seals/entry-32`.
+
+**What changed.** The CI runner `run_dashclaw_external_verdict.py` asserted
+that an exactly-approved medium correction commits. Since ADR-037 step 4b-2
+(Entry #24) it parks: the approval satisfies the DashClaw half of
+`commit_bound_mutation` (identity-bound, external actor, not self-approved)
+and no longer discharges PAMA's `require_review`, because the seam's Agent
+Memory half is the legacy `review_satisfied` route and assertion no longer
+discharges review. The runner now records the park -- `committed=False`,
+`refusal=None`, decision `require_review` with reason
+`review_requires_qualified_evidence`, receipt `decision_outcome`
+`require_review`, state `v1`, value unchanged, v1 fact still recall-admitted
+-- and asserts exactly that (lines 334-339 and 341). The workflow's inline
+invariant step mirrors it line for line and now lists the new test in its
+paths and its unittest invocation. The runtime-evidence document states the
+park in its Correction, Stale replay and Approval-and-commit-boundary
+sections. The stale-replay case parks too, because state never advances;
+`stale_authorization_reachable=False` is recorded and asserted in both the
+runner and the workflow (audit C1), with the five non-DashClaw tests that still
+assert `stale_authorization` named.
+
+**What did not change, and why.** `commit_bound_mutation`, `policy`,
+`adapter`, `evidence_for`. The module's producer yields two `artifact_bound`
+digests (mutation content, authority reference); at medium risk the ladder
+accepts `asserted` binding, so forwarding them would commit the correction as
+`delegated_policy` on binding and authority material alone -- "evidence
+supports the proposition; authority permits the consequence; not
+interchangeable" (Entry #24). `test_dashclaw_correction_parks.py` asserts both
+halves: the approved correction parks and the adapter's `commit_proposal`
+receives no evidence from the seam; the same producer evidence, forwarded
+directly on an adapter with an empty registry, commits with
+`discharge_authority == delegated_policy` and `state_version == 2`. The route
+that would honestly un-park it is an evaluator-held `TransitionRuleCorpus` for
+DashClaw corrections: R6, DashClaw-side, not this cycle.
+
+**Correction to the record.** Entry #24 lists `dashclaw_external_verdict`
+among three modules that "present real evidence" and cross. That was true of
+the 4b-1 producer, tested at high risk with an attestation
+(`test_evidence_producers.py:230-247`), and never true of the correction
+seam, which no caller routes through. Recorded in the brief's alignment table
+and as Shadow Genome Failure #7 (FIXED at this entry).
+
+**Verification.** Runner exit 1 on the pre-fix state (AssertionError, line
+334), exit 0 after with the evidence JSON written; the workflow's invariant
+block executed locally against that JSON: OK. Full suite 1111 to 1113 (+2), 0
+failures, 7 skipped under the pinned `cryptography==50.0.1`; the DashClaw
+workflow's YAML parses. Adversarial: the seam mutated to forward
+`evidence_for(mutation)` makes test (a) fail first on `committed`
+(`True is not false`) and the runner exit 1; reverted clean. Validators clean;
+feature index 21/21 (FX021 new); `verify_seals` OK. Gates: intent lock
+VERIFIED, secret scan clean, DoD well-formed, merge velocity within capacity,
+instruction hygiene clean, governance index enforced.
+
+**Decision**: audit VETOed once (Entry #30, attempt 1, Option B mandatory):
+the plan named `review_discharge` for what `discharge_authority` carries,
+said "fresh adapter" for a mutation whose snapshot presupposes a seeded state,
+misattributed the `stale_authorization` unit coverage, and left runner line
+339 unaddressed; every pre-audit lint had passed, which proves citations, not
+passability. Iteration 2 executed every assertion before locking; attempt 2
+(Entry #31) PASSED on independent re-review with one condition, C1, applied.
+Shadow Genome Failure #8 records the pattern. Review Boundary: staged, not
+committed; no push, PR, tag or merge.

@@ -235,6 +235,8 @@ The commit seam refuses when:
 
 After scope/target-scope checks and approval binding, the proposal is passed through `GovernedMemoryAdapter.commit_proposal`, which independently re-evaluates PAMA and current state. A valid approval therefore cannot make a stale proposal current again.
 
+Since ADR-037 step 4b-2 (ledger Entry #24), an approval bound to the exact `input_identity` satisfies the DashClaw half of the seam and **no longer discharges PAMA's `require_review`**: `review_satisfied` plus `approval_refs` is an assertion, and assertion no longer discharges review. The adapter parks the proposal with `review_requires_qualified_evidence` and records that outcome in the receipt. The route that would discharge it is an evaluator-held transition rule (`TransitionRuleCorpus`) adjudicating DashClaw corrections, which is outside this document's scope; the module's `evidence_for` (content digest and authority reference) is deliberately **not** forwarded, because at medium risk two `artifact_bound` digests would discharge on binding and authority material alone.
+
 ## Executed workload
 
 The deterministic workload is the #279 release-branch scenario plus authority attacks.
@@ -287,21 +289,23 @@ scope authority resolved
 -> exact external approval accepted as evidence
 -> current target scope revalidated for acting identity
 -> Agent Memory independently revalidates
--> correction commits
--> old release value becomes superseded/event-invalid
--> main becomes current and recall-admissible
+-> require_review parks (review_requires_qualified_evidence)
+-> release value stays current at state v1; recall still admits it
 ```
+
+The workload evidence records `committed = false`, `refusal = null`, `decision_outcome = require_review`, `receipt_decision_outcome = require_review`, `state_version = 1`.
 
 ### Stale replay
 
-Replaying the previously approved correction after state advances to `v2` produces:
+Because the approved correction parks, state never advances to `v2`; replaying the same approved correction is not stale and parks the same way:
 
 ```text
 committed = false
-refusal = stale_authorization
+refusal = null
+decision_outcome = require_review
 ```
 
-The approval remains authentic evidence but does not become standing authority over changed state.
+The workload records `stale_authorization_reachable = false`: a committed correction was the precondition for demonstrating `stale_authorization` on this path. That refusal is still asserted at unit level by five non-DashClaw tests (`test_governed_paths.py`, `test_restart_safe_runtime.py`, `test_procedural_memory.py`, `test_concurrency_evidence.py`, `test_benchmark_security.py`); no DashClaw test or runner reaches it.
 
 ### High-authority scope attack
 
