@@ -142,7 +142,7 @@ Schema:
 
 Reference implementation:
 
-`reference/agentmem_ref/external_evidence.py`
+`reference/agentmem_ref/memory/external_evidence.py`
 
 The normalized candidate contains distinct surfaces for:
 

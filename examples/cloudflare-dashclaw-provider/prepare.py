@@ -18,6 +18,7 @@ import argparse
 import hashlib
 import importlib
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -28,10 +29,17 @@ REPO_ROOT = EXAMPLE_DIR.parents[1]
 CANONICAL_DIR = REPO_ROOT / "reference" / "agentmem_ref"
 OUTPUT_DIR = EXAMPLE_DIR / "src" / "agentmem_ref"
 
-SOURCE_FILES = (
-    "policy.py",
-    "dashclaw_external_verdict.py",
-    "dashclaw_authority.py",
+# Canonical sources live in layered subpackages (Sprint 3a); the Worker bundle
+# stays flat, so layer-relative imports are flattened as a packaging-only change.
+SOURCE_FILES = {
+    "policy.py": "core/policy.py",
+    "dashclaw_external_verdict.py": "memory/dashclaw_external_verdict.py",
+    "dashclaw_authority.py": "memory/dashclaw_authority.py",
+}
+_LAYERS = ("core", "state", "contracts", "runtime", "memory", "crg", "harness")
+_LAYER_IMPORT = re.compile(
+    r"^(?P<indent>\s*)from \.\.(?:" + "|".join(_LAYERS) + r")(?:\.(?P<module>\w+))? import ",
+    re.MULTILINE,
 )
 
 _TYPING_IMPORT = "from typing import Any, Callable, Iterable, Mapping\n"
@@ -42,6 +50,17 @@ _PORTABLE_ADAPTER_IMPORT = "if TYPE_CHECKING:\n    from .adapter import Governed
 
 def _sha256(value: bytes) -> str:
     return "sha256:" + hashlib.sha256(value).hexdigest()
+
+
+def _flatten_layers(source: str) -> str:
+    """``from ..core import policy`` -> ``from . import policy`` for the flat bundle."""
+
+    def flat(match: re.Match[str]) -> str:
+        module = match.group("module")
+        target = f".{module}" if module else "."
+        return f"{match.group('indent')}from {target} import "
+
+    return _LAYER_IMPORT.sub(flat, source)
 
 
 def _portable_provider(source: str) -> str:
@@ -58,10 +77,10 @@ def _render_sources() -> tuple[dict[str, str], dict[str, dict[str, str]]]:
     rendered: dict[str, str] = {}
     manifest: dict[str, dict[str, str]] = {}
 
-    for name in SOURCE_FILES:
-        source_path = CANONICAL_DIR / name
+    for name, canonical in SOURCE_FILES.items():
+        source_path = CANONICAL_DIR / canonical
         raw = source_path.read_bytes()
-        text = raw.decode("utf-8")
+        text = _flatten_layers(raw.decode("utf-8"))
         prepared = _portable_provider(text) if name == "dashclaw_external_verdict.py" else text
         compile(prepared, str(source_path), "exec")
         rendered[name] = prepared

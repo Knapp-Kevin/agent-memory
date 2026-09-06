@@ -2048,3 +2048,114 @@ character. The recurring defect is a record written before its verification
 ran, or after a verification whose failure did not stop the writer. The
 countermeasure applied here: the writer executes the artifact and aborts on
 any failure, using no intermediary whose resolution can differ from CI's.
+---
+
+### Entry #36: SESSION SEAL - Phase 17 (Sprint 3a modular package structure, re-sealed after rebase)
+
+**Entry ID**: `5ba7deaea3e0`
+**Content Hash**: `cc34f31824fe1604fd2b4d902bb85302bdbb1f04f0db2e0ba8b896771a8184e6`
+**Previous Hash**: `065b19f6ce03fc9a1276969980946c556498620e026e44976119979e5c282f7b`
+**Chain Hash**: `db24c5ab3afd88eaee0599ecc8641a7d1512cee6eeca3d1024bfb93eeeb5f232`
+**Timestamp**: 2026-09-06T17:30:00-04:00
+**Phase**: SUBSTANTIATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: PASS
+**Session**: 2026-09-05T1400-b7a3e1
+**Plan**: docs/plan-sprint3a-modular-package.md (iteration 3; change_class feature -- a non-breaking layout refactor)
+**SSDF Practices**: PW.1.1, PW.4.1, PW.7.2, PS.1.1
+
+**Merkle Seal** (SHA256 over `git write-tree` of the staged index 2c8023e30e0db885fe8af2474f37931957e76c61):
+`6f84d5a24df2ffca271aeb813085f418cfe3f57cda992f9b921e01498eb2c76c`
+
+**Anchor**: `refs/seals/entry-36`.
+
+**Why a re-seal.** This cycle was first sealed on 2026-09-05 as Entry #26
+(tree `d953c9160aee...`) on a branch cut from `main` at `27f2de3`, with a
+layout-test correction recorded as Entry #27 (tree `e4259d0dc770...`). Two
+cycles then landed on `main` ahead of it -- Sprint 3b (#390, Entries #26-#28
+on `main`) and Sprint 3c (#391, Entries #29-#35) -- so the branch's entry
+numbers, its feature-index row and its seal tree all collided with `main`.
+With the operator's approval the branch was rebuilt as one squash merge onto
+`main` at `b260119`, its earlier seal anchor `refs/seals/entry-26` was deleted
+from `origin`, and this entry seals the rebased tree. Entries #26 and #27 of
+the pre-rebase branch are superseded by this one and are not in this ledger.
+Their substance follows.
+
+**What moved.** `reference/agentmem_ref` was 126 flat modules. It is now seven
+layered subpackages in dependency order -- `core < state < contracts < runtime
+< memory < crg < harness` -- with 124 modules moved by `git mv`, every relative
+import rewritten to the new layout, and a `sys.modules` alias at every old path
+so `agentmem_ref.policy is agentmem_ref.core.policy`: the identical object, not
+a copy, so the `_HIGH_RISK` monkeypatch tests from Loops 11-12 still reach the
+evaluator. `agentmem_ref.crg` is Agent Memory's Code Reality Graph, with the
+`codegenome_*` modules inside it as the first-party implementation profile
+(ADR-035, ADR-036). The layer order, the table and the top-level residents live
+in one place, `scripts/restructure_package.py`, and the layout test reads them
+from there -- the test cannot be written to a different order than the mover.
+
+**What did not move.** Behaviour. `__init__` exports the same five names.
+No function, class, signature, schema, fixture or policy changed. No existing
+test changed. On the rebased tree the suite is 1113 to 1121 (+8, the layout
+test), 0 failures, 7 skipped under the pinned `cryptography==50.0.1`, under
+both `discover -t reference` and `discover` without `-t`. Every `run_*.py`
+invocation CI makes: 45 distinct commands, 31 pass, 14 fail only for missing
+local prerequisites (upstream raw artifacts, hindsight-embed, uor_addr,
+openssl TSA fixtures) after importing the layered package cleanly; the
+DashClaw runner, which failed on the first seal as a pre-existing `main`
+defect, now passes with Sprint 3c's correction under the layered package.
+`verify_seals` 18/18, validators clean, `--check` reports the layout matches
+the table.
+
+**The hazard the audit condition targeted.** Twenty-two sites computed roots as
+`Path(__file__).resolve().parents[N]`; one level deeper shifts every one, and
+`receipts.schema_dir()` is among them. They now import `REPO_ROOT` /
+`REFERENCE_ROOT` from a top-level `_paths.py`, and `receipts._packaged_schemas`
+names the package explicitly rather than `__package__`. Audit C1 required that
+packaged-schema resolution be proven with the source tree actually absent:
+on the first seal the wheel was built, installed in a fresh venv, and run from
+the scratch directory -- `schema_dir()` returned
+`site-packages/agentmem_ref/_schemas`, `agent-memory --help` exit 0, alias
+identity and the `crg` doctrine held. The packaging surfaces (`setup.py`,
+`pyproject.toml`, `core/receipts.py`, `_paths.py`) are byte-identical between
+that tree and this one, so the proof carries.
+
+**Found at implementation, amended before the move.** The plan's layer names
+`substrate` and `capabilities` are also module names, and a package directory
+shadows a same-named module file; plan iteration 3 renames the layers `state`
+and `contracts`, and the mover refuses any layer name that collides with a
+module.
+
+**Found by CI, corrected (formerly Entry #27).** The layout test imports all
+124 modules to prove alias identity; three `harness` benchmarks import
+`numpy` at module load and the pinned CI requirements do not carry it. When
+the real module raises `ModuleNotFoundError` for a name outside
+`agentmem_ref`, the subtest now asserts the alias file is byte-for-byte the
+mover's `alias_source` and skips, naming the dependency; `agentmem_ref` names
+and every other `ImportError` still raise. Verified with numpy present, with
+numpy blocked, and with an internal import broken.
+
+**One consumer of module text.** `examples/cloudflare-dashclaw-provider/
+prepare.py` reads its three canonical sources from their layered locations and
+flattens `from ..core import policy` to `from . import policy` before its
+existing exact-match transform.
+
+**Documentation.** Path references in docs, wiki source, READMEs and workflow
+path triggers were rewritten to the new locations on the first seal; on
+rebase the same rewrite was re-applied to the versions of `FEATURE_INDEX`
+(now FX022 for this feature, after `main`'s FX020-FX021) and `SYSTEM_STATE`
+that `main` had advanced, and the `GOVERNANCE_INDEX` rows re-added. Sealed
+historical records -- this ledger, earlier plans and briefs, JSON evidence --
+were deliberately not rewritten: their content hashes are ledger-bound.
+
+**Adversarial pass**: seven mutations, each caught on the rebased tree,
+control green -- an alias replaced by a star-import copy; a core module
+importing `memory`; a lazy in-function import of a later layer; `parents[N]`
+reintroduced; `__init__` routed through an alias; a module physically in the
+wrong layer; the `crg` doctrine removed.
+
+**Decision**: audit VETOed once (V1 layer order unstated; V2 `__init__` via
+aliases; V3 residents unstated), then PASS with C1, satisfied as above. This
+re-seal was written by a script that first verified the staged tree is
+complete, the layout matches the table and the 1121-test suite is green, and
+refused to write otherwise. Review Boundary: staged, not committed.

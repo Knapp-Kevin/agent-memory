@@ -22,17 +22,17 @@ experience / observation
 
 The reference implementation is:
 
-- `reference/agentmem_ref/cognitive_mesh.py`
+- `reference/agentmem_ref/memory/cognitive_mesh.py`
 - `reference/tests/test_cognitive_mesh.py`
 - `reference/run_cognitive_mesh.py`
 - `.github/workflows/cognitive-mesh-evidence.yml`
 
 It composes existing Agent Memory primitives rather than creating a parallel memory runtime:
 
-- `reference/agentmem_ref/adapter.py`
-- `reference/agentmem_ref/policy.py`
-- `reference/agentmem_ref/contextual_recall.py`
-- `reference/agentmem_ref/substrate.py`
+- `reference/agentmem_ref/runtime/adapter.py`
+- `reference/agentmem_ref/core/policy.py`
+- `reference/agentmem_ref/core/contextual_recall.py`
+- `reference/agentmem_ref/state/substrate.py`
 
 ## Minimal Cognitive Mesh contract
 

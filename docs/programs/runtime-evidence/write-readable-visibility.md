@@ -36,7 +36,7 @@ Latency remains observational and environment-specific. It does not create autho
 
 The machine-readable contract is `schemas/write-readable-visibility.schema.json`.
 
-The reference implementation lives in `reference/agentmem_ref/visibility.py` and emits exact-head evidence through `reference/run_write_readable_visibility.py`.
+The reference implementation lives in `reference/agentmem_ref/state/visibility.py` and emits exact-head evidence through `reference/run_write_readable_visibility.py`.
 
 Every operation binds evidence to:
 

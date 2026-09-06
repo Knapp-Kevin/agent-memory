@@ -24,7 +24,7 @@ Neither surface changes Agent Memory memory semantics or PAMA authority.
 
 Reference implementation:
 
-`reference/agentmem_ref/enforcement_evidence.py`
+`reference/agentmem_ref/memory/enforcement_evidence.py`
 
 A witness binds to:
 

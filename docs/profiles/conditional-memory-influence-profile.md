@@ -26,7 +26,7 @@ Every record states that address is not identity, prefetch is not admission, ext
 
 Evidence:
 - `schemas/conditional-memory-influence.schema.json`
-- `reference/agentmem_ref/conditional_memory_influence.py`
+- `reference/agentmem_ref/memory/conditional_memory_influence.py`
 - `reference/tests/test_conditional_memory_influence_gate.py`
 - `reference/tests/test_conditional_memory_influence_identity.py`
 - the existing #228 conditional-memory harness

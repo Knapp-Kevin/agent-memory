@@ -43,10 +43,10 @@ Current schema version:
 
 Reference implementations:
 
-- `reference/agentmem_ref/qualification.py`
-- `reference/agentmem_ref/component_failure_probe.py`
-- `reference/agentmem_ref/component_fallback.py`
-- `reference/agentmem_ref/code_graph_qualification.py`
+- `reference/agentmem_ref/contracts/qualification.py`
+- `reference/agentmem_ref/contracts/component_failure_probe.py`
+- `reference/agentmem_ref/contracts/component_fallback.py`
+- `reference/agentmem_ref/crg/code_graph_qualification.py`
 
 The qualification subject binds:
 

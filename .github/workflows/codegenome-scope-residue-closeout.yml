@@ -3,7 +3,7 @@ name: CodeGenome Scope and Residue Closeout
 on:
   pull_request:
     paths:
-      - "reference/agentmem_ref/codegenome_scope_residue.py"
+      - "reference/agentmem_ref/crg/codegenome_scope_residue.py"
       - "reference/run_codegenome_scope_residue.py"
       - "reference/tests/test_codegenome_scope_residue.py"
       - "reference/fixtures/component-capabilities/codegenome.example.json"

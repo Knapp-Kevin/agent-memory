@@ -16,7 +16,7 @@ The provider-neutral evaluation binds projection/source-schema identity, source 
 States are `current`, `migration_required`, `incompatible`, and `unknown`. Compatibility has no authority effect and does not establish admission, approval, execution, enforcement, or certification.
 
 Schema: `schemas/policy-projection-compatibility.schema.json`  
-Evaluator: `reference/agentmem_ref/policy_projection_compatibility.py`
+Evaluator: `reference/agentmem_ref/memory/policy_projection_compatibility.py`
 
 ## Historical/current split
 

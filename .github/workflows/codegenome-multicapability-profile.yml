@@ -4,8 +4,8 @@ on:
   pull_request:
     paths:
       - "reference/fixtures/component-capabilities/codegenome.example.json"
-      - "reference/agentmem_ref/codegenome_profile.py"
-      - "reference/agentmem_ref/code_graph_qualification.py"
+      - "reference/agentmem_ref/crg/codegenome_profile.py"
+      - "reference/agentmem_ref/crg/code_graph_qualification.py"
       - "reference/run_codegenome_multicapability_profile.py"
       - "reference/tests/test_codegenome_multicapability_profile.py"
       - "reference/tests/test_component_capabilities.py"

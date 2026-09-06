@@ -274,8 +274,8 @@ A remembered procedure may shape a plan after governed admission. Actual actions
 Acceptance is backed by the #295 reference vertical slice and the focused exact-head evidence workflow:
 
 - [`../programs/runtime-evidence/procedural-memory.md`](../programs/runtime-evidence/procedural-memory.md)
-- `reference/agentmem_ref/capabilities.py`
-- `reference/agentmem_ref/procedural_memory.py`
+- `reference/agentmem_ref/contracts/capabilities.py`
+- `reference/agentmem_ref/memory/procedural_memory.py`
 - `reference/tests/test_component_capabilities.py`
 - `reference/tests/test_procedural_memory.py`
 - `reference/run_procedural_memory.py`

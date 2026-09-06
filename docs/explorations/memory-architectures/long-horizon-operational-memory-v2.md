@@ -128,8 +128,8 @@ The strongest next questions are not “add another representation.” They are:
 
 Executable evidence lives in:
 
-- `reference/agentmem_ref/long_horizon_dataset.py`
-- `reference/agentmem_ref/long_horizon_benchmark.py`
+- `reference/agentmem_ref/harness/long_horizon_dataset.py`
+- `reference/agentmem_ref/harness/long_horizon_benchmark.py`
 - `reference/run_long_horizon_memory_benchmark.py`
 - `.github/workflows/long-horizon-memory-benchmark.yml`
 - workflow artifacts `long-horizon-memory-local` and `long-horizon-memory-vjepa2`

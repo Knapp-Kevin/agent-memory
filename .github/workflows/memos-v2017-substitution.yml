@@ -4,8 +4,8 @@ on:
   pull_request:
     paths:
       - ".github/workflows/memos-v2017-substitution.yml"
-      - "reference/agentmem_ref/memos_qualification.py"
-      - "reference/agentmem_ref/resource_provider_substitution.py"
+      - "reference/agentmem_ref/contracts/memos_qualification.py"
+      - "reference/agentmem_ref/contracts/resource_provider_substitution.py"
       - "reference/run_memos_local_v2017_fixture.mjs"
       - "reference/run_memos_local_v2017_qualification.py"
       - "reference/run_resource_artifact_substitution.py"
@@ -13,8 +13,8 @@ on:
       - "reference/fixtures/component-capabilities/memos-local-plugin-v2.0.17.json"
       - "reference/fixtures/component-capabilities/hindsight-v0.9.0.json"
       - "reference/fixtures/component-qualification/hindsight-v0.9.0-resource-artifact-qualified-v12.json"
-      - "reference/agentmem_ref/qualification.py"
-      - "reference/agentmem_ref/capabilities.py"
+      - "reference/agentmem_ref/contracts/qualification.py"
+      - "reference/agentmem_ref/contracts/capabilities.py"
       - "schemas/component-capability-profile.schema.json"
       - "schemas/component-capability-qualification.schema.json"
   workflow_dispatch:

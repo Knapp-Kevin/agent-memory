@@ -14,7 +14,7 @@ External projects are not modified, asked to adopt the contract, or treated as i
 
 ## V1: governed export and import
 
-The reference path under `reference/agentmem_ref/interchange.py` enforces:
+The reference path under `reference/agentmem_ref/memory/interchange.py` enforces:
 
 1. sender export requires a schema-valid memory and a committed governed boundary-crossing receipt;
 2. the crossing receipt must bind the exported memory id;
@@ -36,7 +36,7 @@ A later `SourceLifecycleNotice` may report correction, supersession, revocation,
 
 ## V3: two-store correction and deletion propagation
 
-`reference/agentmem_ref/interchange_propagation.py` composes the notice contract with two existing first-party mechanisms rather than creating an interoperability shortcut:
+`reference/agentmem_ref/memory/interchange_propagation.py` composes the notice contract with two existing first-party mechanisms rather than creating an interoperability shortcut:
 
 - receiver correction uses `GovernedMemoryAdapter.commit_proposal(operation="correction")`, emits the normal decision receipt, writes replacement state in the receiver's own store, and then marks the prior receiver fact superseded rather than erasing history;
 - receiver deletion uses `GovernedMemoryAdapter.governed_delete(operation="permanent_deletion")`, then runs the existing P4 projection purge plan, independent residue sweep, four-way residue partition, and `DeletionCompletenessMeasurement`.

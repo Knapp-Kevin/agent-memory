@@ -115,7 +115,7 @@ Canonical evidence: [`codegenome-multicapability-profile.md`](codegenome-multica
 The common qualification surface is:
 
 - `schemas/component-capability-qualification.schema.json`;
-- `reference/agentmem_ref/qualification.py`;
+- `reference/agentmem_ref/contracts/qualification.py`;
 - [`component-adapter-qualification-contract.md`](component-adapter-qualification-contract.md);
 - [`component-qualification-runtime.md`](component-qualification-runtime.md).
 

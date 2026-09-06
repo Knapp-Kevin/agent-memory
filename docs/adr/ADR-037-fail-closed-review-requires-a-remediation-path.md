@@ -196,9 +196,9 @@ The principal still needs qualifying evidence and valid scope/risk authority. Re
 
 The gate does not close until the first three exist. This ordering is part of the decision.
 
-1. **Parked proposal state** — `enter_pending_verification` as a real, resumable, evidence-emitting outcome. **DONE** (Loop 8, ledger entry #18): `reference/agentmem_ref/pending_verification.py`.
-2. **Evidence qualification and dependence lineage** — R2 and R3 made computable, including dependence-group collapse. **DONE** (Loop 9, ledger entry #19): `reference/agentmem_ref/evidence_qualification.py`.
-3. **Governed resumption and re-evaluation** — evaluator-owned, policy re-evaluated from scratch, staleness applied. **Also owns §4**. **DONE** (Loop 10, ledger entry #20): `reference/agentmem_ref/resumption.py`.
+1. **Parked proposal state** — `enter_pending_verification` as a real, resumable, evidence-emitting outcome. **DONE** (Loop 8, ledger entry #18): `reference/agentmem_ref/core/pending_verification.py`.
+2. **Evidence qualification and dependence lineage** — R2 and R3 made computable, including dependence-group collapse. **DONE** (Loop 9, ledger entry #19): `reference/agentmem_ref/core/evidence_qualification.py`.
+3. **Governed resumption and re-evaluation** — evaluator-owned, policy re-evaluated from scratch, staleness applied. **Also owns §4**. **DONE** (Loop 10, ledger entry #20): `reference/agentmem_ref/core/resumption.py`.
 4. **Fail-closed `require_review`** — convert the 51 caller sites. **This step splits**, because the sequencing principle above applies recursively:
 
    - **4a — the discharge path.** **DONE** (Loop 12, ledger entry #22): `policy.evaluate_with_qualified_evidence`. Measured before it was built: *no* entry point in `policy` discharged `require_review` on qualified evidence — `evaluate` and `evaluate_with_base_outcome` take no evidence, and `evaluate_with_external_verification` early-returns unless the outcome is `require_external_verification`. Flipping the gate first would therefore have left all 51 sites refused with **no route** — the exact halt this ADR forbids. Additive: `_apply_review` untouched, both paths coexist.

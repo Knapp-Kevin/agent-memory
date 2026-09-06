@@ -253,9 +253,9 @@ The completed #265 / PR #267 evidence slice adds exact signer-trust binding and 
 - `docs/research/cryptographic-temporal-commitments.md`
 - `docs/adr/ADR-031-temporal-claims-require-deterministic-content-commitments.md`
 - `docs/profiles/temporal-commitment-evidence-profile.md`
-- `reference/agentmem_ref/temporal_commitment.py`
-- `reference/agentmem_ref/temporal_trust.py`
-- `reference/agentmem_ref/temporal_transparency.py`
+- `reference/agentmem_ref/memory/temporal_commitment.py`
+- `reference/agentmem_ref/memory/temporal_trust.py`
+- `reference/agentmem_ref/memory/temporal_transparency.py`
 - `schemas/temporal-commitment.schema.json`
 - `schemas/temporal-signer-attestation.schema.json`
 - `schemas/temporal-signer-trust.schema.json`

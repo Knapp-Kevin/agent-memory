@@ -18,7 +18,7 @@ Current schema version:
 
 Reference validator:
 
-`reference/agentmem_ref/runtime_config.py`
+`reference/agentmem_ref/runtime/runtime_config.py`
 
 Reference attach-to-existing-stack fixture:
 

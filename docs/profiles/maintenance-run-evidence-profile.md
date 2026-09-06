@@ -82,10 +82,10 @@ transaction evidence != production enforcement proof
 ## Conformance evidence
 
 - `schemas/maintenance-run-evidence.schema.json`
-- `reference/agentmem_ref/maintenance_run_state.py`
-- `reference/agentmem_ref/maintenance_run_rules.py`
-- `reference/agentmem_ref/maintenance_run_bindings.py`
-- `reference/agentmem_ref/maintenance_run.py`
+- `reference/agentmem_ref/memory/maintenance_run_state.py`
+- `reference/agentmem_ref/memory/maintenance_run_rules.py`
+- `reference/agentmem_ref/memory/maintenance_run_bindings.py`
+- `reference/agentmem_ref/memory/maintenance_run.py`
 - `reference/tests/test_maintenance_run_state.py`
 - `reference/tests/test_maintenance_run_binding_positive.py`
 - existing `reference/tests/test_autonomous_maintenance.py`

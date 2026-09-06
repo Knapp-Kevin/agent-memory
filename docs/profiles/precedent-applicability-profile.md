@@ -47,7 +47,7 @@ Schema:
 
 Reference consumer:
 
-`reference/agentmem_ref/precedent_applicability.py`
+`reference/agentmem_ref/memory/precedent_applicability.py`
 
 The result reports separately:
 

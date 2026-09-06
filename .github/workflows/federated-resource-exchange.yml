@@ -4,8 +4,8 @@ on:
   pull_request:
     paths:
       - ".github/workflows/federated-resource-exchange.yml"
-      - "reference/agentmem_ref/resource_exchange.py"
-      - "reference/agentmem_ref/resource_provider_substitution.py"
+      - "reference/agentmem_ref/contracts/resource_exchange.py"
+      - "reference/agentmem_ref/contracts/resource_provider_substitution.py"
       - "reference/run_federated_resource_exchange_fixture.py"
       - "reference/run_federated_resource_exchange.py"
       - "reference/run_memos_local_v2017_exchange_endpoint.mjs"

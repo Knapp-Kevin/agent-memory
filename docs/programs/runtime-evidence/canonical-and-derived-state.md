@@ -148,7 +148,7 @@ Two honesty constraints keep the metric from measuring itself:
 
 ## What would discharge ADR-020 item 12
 
-> **Execution status.** All seven items below now run in the reference implementation and in CI. See [`../../../reference/README.md`](../../../reference/README.md); the projection layer is `reference/agentmem_ref/projections.py`, residue accounting is `residue.py`, governed operations are `projection_governance.py`, and the executed bar is `reference/tests/test_canonical_and_derived_state.py`. Items 4, 5, and 6 each carry a paired negative test, because a bar that only passes proves less than one that can also fail. This does not by itself accept ADR-020, which has further validation items.
+> **Execution status.** All seven items below now run in the reference implementation and in CI. See [`../../../reference/README.md`](../../../reference/README.md); the projection layer is `reference/agentmem_ref/state/projections.py`, residue accounting is `residue.py`, governed operations are `projection_governance.py`, and the executed bar is `reference/tests/test_canonical_and_derived_state.py`. Items 4, 5, and 6 each carry a paired negative test, because a bar that only passes proves less than one that can also fail. This does not by itself accept ADR-020, which has further validation items.
 
 Stated now so the evidence bar is fixed before the implementation that must clear it:
 

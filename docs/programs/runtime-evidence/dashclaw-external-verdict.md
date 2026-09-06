@@ -344,11 +344,11 @@ The same-tenant substrate can return matching candidates from several projects. 
 
 Pure wire/PAMA adapter:
 
-`reference/agentmem_ref/dashclaw_external_verdict.py`
+`reference/agentmem_ref/memory/dashclaw_external_verdict.py`
 
 Stateful target-scope commit guard:
 
-`reference/agentmem_ref/dashclaw_governed_commit.py`
+`reference/agentmem_ref/memory/dashclaw_governed_commit.py`
 
 Reference HTTP entrypoint:
 

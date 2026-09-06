@@ -3,7 +3,7 @@ name: Logical State Algebra Pressure
 on:
   pull_request:
     paths:
-      - "reference/agentmem_ref/logical_state_algebra_pressure.py"
+      - "reference/agentmem_ref/harness/logical_state_algebra_pressure.py"
       - "reference/tests/test_logical_state_algebra_pressure.py"
       - "reference/run_logical_state_algebra_pressure.py"
       - "docs/explorations/memory-architectures/logical-state-algebra-scenarios.json"

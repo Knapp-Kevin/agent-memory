@@ -77,6 +77,6 @@ The Accepted head must pass the complete validation matrix before merge.
 - `docs/research/cryptographic-temporal-commitments.md`
 - `docs/profiles/temporal-commitment-evidence-profile.md`
 - `docs/audits/temporal-commitments/01-adr-031-acceptance-audit.md`
-- `reference/agentmem_ref/temporal_commitment.py`
+- `reference/agentmem_ref/memory/temporal_commitment.py`
 - `reference/tests/test_temporal_commitment.py`
 - `wiki-src/Cryptographic-Temporal-Commitments.md`

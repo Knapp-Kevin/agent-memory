@@ -49,11 +49,11 @@ Verification result schema:
 
 Reference implementation:
 
-`reference/agentmem_ref/approval_evidence.py`
+`reference/agentmem_ref/memory/approval_evidence.py`
 
 Execution integration:
 
-`reference/agentmem_ref/enforcement_evidence.py`
+`reference/agentmem_ref/memory/enforcement_evidence.py`
 
 ## Approval evidence
 

@@ -10,7 +10,7 @@ Canonical doc 41 states that individual admission does not prove a combined cont
 
 This slice does not create a universal rule that different domains may never compose. That would convert one threat case into architecture law without evidence.
 
-Instead, `reference/agentmem_ref/composition.py` accepts explicit set-level constraints. A constraint names the domain combination that current policy forbids. The composition evaluator then verifies that every proposed memory already passed candidate-level admission, preserves domain provenance across the set, and fails closed when an explicit prohibited combination is present.
+Instead, `reference/agentmem_ref/runtime/composition.py` accepts explicit set-level constraints. A constraint names the domain combination that current policy forbids. The composition evaluator then verifies that every proposed memory already passed candidate-level admission, preserves domain provenance across the set, and fails closed when an explicit prohibited combination is present.
 
 ## Research support
 

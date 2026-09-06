@@ -3,9 +3,9 @@ name: EvolveAI Cognitive Mesh Evidence
 on:
   pull_request:
     paths:
-      - 'reference/agentmem_ref/cognitive_mesh.py'
-      - 'reference/agentmem_ref/evolveai_cognitive_mesh.py'
-      - 'reference/agentmem_ref/evolveai_profile.py'
+      - 'reference/agentmem_ref/memory/cognitive_mesh.py'
+      - 'reference/agentmem_ref/memory/evolveai_cognitive_mesh.py'
+      - 'reference/agentmem_ref/contracts/evolveai_profile.py'
       - 'reference/fixtures/evolveai-qualification-driver/**'
       - 'reference/run_evolveai_cognitive_mesh.py'
       - 'reference/tests/test_evolveai_cognitive_mesh.py'
