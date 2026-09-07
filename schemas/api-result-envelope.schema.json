@@ -12,7 +12,11 @@
   ],
   "properties": {
     "contract_version": {
-      "const": "1.0.0"
+      "type": "string",
+      "enum": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     "compatibility": {
       "type": "string",
@@ -31,7 +35,9 @@
         "approval",
         "commit",
         "recall",
-        "forget"
+        "forget",
+        "history",
+        "posture"
       ]
     },
     "outcome": {
@@ -132,6 +138,46 @@
         "string",
         "null"
       ]
+    },
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_fact_uuid",
+        "state_version",
+        "tombstoned",
+        "events"
+      ],
+      "properties": {
+        "current_fact_uuid": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tombstoned": {
+          "type": "boolean"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "rejected_values": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "posture": {
+      "type": "object"
     }
   }
 }

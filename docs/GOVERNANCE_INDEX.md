@@ -1,6 +1,6 @@
 # Governance Index
 
-**Last Reviewed**: 2026-09-06
+**Last Reviewed**: 2026-09-07
 
 A single authoritative map of every governance artifact in this project, organized
 into six freshness tiers with explicit drift contracts. A stale entry here is
@@ -110,6 +110,8 @@ Live for plan duration; archived at substantiate. Drift signal: plan shipped but
 | Sprint 4 research brief | `docs/research-brief-sprint4-public-api-2026-09-06.md` | sprint4-public-api |
 | Sprint 4b plan | `docs/plan-sprint4b-js-pama.md` | sprint4b-js-pama |
 | Sprint 4b research brief | `docs/research-brief-sprint4b-js-pama-2026-09-07.md` | sprint4b-js-pama |
+| Sprint 4c-1 plan | `docs/plan-sprint4c1-history-posture.md` | sprint4c1-history-posture |
+| Sprint 4c research brief | `docs/research-brief-sprint4c-remaining-stages-2026-09-07.md` | sprint4c-remaining-stages |
 
 ## Tier 5 — Reference Material
 
