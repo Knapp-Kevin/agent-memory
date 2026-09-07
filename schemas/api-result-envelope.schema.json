@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-result-envelope.schema.json",
+  "title": "Agent Memory Public API: Result Envelope",
+  "description": "What every public stage returns (Sprint 4a, contract 1.0.0): the contract version, the ADR-030 compatibility state of the input envelope, the stage that ran, and the decision projection; a receipt when a commit happened; a refusal when the adapter refused; candidates and admissions for recall.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "compatibility",
+    "stage"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "1.0.0"
+    },
+    "compatibility": {
+      "type": "string",
+      "enum": [
+        "current",
+        "migration_required",
+        "incompatible",
+        "unknown"
+      ]
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "none",
+        "proposal",
+        "approval",
+        "commit",
+        "recall",
+        "forget"
+      ]
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "allow_with_ledger",
+        "require_review",
+        "require_external_verification",
+        "block",
+        "abstain",
+        "quarantine",
+        "collect_more_evidence"
+      ]
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "permitted_actions",
+        "prohibited_actions",
+        "reasons",
+        "policy_version",
+        "discharge_authority"
+      ],
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "permitted_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prohibited_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "discharge_authority": {
+          "type": "string"
+        },
+        "review_discharge": {
+          "type": "string"
+        }
+      }
+    },
+    "receipt": {
+      "type": "object"
+    },
+    "committed": {
+      "type": "boolean"
+    },
+    "fact_uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "refusal": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "admissions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "admitted": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validation_error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

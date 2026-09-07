@@ -338,6 +338,41 @@ The plan asserted which of its new tests would be red on `main` from the design 
 
 ---
 
+### Failure #10: Sprint 4a plan iteration 1 VETOed on a misread seam, a numbering collision, a wrong feature id, and an asserted key that is never recorded
+
+**Date**: 2026-09-06
+**Iteration**: 1 (audit attempt 1 of 5)
+**Verdict ID**: AUDIT_REPORT_4a_attempt1 2026-09-06T23:05 VETO (V1-V4)
+**Category**: SPEC_DRIFT
+
+#### What Was Attempted
+
+An L3 contract plan written from the research brief's map of the surface: the adapter's evaluation selection was described from `governed_delete` and assumed identical in `commit_proposal`; the term home took the next doc number from memory; the layered-package feature id was recalled as FX020; the recall test named an `admitted` key from the `AdmissionResult` dataclass rather than the recorded per-candidate decision.
+
+#### Why It Failed
+
+- Two seams with the same shape were assumed to have the same branches; only one was read.
+- Numbers (doc series, feature ids) were recalled, not listed.
+- A test assertion was written against the dataclass a consumer sees, not the record the adapter emits.
+
+#### Pattern to Avoid
+
+**Anti-Pattern**: describing a second seam by analogy to the first; citing series numbers and ids from recollection; asserting on the wrapper's shape when the plan says "as recorded".
+
+**Correct Pattern**: read every seam the plan factors; `ls` the series and `grep` the index before assigning a number or id; write assertions against the exact record the code produces.
+
+#### Resolution
+
+| Status | Action Taken |
+|--------|--------------|
+| FIXED | Iteration 2 closed V1-V4 and A1-A5 (the second seam read, the doc series listed, the index grepped, the assertion written against the recorded decision); attempt 2 (Entry #44) PASSED with seven plan-text advisories, applied. |
+
+#### Related Entries
+- Ledger Entry: #43 (GATE TRIBUNAL, VETO)
+- Audit Report: `.agent/staging/AUDIT_REPORT_4a_attempt1.md`
+
+---
+
 ## Pattern Library (Extracted Lessons)
 
 ### Section 4 Razor Violations
@@ -373,11 +408,11 @@ The plan asserted which of its new tests would be red on `main` from the design 
 | GHOST_PATH | 0 | - |
 | HALLUCINATION | 2 | 2026-09-01 |
 | ORPHAN | 0 | - |
-| SPEC_DRIFT | 8 | 2026-09-06 |
+| SPEC_DRIFT | 9 | 2026-09-06 |
 | CHAIN_BREAK | 0 | - |
 
-**Total Failures Recorded**: 9
-**Failures Resolved**: 7 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28; Failure #8 grounds closed by iteration 2; Failure #7 fixed at Entry #32; Failure #9 grounds closed by iterations 2-3)
+**Total Failures Recorded**: 10
+**Failures Resolved**: 8 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28; Failure #8 grounds closed by iteration 2; Failure #7 fixed at Entry #32; Failure #9 grounds closed by iterations 2-3; Failure #10 grounds closed by iteration 2)
 **Patterns Extracted**: 5
 
 ---

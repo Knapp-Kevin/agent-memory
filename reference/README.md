@@ -42,6 +42,10 @@ The durable-decision overwrite boundary adds another: an approval record may sat
 
 The Governance Context Projection adds a complementary boundary: remembered context can be useful to an external policy system without becoming permission merely because it crossed an adapter seam.
 
+## Public API
+
+Consumers call `agentmem_ref.surface` -- `propose`, `approve`, `commit`, `recall`, `forget` -- with schema-backed, versioned envelopes (`schemas/api-*.schema.json`; examples under `reference/fixtures/api/`) and get a result envelope naming the contract version, its ADR-030 compatibility state, the stage and the decision. The adapter's dataclasses are not the contract. `docs/44-public-api-contract.md` is the contract's home, including what the surface refuses and why.
+
 ## Layout
 
 `agentmem_ref` is seven subpackages in dependency order -- a module imports only from its own layer or an earlier one, and `reference/tests/test_package_layout.py` enforces that order as read from `scripts/restructure_package.py`, the script that produced the layout.

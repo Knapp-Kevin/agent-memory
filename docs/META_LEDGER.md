@@ -2307,3 +2307,151 @@ writer accepts; iteration 3 moved it below the header and verified with
 advisories A7 (PowerShell wheel glob; the local run used Git Bash) and A8
 (ledger and gate clocks differ) recorded. Shadow Genome Failure #9 FIXED.
 Review Boundary: staged, not committed; no push, PR, tag or merge.
+---
+
+### Entry #42: RESEARCH BRIEF
+
+**Timestamp**: 2026-09-06T22:10:00-04:00
+**Phase**: RESEARCH
+**Author**: Analyst
+**Risk Grade**: L3 (a public contract; every consumer binds to it)
+**Session**: 2026-09-06T2140-f7a9c3
+
+**Content Hash**:
+```
+SHA256(docs/research-brief-sprint4-public-api-2026-09-06.md)
+= f0b19659ef00424f2dd1ba04533c04d239cd22f74c855d8d925a58a39ae962d5
+```
+
+**Previous Hash**: `fcfa72d8112bda9086f7d1f00ae10b7a33603153e5b0b4038ba4ce763339ec0c`
+**Chain Hash**:
+```
+SHA256(content_hash + previous_hash)
+= 42951ada9bd3b518bbebbf7fe9f1d8969d7f69fdd5fa0eca0b31f2c69a8fc3d5
+```
+
+**Decision**: Loop 20 (Sprint 4, #362) ideation and research complete; the ideation record (`ideation.json`, readiness `research_required`) quotes the operator-authored issue and marks the analyst's three recommendations as unconfirmed assumptions. Measured: PRD-001 R1 (`docs/prd/PRD-001-configurable-agent-memory-runtime.md:115-130`) requires ten bounded operations and eight distinguishable stages, not the four #362 cites; four stages have boundary forms today (decision, commit, recall admission, execution evidence) and four do not (proposal, approval, retrieval candidate, action authority). 65 files import `GovernedMemoryAdapter` (48 call `commit_proposal`); an envelope shape touches none of them, while schema-backing the dataclasses freezes the 27-field `Proposal` and its ADR-037 remnants. 46 of 58 output schemas carry `schema_version`; ADR-030 supplies the compatibility states a contract version should reuse. The JS runtime has no PAMA, has idempotency the reference lacks, and diverges in reason codes and receipt shape; bringing it under the contract means a PAMA port or a declared partial implementation. Drift: #362 understates the PRD and the importer count. Three decisions are the operator's (shape, approval binding, JS surface); the plan is held until they are taken. Next: operator decisions, then /qor-plan.
+---
+
+### Entry #43: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-06T23:05:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: VETO
+**Session**: 2026-09-06T2140-f7a9c3
+**Target**: docs/plan-sprint4a-public-api-contract.md (iteration 1; plan content hash d4cc7863c74f2d5b7a416974a8daa949ab900279a06a6fd487a8423debee920b)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_4a_attempt1.md) = 3306ca8e01bc1552629da0786539b9253ee53933f89b50bcfc0534deedb68985
+
+**Previous Hash**: `42951ada9bd3b518bbebbf7fe9f1d8969d7f69fdd5fa0eca0b31f2c69a8fc3d5`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 9bb57de41c2319d37d9cbc5ae7a1f4f7c6febb7c18f030843850b27f8568d1a0
+
+**Decision**: VETO, attempt 1 of 5, Option B mandatory and performed; each ground reproduced by the Judge before this entry. V1 -- LD5 called `commit_proposal`'s evaluation three-way and the factoring behaviour-preserving; it is two-way (`adapter.py:220-231`, an attestation without evidence is ignored) and only `governed_delete` is three-way, so the factoring would change outcomes for attestation-only callers. V2 -- the term home `docs/43-public-api-contract.md` collides with the existing `docs/43-substrate-inventory-and-maturity.md`. V3 -- the Feature Inventory attributes the layout test to FX020 (the import-convention guard) instead of FX022. V4 -- the recall test asserts an `admitted` key the adapter's per-candidate decisions do not carry (`outcome` / `reason_code`, `adapter.py:490-528`). Advisories A1-A5: `governed_delete` takes `external_verification=`; a new layer needs a `LAYER_DOCS` entry for the mover; the suite count is cited from the run, not SYSTEM_STATE; LD1 must state the frozen field set exactly; the iteration/gate mapping. Every citation reproduced; layering, test feasibility and packaging mechanics hold. Required next action: Governor amends plan text, re-runs /qor-audit (attempt 2).
+---
+
+### Entry #44: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-06T23:50:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: PASS
+**Session**: 2026-09-06T2140-f7a9c3
+**Target**: docs/plan-sprint4a-public-api-contract.md (iteration 2 with the attempt-2 advisories applied; plan content hash c03629d9776aabc07a9c0ce90d70fda6d27303fd712cad0a71cae0ed27e6b467)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT.md) = a4ab49b202d512c36eeb777879d46ce2c23b667e8520e3c0f446dda995db8096
+
+**Previous Hash**: `9bb57de41c2319d37d9cbc5ae7a1f4f7c6febb7c18f030843850b27f8568d1a0`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 3ad97052086d537b93c26f27ad25801be6069365f38623b183dba73a6337cdd4
+
+**Decision**: PASS, attempt 2 of 5, Option B on both attempts. Attempt-1 grounds closed with repository evidence: `evaluate_proposal` is a new method mirroring `governed_delete`'s three-way selection and `commit_proposal` stays two-way and untouched, its attestation-only asymmetry pinned by a test and raised for a follow-up; the term home is `docs/44-public-api-contract.md`; the layout test is FX022; recall admissions carry `outcome` and `reason_code`; the frozen envelope is exactly the 24 consumer-settable `Proposal` fields. Seven attempt-2 advisories, all plan-text, applied before this record (gate mapping, count removed from CI commands, `correction` named in the pinning test, seal numbered #45, five functions for six stages, FX022 descriptor, field-range citation). Required next action: /qor-implement.
+---
+
+### Entry #45: SESSION SEAL - Phase 21 (Sprint 4a: the public contract -- envelopes, a version, six stages at the boundary)
+
+**Entry ID**: `e1a287ddc26f`
+**Content Hash**: `dc4fd638e605379e6eb8263e3748356906fb987e63e70f7f9cba54b94f5c8f5d`
+**Previous Hash**: `3ad97052086d537b93c26f27ad25801be6069365f38623b183dba73a6337cdd4`
+**Chain Hash**: `6750d2c579abd4bc4600694ea1714bec0f989137d7049d54f705a78bff6e7299`
+**Timestamp**: 2026-09-07T01:10:00-04:00
+**Phase**: SUBSTANTIATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: PASS
+**Session**: 2026-09-06T2140-f7a9c3
+**Plan**: docs/plan-sprint4a-public-api-contract.md (iteration 2 with the attempt-2 advisories and the implementation addendum; change_class feature; gate `plan-iter7.json`)
+**SSDF Practices**: PO.1.4, PS.2.1, PW.1.1
+
+**Merkle Seal** (SHA256 over `git write-tree` of the staged index ad3cb1a97e552c54029b477317ee80066b288b2a):
+`939ecd607112b6abaa366fd5417552874c5cd964e702607c50f7dd91a2984d67`
+
+**Anchor**: `refs/seals/entry-45`.
+
+**What this is.** Issue #362's boundary freeze, first cycle. Three schemas
+define the public inputs and output -- `api-proposal-envelope`,
+`api-recall-context`, `api-result-envelope`, each carrying `contract_version`
+`1.0.0` -- and a new `api` layer (`core < state < contracts < runtime < memory
+< api < crg < harness`) holds `contract` (validation, ADR-030 compatibility
+with its four states, envelope-to-dataclass and decision-to-projection
+conversion) and `surface`: five functions covering six of PRD-001 R1's eight
+stages -- `propose` (proposal, with the decision projection), `approve`
+(approval), `commit`, `recall` (retrieval candidate and recall admission),
+`forget`. The adapter's dataclasses stay behind the surface; the 65 files
+that import the adapter are untouched.
+
+**The decisions the operator took** (ideation gate, 2026-09-06): the envelope
+shape rather than schema-backing the 27-field `Proposal`; approval bound to
+the ADR-037 4a qualified-evidence / attestation discharge, exposed as
+`GovernedMemoryAdapter.evaluate_proposal` -- a new method mirroring
+`governed_delete`'s three-way selection, run through the adapter's own
+registry, with no verifier accepted anywhere on the surface; the JS runtime
+gets a PAMA port in Sprint 4b. The proposal envelope rejects
+`review_satisfied`, `approval_refs`, `approves_own_authority` and
+`actor_authority_resolved`, so the contract cannot express the assertion
+4b-2 removed.
+
+**What was found and left honest.** `commit_proposal`'s evaluation is
+two-way -- an attestation without evidence is ignored there -- while
+`governed_delete` and the new `evaluate_proposal` are three-way. The surface
+forwards both arguments unchanged (DoD 20, asserted by a recording adapter),
+the asymmetry is documented in `docs/44-public-api-contract.md`, pinned by
+`test_commit_attestation_only_is_ignored_by_the_adapter_today`, and raised
+as a follow-up at handoff rather than changed in a seam 48 files call. The
+base evaluation records no reason string when nothing is claimed; the plan's
+two mentions of `review_requires_qualified_evidence` on that path were
+corrected by addendum after the tests observed it.
+
+**Verification.** 18 new tests (contract 5, surface 9, DoD-20 meta-test 4);
+suite 1124 to 1142, 0 failures, 7 skipped under `cryptography==50.0.1`, both
+discover styles; the layout test enforces the new layer read from the mover
+and the two aliases are the identical objects. Adversarial: `commit` dropping
+`evidence=` fails the DoD-20 test; the envelope schema allowing
+`review_satisfied` fails the contract test; `surface` importing `crg` fails
+the layout test -- 3 of 3 caught, control green. Wheel smoke from outside the
+checkout by `cli-doctor.yml`'s own extended step: exit 0 with the envelope
+validated from the installed package and `surface.__all__` printed; exit 1
+when built without the three schemas; the wheel carries 3 `api-*` schemas and
+3 `api/` modules. Validators clean; feature index 24/24 (FX024 new; FX022 and
+FX001 modified); governance index enforced with `docs/44` registered as
+Doctrine 44. This seal's writer re-ran the layout check, the suite, the three
+mutations and the installed-wheel smoke, and inspected the wheel, before
+writing.
+
+**Disclosed skips (Phase 75).** `doc_integrity` strict at tier `system`
+requires `qor/references/glossary.md`, which this repository does not carry;
+term homes are the numbered docs (`docs/44`) by this repository's
+convention. `seal_artifacts --check` requires a `qor/skills` root, absent
+here. Both recorded as `gate_skipped_prerequisite_absent` events.
+
+**Decision**: audit VETOed once (Entry #43, Option B: a second seam described
+by analogy to the first, a doc number and a feature id recalled rather than
+listed, an assertion written against the wrapper instead of the record), then
+PASS (Entry #44) with seven plan-text advisories applied. Shadow Genome
+Failure #10 FIXED. Review Boundary: staged, not committed; no push, PR, tag
+or merge.

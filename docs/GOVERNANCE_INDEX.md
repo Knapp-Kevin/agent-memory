@@ -106,6 +106,8 @@ Live for plan duration; archived at substantiate. Drift signal: plan shipped but
 | Sprint 3c research brief | `docs/research-brief-sprint3c-dashclaw-park-and-report-2026-09-06.md` | sprint3c-dashclaw-park-and-report |
 | Sprint 3d plan | `docs/plan-sprint3d-packaging-remainder.md` | sprint3d-packaging-remainder |
 | Sprint 3d research brief | `docs/research-brief-sprint3d-packaging-remainder-2026-09-06.md` | sprint3d-packaging-remainder |
+| Sprint 4a plan | `docs/plan-sprint4a-public-api-contract.md` | sprint4a-public-api-contract |
+| Sprint 4 research brief | `docs/research-brief-sprint4-public-api-2026-09-06.md` | sprint4-public-api |
 
 ## Tier 5 — Reference Material
 
@@ -157,6 +159,7 @@ Informational, slow-drift. Drift signal: factual claims diverge from current cod
 | Doctrine 41 | `docs/41-memory-isolation-domains-and-governed-crossing.md` |
 | Doctrine 42 | `docs/42-governed-mutable-memory-fabric.md` |
 | Doctrine 43 | `docs/43-substrate-inventory-and-maturity.md` |
+| Doctrine 44 | `docs/44-public-api-contract.md` |
 | Canonical architecture synthesis | `docs/AGENTIC_MEMORY_SYSTEMS_CANONICAL_ARCHITECTURE.md` |
 | Documentation map | `docs/README.md` (reachability gaps: GAP-DOC-04) |
 | Implementation maps | `docs/05-repo-implementation-map.md`, `docs/39-implementation-ownership-map.md` (stale: GAP-DOC-05) |

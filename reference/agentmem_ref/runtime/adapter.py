@@ -175,6 +175,32 @@ class GovernedMemoryAdapter:
 
     # -- write path -----------------------------------------------------
 
+    def evaluate_proposal(
+        self,
+        proposal: policy.Proposal,
+        *,
+        evidence: "Sequence[EvidenceItem] | None" = None,
+        attestation: policy.ExternalVerification | None = None,
+    ) -> policy.Decision:
+        """Evaluate without writing, through this adapter's own verifier registry.
+
+        Sprint 4a (LD5): the public ``approve`` stage. The selection mirrors
+        ``governed_delete``: qualified evidence (with an optional attestation),
+        else an attestation alone, else the base evaluation. ``commit_proposal``
+        keeps its own two-way selection; see the public contract document.
+        """
+        if evidence:
+            from ..core.evidence_qualification import group_by_dependence
+
+            return policy.evaluate_with_qualified_evidence(
+                proposal,
+                group_by_dependence(evidence, verifiers=self._verifier_registry.as_mapping()),
+                attestation=attestation,
+            )
+        if attestation is not None:
+            return policy.evaluate_with_external_verification(proposal, attestation)
+        return policy.evaluate(proposal)
+
     def commit_proposal(
         self,
         proposal: policy.Proposal,

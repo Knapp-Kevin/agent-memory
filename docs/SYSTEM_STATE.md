@@ -30,11 +30,11 @@ agent-memory/
 |-- schemas/                   58 JSON Schemas (draft 2020-12)
 |-- fixtures/                  64 validated scenario fixtures
 |-- reference/
-|   |-- agentmem_ref/          124 modules in 7 layered subpackages: core/ state/ contracts/ runtime/ memory/ crg/ harness/ (+ 124 top-level compatibility aliases, _paths.py)
+|   |-- agentmem_ref/          126 modules in 8 layered subpackages: core/ state/ contracts/ runtime/ memory/ api/ crg/ harness/ (+ 126 top-level compatibility aliases, _paths.py)
 |   |-- run_*.py               68 evidence emitters
 |   |-- native/                1 Rust driver
 |   |-- policies/, fixtures/ (15 JSON), testdata/
-|   `-- tests/                 141 test files, 1124 tests
+|   `-- tests/                 144 test files, 1142 tests
 |-- integrations/
 |   |-- agent-memory-runtime/  JS, 1 source + 1 test, private
 |   `-- hermes-agent-memory/   Python, 10 modules, 6 tests
