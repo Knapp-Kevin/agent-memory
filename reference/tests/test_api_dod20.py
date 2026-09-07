@@ -5,6 +5,7 @@ source."""
 
 from __future__ import annotations
 
+import inspect
 import json
 import sys
 import unittest
@@ -22,7 +23,7 @@ REPO = Path(__file__).resolve().parents[2]
 EXAMPLE = json.loads((REPO / "reference/fixtures/api/proposal-envelope.example.json").read_text(encoding="utf-8"))
 ORG = "org:example"
 WRITERS = {"commit": surface.commit, "forget": surface.forget}
-READERS = {"propose": surface.propose, "approve": surface.approve, "recall": surface.recall}
+READERS = {"propose": surface.propose, "approve": surface.approve, "recall": surface.recall, "history": surface.history, "posture": surface.posture}
 
 
 class RecordingAdapter(GovernedMemoryAdapter):
@@ -88,6 +89,10 @@ class PublicSurfaceForwardsOrParks(unittest.TestCase):
         surface.propose(self.memory, _medium_correction(self.target))
         surface.approve(self.memory, _medium_correction(self.target))
         surface.recall(self.memory, "release branch", recall_context)
+        surface.history(self.memory, {"contract_version": "1.1.0", "target_reference": self.target})
+        posture = surface.posture(REPO / "reference/fixtures/runtime-configuration/reference-composed-runtime.json")
+        self.assertEqual(posture["stage"], "posture")
+        self.assertNotIn("memory", inspect.signature(surface.posture).parameters)  # posture takes no adapter: structurally read-only
         self.assertEqual(self.memory.calls, [])
         self.assertEqual(self.memory.state_version(self.target), 1)
 

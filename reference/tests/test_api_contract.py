@@ -36,19 +36,25 @@ class EnvelopeValidation(unittest.TestCase):
         self.assertEqual(contract.validate_recall_context(recall), recall)
 
     def test_compatibility_states(self):
+        # Additive versioning (Sprint 4c-1): an older minor of the same major is current; a newer
+        # minor is migration_required; a different major is incompatible. Sprint 4a had the first
+        # two inverted; this re-statement is the one existing-test edit of that cycle.
         cases = {
-            "1.0.0": contract.CURRENT, "1.1.0": contract.CURRENT, "0.9.0": contract.INCOMPATIBLE,
-            "2.0.0": contract.INCOMPATIBLE, None: contract.UNKNOWN, "one.zero": contract.UNKNOWN,
+            "1.0.0": contract.CURRENT, "1.1.0": contract.CURRENT, "1.2.0": contract.MIGRATION_REQUIRED,
+            "0.9.0": contract.INCOMPATIBLE, "2.0.0": contract.INCOMPATIBLE, None: contract.UNKNOWN, "one.zero": contract.UNKNOWN,
         }
         for version, expected in cases.items():
             with self.subTest(version=version):
                 envelope = {} if version is None else {"contract_version": version}
                 self.assertEqual(contract.compatibility(envelope), expected)
-        # A lower minor of the same major is a migration, not an incompatibility:
-        # exercised through the constant rather than a literal so the rule stays tied to CONTRACT_VERSION.
-        major, minor, _ = contract.CONTRACT_VERSION.split(".")
-        if int(minor) > 0:
-            self.assertEqual(contract.compatibility({"contract_version": f"{major}.{int(minor) - 1}.0"}), contract.MIGRATION_REQUIRED)
+        self.assertEqual(contract.CONTRACT_VERSION, "1.1.0")
+
+    def test_target_envelope_validates(self):
+        example = _example("target-envelope.example.json")
+        self.assertEqual(contract.validate_target_envelope(example), example)
+        self.assertEqual(contract.validate_target_envelope({**example, "contract_version": "1.0.0"})["contract_version"], "1.0.0")
+        with self.assertRaises(ValueError):
+            contract.validate_target_envelope({**example, "extra": 1})
 
     def test_envelope_to_proposal_round_trip(self):
         example = _example("proposal-envelope.example.json")

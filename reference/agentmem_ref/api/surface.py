@@ -11,11 +11,14 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 
+from pathlib import Path
+
 from ..core import policy
+from ..runtime import doctor
 from ..runtime.adapter import GovernedMemoryAdapter
 from . import contract
 
-__all__ = ["propose", "approve", "commit", "recall", "forget"]
+__all__ = ["propose", "approve", "commit", "recall", "forget", "history", "posture"]
 
 
 def _gate(envelope: Mapping[str, Any], validator, stage: str):
@@ -90,3 +93,31 @@ def forget(memory: GovernedMemoryAdapter, envelope: Mapping[str, Any], *,
                            decision=contract.decision_projection(outcome.decision),
                            receipt=outcome.receipt, committed=outcome.committed,
                            fact_uuid=outcome.fact_uuid, refusal=outcome.refusal)
+
+
+def history(memory: GovernedMemoryAdapter, target_envelope: Mapping[str, Any], *, fact_text: str | None = None) -> dict:
+    """Inspect history: what the adapter retains for one target. Reads only."""
+    compat, validated, early = _gate(target_envelope, contract.validate_target_envelope, "history")
+    if early is not None:
+        return early
+    target = validated["target_reference"]
+    record = {
+        "current_fact_uuid": memory.current_fact_uuid(target),
+        "state_version": memory.state_version(target),
+        "tombstoned": target in memory.tombstoned_ids(),
+        "events": [event for event in memory.events if event.get("memory_id") == target],
+    }
+    if fact_text is not None:
+        record["rejected_values"] = [dict(item) for item in memory.rejected_value_history(target, fact_text)]
+    return contract.result("history", compat, history=record)
+
+
+def posture(config_path: str | Path, *, qualification_path: str | Path | None = None,
+            state_dir: str | Path | None = None) -> dict:
+    """Inspect posture: the doctor's report for a configuration, under its schema. Reads only."""
+    try:
+        report = doctor.diagnose(config_path, qualification_path=qualification_path, state_dir=state_dir)
+        contract.validate_posture_report(report)
+    except (ValueError, OSError) as exc:
+        return contract.result("none", contract.CURRENT, validation_error=f"{type(exc).__name__}: {exc}")
+    return contract.result("posture", contract.CURRENT, posture=report)

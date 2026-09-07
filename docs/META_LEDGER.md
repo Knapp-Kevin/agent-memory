@@ -2499,3 +2499,138 @@ SHA256(.agent/staging/AUDIT_REPORT_4b_attempt1.md) = 13ce2514296df4c6d5843c824f1
 SHA256(content_hash + previous_hash) = 4a4a333a01f00fc80d5fd0be40cfe2fbf53386a997877802f338f9f2cb02abb4
 
 **Decision**: VETO, attempt 1 of 5, Option B mandatory and performed. The grounds are design, not wording. V1 -- the plan undercounts the tests that reach `commitCorrection` (`runtime-adapter.test.mjs:285` and the race fixture at `:217`) and claims the idempotency and concurrency semantics stay unchanged while its own LD2 makes them unreachable: with every correction cell `require_review` or stricter and no discharge ported, no request can reach the commit branch. V2 -- FX025 promises committed events carrying schema-valid `pama-decision` and `decision-receipt` records that no path can produce under LD3 plus the table; a test would fabricate them. V3 -- `CONTRACT_VERSION '1.0.0'` for a two-function surface without envelopes or compatibility evaluation overstates conformance against `docs/44`. Advisories A1-A6 (52 cells over 13 operations, record-field derivations, the seven modifier cases and where reasons are emitted, `scripts.check`, the fake records effects not calls, a line range) and A7, cross-workspace: the runtime's storage port is implemented by QOR Agent's Cloudflare Durable Object, whose correction path would go dead. Separately, the Judge generated the 65-case fixture from `policy.evaluate` and ran a draft `policy.mjs` against it with zero mismatches, so the transcription itself is sound; what the runtime may do with a parked correction is the operator's decision. Required next action: operator decision (fail-closed openly, or port a discharge route in the same cycle), then plan iteration 2 and /qor-audit attempt 2.
+---
+
+### Entry #48: RESEARCH BRIEF
+
+**Timestamp**: 2026-09-07T05:10:00-04:00
+**Phase**: RESEARCH
+**Author**: Analyst
+**Risk Grade**: L3 (additions to the public contract)
+**Session**: 2026-09-07T0500-b3c4d5
+
+**Content Hash**:
+```
+SHA256(docs/research-brief-sprint4c-remaining-stages-2026-09-07.md)
+= 1605f071417c23cf8c4808449528b5316cfbe0d9aced745faab34a2904eac234
+```
+
+**Previous Hash**: `4a4a333a01f00fc80d5fd0be40cfe2fbf53386a997877802f338f9f2cb02abb4`
+**Chain Hash**:
+```
+SHA256(content_hash + previous_hash)
+= 7360ef098b578207a3350e25c45f596149d3f233ee27edc97a5972843ffdd912
+```
+
+**Decision**: Loop 22 (Sprint 4c) research complete, on the operator's 2026-09-07 direction to hold 4b and proceed with 4c. Measured against PRD-001 R1's remaining stages and operations: **action authority** exists only as `procedural_memory.apply_action_governance`, which takes a caller-supplied `ActionGovernanceDecision` whose outcome nothing in the repository evaluates -- at the public boundary that is the assertion shape ADR-037 4b-2 removed, and its honest sources (a PAMA operation for actions, which is doctrine; or an external governance projection) are unwired; **execution evidence** has its record form in `execution-witness.schema.json` and depends on the action decision; **history/provenance** has records that already exist (schema-backed `memory-audit-event`s per commit and recall, `rejected_value_history`, `tombstoned_ids`) and no entry point; **posture** has `doctor.diagnose`'s report and the schema-validated configuration plan and qualification records, the report unschema'd. Recommendation: split -- 4c-1 plans `history` and `posture` entry points on the `1.0.0` surface as additive contract `1.1.0`; 4c-2 goes to ideation because the source of an action decision is a concept question. Drift: one (action authority as PRD stage vs a caller-asserted outcome). Next: /qor-plan for 4c-1.
+---
+
+### Entry #49: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-07T06:30:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: VETO
+**Session**: 2026-09-07T0500-b3c4d5
+**Target**: docs/plan-sprint4c1-history-posture.md (iteration 1; plan content hash 1057174d575a5ac40219b28bd0dfc8cb8b7c69287958b2fdd19c252385a1b089)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_4c1_attempt1.md) = bac9b246e825e53700e8121bf903c30c6dece6ff42d9ef3863d7262ecd999108
+
+**Previous Hash**: `7360ef098b578207a3350e25c45f596149d3f233ee27edc97a5972843ffdd912`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 90560d0ae22ae6f7c38880938d48f6242b1eb3b33f8b9245a5247a0acf44ba56
+
+**Decision**: VETO, attempt 1 of 5, Option B mandatory and performed; V1 reproduced by the Judge before this entry. V1 -- LD2 claimed recall events carry `memory_id`; `_recall_event` deliberately omits it, so the acceptance test's recall event could never appear under the plan's own filter. V2 -- LD3 listed report keys at the top level that `diagnose` nests under `configuration` (and named the digest wrongly). V3 -- closing the report's sub-objects from one observed branch would reject recovered-state reports at the surface's own validation. Advisories A1-A6: the inverted-rule block in the existing test; ADR-030 names the states, not the minor direction; `posture`'s emitted compatibility unspecified; `posture` needs its own read-only assertion; FX025 reserved by the held 4b plan; the bundled 4a correction needs its rationale stated. Every citation reproduced; the read-only sources, error paths and packaging mechanics hold. Required next action: Governor amends plan text, re-runs /qor-audit (attempt 2).
+---
+
+### Entry #50: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-07T07:20:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: PASS
+**Session**: 2026-09-07T0500-b3c4d5
+**Target**: docs/plan-sprint4c1-history-posture.md (iteration 2 with the attempt-2 condition and advisories applied; plan content hash 76006314894155554e733c93be0eac3e86f4439f01f141c1069cc2da76242d88)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT.md) = afe4ccf4178dc0b2de41af076fc912b937a9b81b79b664aa688194bf51b1ba13
+
+**Previous Hash**: `90560d0ae22ae6f7c38880938d48f6242b1eb3b33f8b9245a5247a0acf44ba56`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 34c9787df182ee13cc88ad6cbd5f47b129e3526bb6574d8078b04a58075fa1c6
+
+**Decision**: PASS, attempt 2 of 5, Option B on both attempts. Attempt-1 grounds closed with repository evidence: recall events are excluded from a target's history because `_recall_event` carries no `memory_id`; the posture schema's keys are the report's, nested as `diagnose` builds them; only the two sub-objects built once are closed and both doctor branches are driven. One binding condition, C1, applied before this record: the rejected-values test asserts a real rejection -- the registry is written only when a correction commits and supersedes the prior value -- rather than an empty list any implementation returns. Three text advisories applied. Required next action: /qor-implement.
+---
+
+### Entry #51: SESSION SEAL - Phase 22 (Sprint 4c-1: history and posture on the public surface, contract 1.1.0)
+
+**Entry ID**: `24cfa2b9ed21`
+**Content Hash**: `76006314894155554e733c93be0eac3e86f4439f01f141c1069cc2da76242d88`
+**Previous Hash**: `34c9787df182ee13cc88ad6cbd5f47b129e3526bb6574d8078b04a58075fa1c6`
+**Chain Hash**: `cbb191919e727a6089e3eed8e7d7ec231c4bb0b70b031783841aa440d23db057`
+**Timestamp**: 2026-09-07T08:40:00-04:00
+**Phase**: SUBSTANTIATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: PASS
+**Session**: 2026-09-07T0500-b3c4d5
+**Plan**: docs/plan-sprint4c1-history-posture.md (iteration 2 with the attempt-2 condition and advisories; change_class feature; gate `plan-iter5.json`)
+**SSDF Practices**: PO.1.4, PS.2.1, PW.1.1
+
+**Merkle Seal** (SHA256 over `git write-tree` of the staged index f92a60fa039fc78428a8c9630991433a9e80d2c9):
+`86e841f4bedf4b2589f2544deaeef0802b0b7e38806d136ccdd827fe01c823bd`
+
+**Anchor**: `refs/seals/entry-51`.
+
+**What this adds.** Contract `1.1.0`: two read-only inspections on the
+surface Sprint 4a froze. `history(memory, target_envelope, *, fact_text=None)`
+returns what the adapter already retains for one target -- its commit and
+deletion audit events (recall events carry no target and are excluded, as
+`_recall_event` intends), `current_fact_uuid`, `state_version`, `tombstoned`,
+and, given a value, that value's rejected-value history, which the adapter
+records only when a committed correction supersedes it. `posture(config_path,
+*, qualification_path=None, state_dir=None)` returns the doctor's report,
+validated against a new `api-posture-report` schema whose two invariant
+sub-objects are closed and whose four branch-dependent ones are open with
+`status` required, driven on both doctor branches. A fourth input schema,
+`api-target-envelope`, names the target. Nothing writes; nothing evaluates.
+
+**The 4a correction it carries.** `contract.compatibility` reported an older
+minor of the same major as `migration_required` and a newer minor as
+`current` -- inverted for additive versioning. `1.1.0` corrects it (older
+minor `current`, newer minor `migration_required`), the direction being this
+plan's reasoning about additive minors while ADR-030 supplies the four states
+and the rule that `unknown` is not current. The contract document names the
+inversion. The correction travels with the feature because the version bump
+is the first moment the direction is observable.
+
+**Verification.** 8 new tests (contract 1, history/posture 7); the two
+existing-test edits declared in the plan (`test_compatibility_states`
+re-stated, the DoD-20 readers extended, with `posture` asserted read-only
+structurally); suite 1142 to 1150, 0 failures, 7 skipped under
+`cryptography==50.0.1`; layout matches. Audit C1 applied: the rejected-values
+test parks a correction (nothing recorded), then commits one with qualified
+evidence and asserts exactly one record for the superseded value naming the
+fact that was current before. Adversarial 3 of 3: the per-target filter
+removed fails the isolation assertion; the 4a compatibility rule restored
+fails `test_compatibility_states`; the posture schema requiring a key the
+report lacks fails the posture test. Wheel smoke by the job's own extended
+step from outside the checkout: exit 0 with the target envelope validated and
+contract `1.1.0` printed; exit 1 built without `api-target-envelope`; the
+wheel carries five `api-*` schemas. Validators clean; feature index 25/25
+(FX026 new, FX025 reserved by held 4b; FX024 modified); governance index
+enforced. This seal's writer re-ran the layout check, the suite, the three
+mutations and the installed-wheel smoke, and inspected the wheel, before
+writing.
+
+**Decision**: audit VETOed once (Entry #49, Option B): a record shape stated
+from one builder and one branch -- recall events assumed to carry a target,
+report keys listed flat, sub-objects closed from a single run. Iteration 2
+printed each record from each builder and branch before locking; attempt 2
+(Entry #50) PASSED with condition C1 applied. Shadow Genome Failure #12
+FIXED. Sprint 4c-2 (action authority, execution evidence) waits on ideation;
+Sprint 4b is held. Review Boundary: staged, not committed; no push, PR, tag
+or merge.

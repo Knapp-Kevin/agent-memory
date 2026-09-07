@@ -17,11 +17,13 @@ from typing import Any, Mapping
 from ..core import policy, receipts
 from ..runtime.adapter import RecallContext
 
-CONTRACT_VERSION = "1.0.0"
+CONTRACT_VERSION = "1.1.0"
 
 PROPOSAL_SCHEMA = "api-proposal-envelope.schema.json"
 RECALL_CONTEXT_SCHEMA = "api-recall-context.schema.json"
 RESULT_SCHEMA = "api-result-envelope.schema.json"
+TARGET_SCHEMA = "api-target-envelope.schema.json"
+POSTURE_SCHEMA = "api-posture-report.schema.json"
 
 CURRENT = "current"
 MIGRATION_REQUIRED = "migration_required"
@@ -52,7 +54,9 @@ def compatibility(envelope: Mapping[str, Any]) -> str:
     ours = tuple(int(part) for part in CONTRACT_VERSION.split("."))
     if major != ours[0]:
         return INCOMPATIBLE
-    if (major, minor) < ours[:2]:
+    # Additive versioning (Sprint 4c-1 corrected Sprint 4a's inversion): this implementation
+    # understands every envelope of an older minor; a newer minor may carry fields it lacks.
+    if minor > ours[1]:
         return MIGRATION_REQUIRED
     return CURRENT
 
@@ -65,6 +69,16 @@ def validate_proposal_envelope(envelope: Mapping[str, Any]) -> dict:
 def validate_recall_context(envelope: Mapping[str, Any]) -> dict:
     receipts.validate(RECALL_CONTEXT_SCHEMA, dict(envelope))
     return dict(envelope)
+
+
+def validate_target_envelope(envelope: Mapping[str, Any]) -> dict:
+    receipts.validate(TARGET_SCHEMA, dict(envelope))
+    return dict(envelope)
+
+
+def validate_posture_report(report: Mapping[str, Any]) -> dict:
+    receipts.validate(POSTURE_SCHEMA, dict(report))
+    return dict(report)
 
 
 def proposal_from_envelope(envelope: Mapping[str, Any]) -> policy.Proposal:
@@ -108,7 +122,7 @@ def result(stage: str, compat: str, **fields: Any) -> dict:
 
 __all__ = [
     "CONTRACT_VERSION", "CURRENT", "MIGRATION_REQUIRED", "INCOMPATIBLE", "UNKNOWN",
-    "PUBLIC_PROPOSAL_FIELDS", "compatibility", "validate_proposal_envelope",
-    "validate_recall_context", "proposal_from_envelope", "recall_context_from_envelope",
+    "PUBLIC_PROPOSAL_FIELDS", "TARGET_SCHEMA", "POSTURE_SCHEMA", "compatibility", "validate_proposal_envelope",
+    "validate_recall_context", "validate_target_envelope", "validate_posture_report", "proposal_from_envelope", "recall_context_from_envelope",
     "decision_projection", "result",
 ]

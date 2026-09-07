@@ -187,6 +187,16 @@ jobs:
               print(f"api: envelope schema NOT resolved from wheel: {type(exc).__name__}: {exc}")
               sys.exit(1)
           print("api: proposal envelope validated from wheel; surface exports", surface.__all__)
+          # Sprint 4c-1: the read-only inspections and the target envelope ship too.
+          if not {"history", "posture"} <= set(surface.__all__):
+              print("api: history/posture missing from surface.__all__:", surface.__all__)
+              sys.exit(1)
+          try:
+              contract.validate_target_envelope({"contract_version": contract.CONTRACT_VERSION, "target_reference": "t"})
+          except Exception as exc:
+              print(f"api: target envelope schema NOT resolved from wheel: {type(exc).__name__}: {exc}")
+              sys.exit(1)
+          print("api: target envelope validated from wheel; contract", contract.CONTRACT_VERSION)
           sys.exit(0)
           PY
       - name: Installed evidence modules import

@@ -408,6 +408,41 @@ A transcription of the PAMA table, floors, modifiers and envelope into the JS ru
 
 ---
 
+### Failure #12: Sprint 4c-1 plan iteration 1 VETOed on a record shape stated from one function and one branch
+
+**Date**: 2026-09-07
+**Iteration**: 1 (audit attempt 1 of 5)
+**Verdict ID**: AUDIT_REPORT_4c1_attempt1 2026-09-07T06:30 VETO (V1-V3)
+**Category**: SPEC_DRIFT
+
+#### What Was Attempted
+
+The plan described the audit-event shape from `_event` and assumed `_recall_event` matched; described the doctor report's keys from a grep of key names without their nesting; and closed the report's sub-objects from a single run on the composed fixture without a state directory.
+
+#### Why It Failed
+
+- Two builders with one purpose were assumed to share a shape; only one was read.
+- A key list was taken from a flat grep rather than from a printed report.
+- A schema was closed from one branch of a function with several.
+
+#### Pattern to Avoid
+
+**Anti-Pattern**: locking a record's shape from the first builder or the first branch observed; closing a schema (`additionalProperties: false`) over output the code produces conditionally.
+
+**Correct Pattern**: print the record from each builder and each branch before locking its shape; close a schema only where the code has one shape, and say which branches were observed.
+
+#### Resolution
+
+| Status | Action Taken |
+|--------|--------------|
+| FIXED | Iteration 2 printed each record from each builder and branch before locking (recall events excluded; report keys nested as built; only invariant sub-objects closed); attempt 2 (Entry #50) PASSED with condition C1 applied. |
+
+#### Related Entries
+- Ledger Entry: #49 (GATE TRIBUNAL, VETO)
+- Audit Report: `.agent/staging/AUDIT_REPORT_4c1_attempt1.md`
+
+---
+
 ## Pattern Library (Extracted Lessons)
 
 ### Section 4 Razor Violations
@@ -443,11 +478,11 @@ A transcription of the PAMA table, floors, modifiers and envelope into the JS ru
 | GHOST_PATH | 0 | - |
 | HALLUCINATION | 2 | 2026-09-01 |
 | ORPHAN | 0 | - |
-| SPEC_DRIFT | 10 | 2026-09-07 |
+| SPEC_DRIFT | 11 | 2026-09-07 |
 | CHAIN_BREAK | 0 | - |
 
-**Total Failures Recorded**: 11
-**Failures Resolved**: 8 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28; Failure #8 grounds closed by iteration 2; Failure #7 fixed at Entry #32; Failure #9 grounds closed by iterations 2-3; Failure #10 grounds closed by iteration 2)
+**Total Failures Recorded**: 12
+**Failures Resolved**: 9 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28; Failure #8 grounds closed by iteration 2; Failure #7 fixed at Entry #32; Failure #9 grounds closed by iterations 2-3; Failure #10 grounds closed by iteration 2; Failure #12 grounds closed by iteration 2)
 **Patterns Extracted**: 5
 
 ---

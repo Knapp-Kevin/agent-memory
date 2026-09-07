@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-posture-report.schema.json",
+  "title": "Agent Memory Public API: Posture Report",
+  "description": "The doctor's report as returned by agentmem_ref.runtime.doctor.diagnose (Sprint 4c-1). Top level is open so a future finding does not break consumers; the named sub-objects are closed.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "command",
+    "configuration",
+    "qualification",
+    "durable_state",
+    "recovery",
+    "currentness",
+    "provider_availability",
+    "configuration_startable",
+    "operational_readiness",
+    "authority_effect"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "command": {
+      "type": "string"
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "digest",
+        "entry_mode",
+        "profile_id",
+        "profile_version",
+        "route_count",
+        "required_projection_ids",
+        "authority_effect"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "digest": {
+          "type": "string"
+        },
+        "entry_mode": {
+          "type": "string"
+        },
+        "profile_id": {
+          "type": "string"
+        },
+        "profile_version": {
+          "type": "string"
+        },
+        "route_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "required_projection_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "authority_effect": {
+          "type": "string"
+        }
+      }
+    },
+    "qualification": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "binding_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "durable_state": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "state_dir": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "currentness": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "provider_availability": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    },
+    "configuration_startable": {
+      "type": "boolean"
+    },
+    "operational_readiness": {
+      "type": "string"
+    },
+    "authority_effect": {
+      "type": "string"
+    }
+  }
+}
