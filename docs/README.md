@@ -118,6 +118,7 @@ Native contributor-authored doctrine does not need to masquerade as an external 
 | 41 | [`41-memory-isolation-domains-and-governed-crossing.md`](41-memory-isolation-domains-and-governed-crossing.md) | Logical isolation domains, same-agent task/project separation, governed crossings, shared-memory domains, and derived-scope inheritance |
 | 42 | [`42-governed-mutable-memory-fabric.md`](42-governed-mutable-memory-fabric.md) | Agent Runtime / Agent Memory / Agent Governance boundary, configurable memory modules, routing, and governed structural mutability |
 | 43 | [`43-substrate-inventory-and-maturity.md`](43-substrate-inventory-and-maturity.md) | Which substrates exist and where, their maturity, qualified external components, and which named concepts (Code Reality Graph, GraphRAG, Markdown, Postgres) are roles or mechanisms rather than substrates |
+| 44 | [`44-public-api-contract.md`](44-public-api-contract.md) | The public consumer contract: versioned proposal, recall-context and result envelopes, ADR-030 compatibility, and the stage entry points -- what the surface refuses and why. |
 
 ## Profiles and future subsystems
 

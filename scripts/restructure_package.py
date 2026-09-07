@@ -32,7 +32,7 @@ from pathlib import Path
 PACKAGE = Path(__file__).resolve().parents[1] / "reference" / "agentmem_ref"
 
 # Order matters: a module may import only from its own layer or an earlier one.
-LAYER_ORDER = ("core", "state", "contracts", "runtime", "memory", "crg", "harness")
+LAYER_ORDER = ("core", "state", "contracts", "runtime", "memory", "api", "crg", "harness")
 
 LAYERS: dict[str, tuple[str, ...]] = {
     "core": (
@@ -69,6 +69,7 @@ LAYERS: dict[str, tuple[str, ...]] = {
         "temporal_commitment", "temporal_transparency", "temporal_trust",
         "trace_action_evidence", "uor_content_reference",
     ),
+    "api": ("contract", "surface"),
     "crg": (
         "code_graph_qualification", "codegenome_profile", "codegenome_cognitive_mesh",
         "codegenome_scope_residue",
@@ -106,6 +107,9 @@ LAYER_DOCS = {
               "epistemic, predictive, procedural, decision overwrite, structural mutation, "
               "crossing, interchange, temporal, precedent, maintenance. Depends on "
               "``runtime`` and below.",
+    "api": "The public consumer contract (Sprint 4a): versioned proposal, recall-context and "
+           "result envelopes, ADR-030 compatibility, and the stage entry points -- propose, "
+           "approve, commit, recall, forget. Depends on ``runtime`` and ``memory``.",
     "crg": "Agent Memory's Code Reality Graph.\n\n"
            "A Code Reality Graph is a governed graph of what a codebase actually is --\n"
            "its structure, its qualified components, its scope residue -- held as memory\n"

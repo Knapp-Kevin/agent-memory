@@ -9,5 +9,6 @@ does not constitute as evidence.
 from .runtime import adapter
 from .core import governance_projection, policy, receipts
 from .state import substrate
+from .api import surface
 
-__all__ = ["adapter", "governance_projection", "policy", "receipts", "substrate"]
+__all__ = ["adapter", "governance_projection", "policy", "receipts", "substrate", "surface"]

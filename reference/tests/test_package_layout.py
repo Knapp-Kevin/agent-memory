@@ -112,7 +112,7 @@ class LayoutMatchesMover(unittest.TestCase):
         import agentmem_ref
 
         self.assertEqual(
-            agentmem_ref.__all__, ["adapter", "governance_projection", "policy", "receipts", "substrate"]
+            agentmem_ref.__all__, ["adapter", "governance_projection", "policy", "receipts", "substrate", "surface"]
         )
 
     def test_top_level_residents(self):

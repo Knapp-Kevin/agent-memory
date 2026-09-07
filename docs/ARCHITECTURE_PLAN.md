@@ -26,7 +26,7 @@ agent-memory/
 |-- schemas/                  58 JSON Schemas: memory units, runtime configuration, provider probes, contracts
 |-- fixtures/                 Validated corpus consumed by conformance and evidence workflows
 |-- reference/
-|   |-- agentmem_ref/         Reference runtime + diagnostic CLI (package agent-memory-reference, entry point agent-memory)
+|   |-- agentmem_ref/         Reference runtime + diagnostic CLI (package agent-memory-reference, entry point agent-memory); layered core/ state/ contracts/ runtime/ memory/ api/ crg/ harness/, with api/ the public contract (docs/44)
 |   |-- native/               First-party substrate implementations (epistemic, predictive, procedural, reality graph, metabolism)
 |   |-- policies/             Reference policy bundles
 |   |-- fixtures/             Component capability / qualification / runtime-configuration fixtures

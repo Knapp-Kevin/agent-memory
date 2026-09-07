@@ -173,6 +173,20 @@ jobs:
                   print(f"{name}: unexpected schema payload")
                   sys.exit(1)
               print(f"{name}: resolved from wheel: {schema['$id']}")
+          # Sprint 4a: the public contract's schemas ship in the wheel too.
+          from agentmem_ref.api import contract, surface
+          envelope = {
+              "contract_version": contract.CONTRACT_VERSION, "proposal_id": "p", "actor_id": "a", "charter_version": "c",
+              "target_reference": "t", "target_class": "M2_OPERATIONAL_ASSOCIATION", "scope": "s", "operation": "promotion",
+              "current_strength": "observed", "proposed_strength": "reinforced", "downstream_authority": "A1_RECOMMENDATION_INFLUENCE",
+              "reversibility": "reversible", "risk_class": "low", "evidence_refs": ["e"],
+          }
+          try:
+              contract.validate_proposal_envelope(envelope)
+          except Exception as exc:
+              print(f"api: envelope schema NOT resolved from wheel: {type(exc).__name__}: {exc}")
+              sys.exit(1)
+          print("api: proposal envelope validated from wheel; surface exports", surface.__all__)
           sys.exit(0)
           PY
       - name: Installed evidence modules import

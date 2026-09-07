@@ -1,0 +1,25 @@
+{
+  "contract_version": "1.0.0",
+  "proposal_id": "proposal-example-1",
+  "actor_id": "agent:release-planner",
+  "charter_version": "charter-v1",
+  "target_reference": "repo:example:release-branch",
+  "target_class": "M2_OPERATIONAL_ASSOCIATION",
+  "scope": "project:example",
+  "operation": "promotion",
+  "current_strength": "observed",
+  "proposed_strength": "reinforced",
+  "downstream_authority": "A1_RECOMMENDATION_INFLUENCE",
+  "reversibility": "reversible",
+  "risk_class": "low",
+  "evidence_refs": [
+    "evidence:release-notes-v1"
+  ],
+  "state_snapshot": "v0",
+  "purpose": "release planning",
+  "isolation_domain_refs": [
+    "org:example",
+    "project:example"
+  ],
+  "project_ref": "project:example"
+}
