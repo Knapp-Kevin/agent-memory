@@ -1,0 +1,85 @@
+name: Runtime Configuration Contract
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute targeted runtime configuration tests
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_runtime_config.py'
+
+      - name: Execute full reference regression suite
+        run: python -m unittest discover -s reference/tests -t reference
+
+      - name: Emit exact-head runtime configuration evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_runtime_configuration.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output runtime-configuration-evidence.json
+
+      - name: Validate emitted configuration evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("runtime-configuration-evidence.json").read_text())
+          if len(report["agent_memory_commit"]) != 40:
+              raise SystemExit("configuration evidence is not exact-head bound")
+          failed = [
+              name for name, passed in report["structural_invariants"].items()
+              if not passed
+          ]
+          if failed:
+              raise SystemExit(f"runtime configuration invariants failed: {failed}")
+          plan = report["plan"]
+          if plan["authority_effect"] != "none":
+              raise SystemExit("configuration must not create authority")
+          if not plan["startable"]:
+              raise SystemExit("validated reference configuration should be startable")
+          if plan["entry_mode"] != "attach_existing_stack":
+              raise SystemExit("reference fixture must exercise attach_existing_stack")
+          print(f"validated {len(report['structural_invariants'])} runtime configuration invariants")
+          PY
+
+      - name: Upload runtime configuration evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: runtime-configuration-evidence
+          path: runtime-configuration-evidence.json
+          if-no-files-found: error
+
+      - name: Publish configuration summary
+        if: always()
+        run: |
+          {
+            echo "## Portable runtime configuration"
+            echo ""
+            echo "The reference fixture attaches Agent Memory to an operator-managed stack and validates canonical ownership, component routing, independent qualification, fallback topology, currentness obligations, source rights, governance peers, and secret references."
+            echo ""
+            echo "JSON is a reference serialization of the contract, not a mandated product syntax."
+            echo ""
+            echo '```'
+            echo "python -m unittest discover -s reference/tests -t reference -p 'test_runtime_config.py'"
+            echo "python reference/run_runtime_configuration.py --agent-memory-commit <exact-40-hex-commit> --output runtime-configuration-evidence.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

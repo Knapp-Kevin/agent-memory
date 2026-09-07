@@ -1,0 +1,292 @@
+{
+  "fixture_id": "precedent-applicability-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "Deterministic precedent applicability scenarios prove that prior governed decisions may reduce redundant review only when material conditions and scope remain current, while history never becomes authority.",
+  "expected_behavior": {
+    "cases_evaluated": 8,
+    "redundant_review_reductions_proposed": 2,
+    "unsafe_equivalence_false_positives": 0,
+    "material_difference_misses": 0,
+    "negative_precedent_misses": 0,
+    "cross_scope_leakage_failures": 0,
+    "stale_precedent_reuse_failures": 0,
+    "independent_human_derived_evidence_attribution_errors": 0,
+    "novel_case_escalation_rate": 1.0
+  },
+  "memory_unit": {
+    "id": "mem:precedent-applicability",
+    "content_ref": "fixture://precedent-applicability/current-action",
+    "type": "decision",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "precedent-applicability-matrix",
+      "timestamp": "2026-08-12T21:10:00Z",
+      "source_refs": ["issue://181", "issue://153"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:precedent-applicability",
+        "kind": "precedent_applicability_fixture",
+        "ref": "issue://181",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["governance_context", "authority_separation"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": ["issue:153", "issue:181", "ADR-029"],
+      "permitted_actions": ["collect_more_evidence", "defer", "enter_pending_verification"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T21:10:00Z"
+  },
+  "scenarios": [
+    {
+      "case_id": "repeated-safe-equivalent",
+      "scope_relationship": "same",
+      "precedents": [
+        {
+          "ref_prefix": "mem:safe-push",
+          "repeat": 3,
+          "polarity": "supportive",
+          "source_type": "human_adjudication",
+          "independent_adjudication": true,
+          "validity": "current",
+          "conditions": {
+            "action": ["git_push", "git_push"],
+            "protected": [false, false],
+            "force": [false, false],
+            "ci": ["current_pass", "current_pass"],
+            "tenant": ["tenant-a", "tenant-a"]
+          }
+        }
+      ],
+      "expected_applicability": "materially_equivalent",
+      "expected_handling": "reduce_redundant_review",
+      "expected": {
+        "review_reduction_safe": true,
+        "independent_human_evidence_count": 3,
+        "policy_or_derived_evidence_count": 0
+      }
+    },
+    {
+      "case_id": "force-protected-branch-near-match",
+      "scope_relationship": "same",
+      "precedents": [
+        {
+          "ref_prefix": "mem:ordinary-push",
+          "repeat": 1,
+          "polarity": "supportive",
+          "source_type": "human_adjudication",
+          "independent_adjudication": true,
+          "validity": "current",
+          "conditions": {
+            "action": ["git_push", "git_push"],
+            "target": ["feature-x", "main"],
+            "protected": [false, true],
+            "force": [false, true]
+          }
+        }
+      ],
+      "expected_applicability": "materially_different",
+      "expected_handling": "normal_review",
+      "expected": {
+        "review_reduction_safe": false,
+        "material_difference": true,
+        "independent_human_evidence_count": 0,
+        "policy_or_derived_evidence_count": 0
+      }
+    },
+    {
+      "case_id": "stale-ci-state",
+      "scope_relationship": "same",
+      "precedents": [
+        {
+          "ref_prefix": "mem:ci-bound-approval",
+          "repeat": 1,
+          "polarity": "supportive",
+          "source_type": "human_adjudication",
+          "independent_adjudication": true,
+          "validity": "current",
+          "conditions": {
+            "action": ["git_push", "git_push"],
+            "ci": ["current_pass", "stale_or_failed"],
+            "state_ref": ["state:v1", "state:v2"]
+          }
+        }
+      ],
+      "expected_applicability": "materially_different",
+      "expected_handling": "normal_review",
+      "expected": {
+        "review_reduction_safe": false,
+        "material_difference": true,
+        "independent_human_evidence_count": 0,
+        "policy_or_derived_evidence_count": 0
+      }
+    },
+    {
+      "case_id": "cross-tenant-near-match",
+      "scope_relationship": "mismatch",
+      "precedents": [
+        {
+          "ref_prefix": "mem:tenant-a-approval",
+          "repeat": 1,
+          "polarity": "supportive",
+          "source_type": "human_adjudication",
+          "independent_adjudication": true,
+          "validity": "current",
+          "conditions": {
+            "action": ["git_push", "git_push"],
+            "protected": [false, false],
+            "force": [false, false]
+          }
+        }
+      ],
+      "expected_applicability": "materially_different",
+      "expected_handling": "escalate",
+      "expected": {
+        "review_reduction_safe": false,
+        "material_difference": true,
+        "cross_scope": true,
+        "independent_human_evidence_count": 1,
+        "policy_or_derived_evidence_count": 0
+      }
+    },
+    {
+      "case_id": "incident-dominates-positive-history",
+      "scope_relationship": "same",
+      "precedents": [
+        {
+          "ref_prefix": "mem:clean-approval",
+          "repeat": 5,
+          "polarity": "supportive",
+          "source_type": "human_adjudication",
+          "independent_adjudication": true,
+          "validity": "current",
+          "conditions": {
+            "action": ["deploy", "deploy"],
+            "environment": ["staging", "staging"]
+          }
+        },
+        {
+          "ref_prefix": "mem:relevant-incident",
+          "repeat": 1,
+          "polarity": "cautionary",
+          "source_type": "runtime_observation",
+          "independent_adjudication": false,
+          "validity": "current",
+          "conditions": {
+            "action": ["deploy", "deploy"],
+            "environment": ["staging", "staging"]
+          }
+        }
+      ],
+      "expected_applicability": "conflicting",
+      "expected_handling": "escalate",
+      "expected": {
+        "review_reduction_safe": false,
+        "negative_present": true,
+        "independent_human_evidence_count": 5,
+        "policy_or_derived_evidence_count": 1
+      }
+    },
+    {
+      "case_id": "policy-generated-repetition-does-not-inflate-human-count",
+      "scope_relationship": "same",
+      "precedents": [
+        {
+          "ref_prefix": "mem:human-approval",
+          "repeat": 1,
+          "polarity": "supportive",
+          "source_type": "human_adjudication",
+          "independent_adjudication": true,
+          "validity": "current",
+          "conditions": {
+            "action": ["git_push", "git_push"],
+            "protected": [false, false]
+          }
+        },
+        {
+          "ref_prefix": "mem:policy-allow",
+          "repeat": 6,
+          "polarity": "supportive",
+          "source_type": "policy_outcome",
+          "independent_adjudication": false,
+          "validity": "current",
+          "conditions": {
+            "action": ["git_push", "git_push"],
+            "protected": [false, false]
+          }
+        }
+      ],
+      "expected_applicability": "materially_equivalent",
+      "expected_handling": "reduce_redundant_review",
+      "expected": {
+        "review_reduction_safe": true,
+        "independent_human_evidence_count": 1,
+        "policy_or_derived_evidence_count": 6
+      }
+    },
+    {
+      "case_id": "expired-approval-evidence",
+      "scope_relationship": "same",
+      "precedents": [
+        {
+          "ref_prefix": "mem:expired-approval",
+          "repeat": 1,
+          "polarity": "supportive",
+          "source_type": "human_adjudication",
+          "independent_adjudication": true,
+          "validity": "expired",
+          "conditions": {
+            "action": ["git_push", "git_push"],
+            "protected": [false, false],
+            "force": [false, false]
+          }
+        }
+      ],
+      "expected_applicability": "stale",
+      "expected_handling": "normal_review",
+      "expected": {
+        "review_reduction_safe": false,
+        "stale": true,
+        "independent_human_evidence_count": 0,
+        "policy_or_derived_evidence_count": 0
+      }
+    },
+    {
+      "case_id": "novel-insufficient-evidence",
+      "scope_relationship": "same",
+      "precedents": [
+        {
+          "ref_prefix": "mem:unresolved-context",
+          "repeat": 1,
+          "polarity": "neutral",
+          "source_type": "memory_inference",
+          "independent_adjudication": false,
+          "validity": "current",
+          "conditions": {
+            "action_family": ["unknown-family", null]
+          }
+        }
+      ],
+      "expected_applicability": "insufficient_evidence",
+      "expected_handling": "normal_review",
+      "expected": {
+        "review_reduction_safe": false,
+        "novel": true,
+        "independent_human_evidence_count": 0,
+        "policy_or_derived_evidence_count": 0
+      }
+    }
+  ]
+}

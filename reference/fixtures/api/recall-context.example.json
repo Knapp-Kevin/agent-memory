@@ -1,0 +1,10 @@
+{
+  "contract_version": "1.0.0",
+  "target_domain_refs": [
+    "org:example",
+    "project:example"
+  ],
+  "principal_ref": "agent:release-planner",
+  "project_ref": "project:example",
+  "purpose": "release planning"
+}

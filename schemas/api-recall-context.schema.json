@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-recall-context.schema.json",
+  "title": "Agent Memory Public API: Recall Context Envelope",
+  "description": "The public, versioned form of a recall context (Sprint 4a, contract 1.0.0). principal_ref is caller-asserted; the embedding host authenticates recall principals (#364).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "target_domain_refs"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": [
+        "1.0.0",
+        "1.1.0"
+      ]
+    },
+    "target_domain_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "principal_ref": {
+      "type": "string"
+    },
+    "project_ref": {
+      "type": "string"
+    },
+    "task_ref": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string"
+    }
+  }
+}

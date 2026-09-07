@@ -1,0 +1,225 @@
+{
+  "schema_version": "1.0.0",
+  "runtime": {
+    "runtime_id": "agent-memory-reference-composed-runtime",
+    "runtime_version": "0.1.0-reference",
+    "profile_id": "reference-canonical-derived-composition",
+    "profile_version": "1.0.0",
+    "entry_mode": "bootstrap_agent_memory_first"
+  },
+  "canonical_state": {
+    "owner_component_id": "reference-governed-memory",
+    "owner_capability_id": "semantic_fact_memory",
+    "owner_capability_version": "1.0"
+  },
+  "durable_governance": {
+    "profile_id": "reference_config_bound_checkpoint_v1",
+    "profile_version": "1.0.0",
+    "state_ref": "state://agent-memory/reference-composed"
+  },
+  "components": [
+    {
+      "declaration": {
+        "component_id": "reference-governed-memory",
+        "component_version": "1.0.0",
+        "profile_version": "component-capability-v2",
+        "enabled": true,
+        "runtime_ref": "reference/agentmem_ref/adapter.py",
+        "failure_posture": "fail_closed",
+        "provenance_refs": ["repo://agent-memory/reference/agentmem_ref/adapter.py"],
+        "capabilities": [
+          {
+            "capability_id": "semantic_fact_memory",
+            "capability_version": "1.0",
+            "maturity": "runtime_wired",
+            "state_posture": "canonical",
+            "scope_posture": "enforces_agent_memory_scope",
+            "failure_posture": "fail_closed",
+            "authority_effect": "none",
+            "enabled": true,
+            "evidence_refs": ["reference:test-governed-adapter"],
+            "limitations": ["bounded_reference_runtime"],
+            "behavior_contract": {
+              "operation_support": {
+                "write": true,
+                "read": true,
+                "recall_candidate": false
+              },
+              "currentness_model": "canonical_version",
+              "invalidation_model": "version_relation",
+              "correction_model": "canonical_supersession",
+              "deletion_model": "canonical_delete",
+              "residue_model": "scan_required",
+              "migration_rebuild_model": "explicit_migration",
+              "structural_mutation_requirement": "none"
+            }
+          },
+          {
+            "capability_id": "exact_identity_retrieval",
+            "capability_version": "1.0",
+            "maturity": "runtime_wired",
+            "state_posture": "canonical",
+            "scope_posture": "enforces_agent_memory_scope",
+            "failure_posture": "fail_closed",
+            "authority_effect": "none",
+            "enabled": true,
+            "evidence_refs": ["reference:test-governed-recall"],
+            "limitations": ["reference_query_path_uses_substrate_search_plus_governed_admission"],
+            "behavior_contract": {
+              "operation_support": {
+                "write": false,
+                "read": true,
+                "recall_candidate": true
+              },
+              "currentness_model": "canonical_version",
+              "invalidation_model": "version_relation",
+              "correction_model": "not_applicable",
+              "deletion_model": "not_applicable",
+              "residue_model": "not_applicable",
+              "migration_rebuild_model": "not_applicable",
+              "structural_mutation_requirement": "none"
+            }
+          }
+        ]
+      },
+      "adapter": {
+        "adapter_id": "reference-governed-memory-adapter",
+        "adapter_version": "1.0.0",
+        "runtime_ref": "reference/agentmem_ref/adapter.py"
+      },
+      "source_rights": {
+        "license_id": "Apache-2.0",
+        "license_ref": "LICENSE@b1faeed936a32f3485a06a7b2f59557655872994",
+        "use_posture": "runtime_allowed"
+      }
+    },
+    {
+      "declaration": {
+        "component_id": "reference-projection-sidecar",
+        "component_version": "1.0.0",
+        "profile_version": "component-capability-v2",
+        "enabled": true,
+        "runtime_ref": "reference/agentmem_ref/projection_governance.py",
+        "failure_posture": "explicit_unavailable",
+        "provenance_refs": ["repo://agent-memory/reference/agentmem_ref/projection_governance.py"],
+        "capabilities": [
+          {
+            "capability_id": "rebuild_projection",
+            "capability_version": "1.0",
+            "maturity": "runtime_wired",
+            "state_posture": "derived",
+            "scope_posture": "inherits_agent_memory_scope",
+            "failure_posture": "explicit_unavailable",
+            "authority_effect": "none",
+            "enabled": true,
+            "evidence_refs": ["reference:test-canonical-derived-state"],
+            "limitations": ["deterministic_reproducible_reference_projection"],
+            "behavior_contract": {
+              "operation_support": {
+                "write": true,
+                "read": true,
+                "recall_candidate": false
+              },
+              "currentness_model": "basis_versioned",
+              "invalidation_model": "version_relation",
+              "correction_model": "invalidate_derived",
+              "deletion_model": "derived_residue_then_purge",
+              "residue_model": "derived_residual",
+              "migration_rebuild_model": "rebuild_from_canonical",
+              "structural_mutation_requirement": "none"
+            }
+          }
+        ]
+      },
+      "adapter": {
+        "adapter_id": "reference-projection-governor",
+        "adapter_version": "1.0.0",
+        "runtime_ref": "reference/agentmem_ref/projection_governance.py"
+      },
+      "source_rights": {
+        "license_id": "Apache-2.0",
+        "license_ref": "LICENSE@b1faeed936a32f3485a06a7b2f59557655872994",
+        "use_posture": "runtime_allowed"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "route_id": "canonical-semantic-fact",
+      "capability_id": "semantic_fact_memory",
+      "capability_version": "1.0",
+      "minimum_maturity": "runtime_wired",
+      "allowed_components": ["reference-governed-memory"],
+      "preferred_component": "reference-governed-memory",
+      "fallback_components": [],
+      "required_state_postures": ["canonical"],
+      "required_scope_postures": ["enforces_agent_memory_scope"],
+      "behavior_requirements": {
+        "operation_support": {
+          "write": true,
+          "read": true
+        },
+        "currentness_models": ["canonical_version"],
+        "correction_models": ["canonical_supersession"],
+        "deletion_models": ["canonical_delete"]
+      },
+      "qualification": {"required": false},
+      "currentness": {"required": false}
+    },
+    {
+      "route_id": "governed-exact-retrieval",
+      "capability_id": "exact_identity_retrieval",
+      "capability_version": "1.0",
+      "minimum_maturity": "runtime_wired",
+      "allowed_components": ["reference-governed-memory"],
+      "preferred_component": "reference-governed-memory",
+      "fallback_components": [],
+      "required_state_postures": ["canonical"],
+      "required_scope_postures": ["enforces_agent_memory_scope"],
+      "behavior_requirements": {
+        "operation_support": {
+          "read": true,
+          "recall_candidate": true
+        },
+        "currentness_models": ["canonical_version"]
+      },
+      "qualification": {"required": false},
+      "currentness": {"required": false}
+    },
+    {
+      "route_id": "derived-projection-rebuild",
+      "capability_id": "rebuild_projection",
+      "capability_version": "1.0",
+      "minimum_maturity": "runtime_wired",
+      "allowed_components": ["reference-projection-sidecar"],
+      "preferred_component": "reference-projection-sidecar",
+      "fallback_components": [],
+      "required_state_postures": ["derived"],
+      "required_scope_postures": ["inherits_agent_memory_scope"],
+      "behavior_requirements": {
+        "operation_support": {
+          "write": true,
+          "read": true
+        },
+        "currentness_models": ["basis_versioned"],
+        "invalidation_models": ["version_relation"],
+        "correction_models": ["invalidate_derived"],
+        "deletion_models": ["derived_residue_then_purge"],
+        "residue_models": ["derived_residual"],
+        "migration_rebuild_models": ["rebuild_from_canonical"],
+        "structural_mutation_requirements": ["none"]
+      },
+      "qualification": {"required": false},
+      "currentness": {
+        "required": true,
+        "projection_id": "reference-derived-index"
+      }
+    }
+  ],
+  "governance_peers": [],
+  "evidence": {
+    "qualification_store_refs": [],
+    "receipt_store_ref": "state://agent-memory/reference-composed/receipts",
+    "runtime_evidence_ref": "evidence://agent-memory/reference-composed"
+  }
+}

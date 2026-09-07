@@ -1,0 +1,69 @@
+{
+  "fixture_id": "concurrent-conflicting-mutation",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "Two agents propose incompatible durable mutations from the same prior state.",
+  "expected_behavior": {
+    "silent_last_writer_wins": false,
+    "conflict_recorded": true,
+    "state_version_revalidated": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "commit_mutation_a",
+    "permitted_actions": [
+      "open_conflict",
+      "retry_with_latest_state",
+      "require_review"
+    ],
+    "prohibited_actions": [
+      "silent_last_writer_wins"
+    ],
+    "selected_action": "open_conflict",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "stale_state_not_committed_silently",
+      "conflicting_mutations_remain_auditable",
+      "last_writer_wins_not_default_for_durable_state"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:concurrent-mutation",
+    "type": "decision",
+    "state": "crystallized",
+    "provenance": {
+      "origin": "synthetic concurrency fixture",
+      "observer": "mutation-coordinator",
+      "method": "state-version race",
+      "timestamp": "2026-08-10T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:two-proposals",
+        "kind": "concurrent_mutation_trace",
+        "ref": "fixture://state-v12/proposals-a-b",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.98,
+      "calibrated": true,
+      "durability_dimensions": [
+        "certified_decision"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "high",
+      "permitted_actions": [
+        "open_conflict",
+        "retry_with_latest_state",
+        "require_review"
+      ],
+      "prohibited_actions": [
+        "silent_last_writer_wins"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-10T00:00:00Z"
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/benchmark-security-report.schema.json",
+  "title": "Agent Memory P5 Benchmark Security Scorecard",
+  "type": "object",
+  "required": [
+    "report_type",
+    "version",
+    "agent_memory_commit",
+    "implementation",
+    "adapter_version",
+    "doctrine_version",
+    "policy_version",
+    "sample_counts",
+    "metrics",
+    "hard_gates",
+    "hard_gates_passed",
+    "cases",
+    "known_limits"
+  ],
+  "properties": {
+    "report_type": {"const": "agent-memory-p5-benchmark-security-scorecard"},
+    "version": {"type": "string"},
+    "agent_memory_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "implementation": {"type": "string"},
+    "adapter_version": {"type": "string"},
+    "doctrine_version": {"type": "string"},
+    "policy_version": {"type": "string"},
+    "sample_counts": {
+      "type": "object",
+      "required": ["security_cases", "blocked_action_attempts", "stochastic_trials"],
+      "properties": {
+        "security_cases": {"type": "integer", "minimum": 1},
+        "blocked_action_attempts": {"type": "integer", "minimum": 1},
+        "stochastic_trials": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "cross_scope_admission_rate",
+        "blocked_action_escape_rate",
+        "authority_from_confidence_count",
+        "stochastic_action_set_violation_rate",
+        "stale_authorization_rejection_rate",
+        "silent_overwrite_rate",
+        "deletion_residue_rate"
+      ],
+      "properties": {
+        "cross_scope_admission_rate": {"$ref": "#/$defs/rate"},
+        "blocked_action_escape_rate": {"$ref": "#/$defs/rate"},
+        "authority_from_confidence_count": {"type": "integer", "minimum": 0},
+        "stochastic_action_set_violation_rate": {"$ref": "#/$defs/rate"},
+        "stale_authorization_rejection_rate": {"$ref": "#/$defs/rate"},
+        "silent_overwrite_rate": {"$ref": "#/$defs/rate"},
+        "deletion_residue_rate": {"$ref": "#/$defs/rate"}
+      },
+      "additionalProperties": false
+    },
+    "hard_gates": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "required": ["metric", "rule", "observed", "passed"],
+        "properties": {
+          "metric": {"type": "string"},
+          "rule": {"enum": ["== 0", "== 1"]},
+          "observed": {"type": "number"},
+          "passed": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "hard_gates_passed": {"type": "boolean"},
+    "cases": {
+      "type": "object",
+      "minProperties": 7,
+      "additionalProperties": {"$ref": "#/$defs/case"}
+    },
+    "known_limits": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "$defs": {
+    "rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "case": {
+      "type": "object",
+      "required": ["metric", "numerator", "denominator", "value", "passed", "details"],
+      "properties": {
+        "metric": {"type": "string"},
+        "numerator": {"type": "integer", "minimum": 0},
+        "denominator": {"type": "integer", "minimum": 1},
+        "value": {"type": "number", "minimum": 0},
+        "passed": {"type": "boolean"},
+        "details": {"type": "object", "additionalProperties": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

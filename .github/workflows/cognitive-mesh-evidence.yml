@@ -1,0 +1,49 @@
+name: Cognitive Mesh Evidence
+
+on:
+  pull_request:
+    paths:
+      - "reference/agentmem_ref/memory/cognitive_mesh.py"
+      - "reference/tests/test_cognitive_mesh.py"
+      - "reference/run_cognitive_mesh.py"
+      - "reference/agentmem_ref/runtime/adapter.py"
+      - "reference/agentmem_ref/core/policy.py"
+      - "reference/agentmem_ref/core/contextual_recall.py"
+      - "reference/agentmem_ref/state/substrate.py"
+      - "docs/adr/ADR-035-agent-memory-is-a-governed-cognitive-framework.md"
+      - "docs/programs/runtime-evidence/cognitive-mesh.md"
+      - ".github/workflows/cognitive-mesh-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cognitive-mesh-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install reference dependencies
+        run: python -m pip install -r reference/requirements.txt
+
+      - name: Validate schemas
+        run: python scripts/validate_schemas.py
+
+      - name: Test Cognitive Mesh reference path
+        run: python -m unittest discover -s reference/tests -p 'test_cognitive_mesh.py' -t reference
+
+      - name: Emit Cognitive Mesh evidence
+        run: python reference/run_cognitive_mesh.py --output artifacts/cognitive-mesh-evidence.json
+
+      - name: Upload Cognitive Mesh evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: cognitive-mesh-evidence
+          path: artifacts/cognitive-mesh-evidence.json

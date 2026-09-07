@@ -1,0 +1,105 @@
+{
+  "fixture_id": "security-evidence-depth-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "Security evidence depth must remain explicit across documented doctrine, structural fixtures, behavioral harnesses, runtime implementation evidence, and production evidence. Poisoning boundaries are demonstrated without inflating weaker evidence into stronger claims.",
+  "expected_behavior": {
+    "level_inference_allowed": false,
+    "composite_security_score_allowed": false,
+    "external_mapping_implies_certification": false,
+    "production_evidence_defaults_proven": false,
+    "protocol_success_upgrades_security_depth": false,
+    "failed_behavior_hidden_by_aggregation": false
+  },
+  "memory_unit": {
+    "id": "mem:security-evidence-depth",
+    "content_ref": "fixture://security-evidence-depth/reference",
+    "type": "evidence",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "security-evidence-depth-matrix",
+      "timestamp": "2026-08-12T22:40:00Z",
+      "source_refs": ["issue://196", "issue://173", "issue://170"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:security-depth-v01",
+        "kind": "security_evidence_depth_fixture",
+        "ref": "issue://196",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["evidence_depth", "poisoning_resistance", "non_certification"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": ["issue:196", "issue:173"],
+      "permitted_actions": ["collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T22:40:00Z"
+  },
+  "evidence_levels": [
+    {"level": "D", "meaning": "documented_doctrine"},
+    {"level": "F", "meaning": "structural_fixture"},
+    {"level": "H", "meaning": "behavioral_harness"},
+    {"level": "R", "meaning": "runtime_implementation_evidence"},
+    {"level": "P", "meaning": "production_evidence"}
+  ],
+  "claims": [
+    {
+      "claim_id": "poisoning:direct-external-write",
+      "title": "Direct untrusted external content cannot self-authorize durable promotion",
+      "threat_family": "memory_poisoning",
+      "doctrine_refs": ["docs/15-memory-threat-model.md", "docs/04-governance-and-pama.md"],
+      "fixture_refs": ["fixtures/security-evidence-depth-matrix.json"],
+      "runtime_evidence_refs": ["reference/agentmem_ref/benchmark_security.py#authority_from_confidence"],
+      "scope_profiles": ["L", "T", "E", "H"]
+    },
+    {
+      "claim_id": "poisoning:mcp-ingestion",
+      "title": "MCP tool/resource output remains evidence or a memory candidate under normal admission",
+      "threat_family": "protocol_ingestion_poisoning",
+      "doctrine_refs": ["docs/15-memory-threat-model.md", "docs/profiles/mcp-interaction-evidence-profile.md"],
+      "fixture_refs": ["fixtures/mcp-interaction-evidence-matrix.json", "fixtures/security-evidence-depth-matrix.json"],
+      "runtime_evidence_refs": [],
+      "scope_profiles": ["L", "T", "E", "H"]
+    },
+    {
+      "claim_id": "poisoning:a2a-ingestion",
+      "title": "A2A peer Message/Artifact content remains evidence or a memory candidate under normal admission",
+      "threat_family": "cross_agent_ingestion_poisoning",
+      "doctrine_refs": ["docs/15-memory-threat-model.md", "docs/profiles/a2a-collaboration-evidence-profile.md"],
+      "fixture_refs": ["fixtures/a2a-collaboration-evidence-matrix.json", "fixtures/security-evidence-depth-matrix.json"],
+      "runtime_evidence_refs": [],
+      "scope_profiles": ["L", "T", "E", "H"]
+    }
+  ],
+  "negative_cases": [
+    {
+      "case_id": "documented-plus-fixture-does-not-imply-higher-levels",
+      "evidence_refs": {"D": ["doc:one"], "F": ["fixture:one"], "H": [], "R": [], "P": []},
+      "expected_demonstrated_levels": ["D", "F"],
+      "expected_unproven_levels": ["H", "R", "P"]
+    },
+    {
+      "case_id": "harness-pass-does-not-imply-production",
+      "evidence_refs": {"D": ["doc:one"], "F": ["fixture:one"], "H": ["harness:one"], "R": [], "P": []},
+      "expected_demonstrated_levels": ["D", "F", "H"],
+      "expected_unproven_levels": ["R", "P"]
+    },
+    {
+      "case_id": "noncontiguous-levels-remain-noncontiguous",
+      "evidence_refs": {"D": ["doc:one"], "F": [], "H": ["harness:one"], "R": [], "P": []},
+      "expected_demonstrated_levels": ["D", "H"],
+      "expected_unproven_levels": ["F", "R", "P"]
+    }
+  ]
+}

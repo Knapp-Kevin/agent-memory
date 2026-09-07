@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "probes": [
+    {
+      "probe_id": "reference-python-runtime",
+      "subject_kind": "component",
+      "subject_id": "reference-governed-memory",
+      "probe_kind": "executable",
+      "target": "python",
+      "required_for_startability": true
+    },
+    {
+      "probe_id": "reference-json-import",
+      "subject_kind": "component",
+      "subject_id": "reference-projection-sidecar",
+      "probe_kind": "python_import",
+      "target": "json",
+      "required_for_startability": false
+    },
+    {
+      "probe_id": "reference-unavailable-optional",
+      "subject_kind": "component",
+      "subject_id": "reference-projection-sidecar",
+      "probe_kind": "executable",
+      "target": "agent-memory-definitely-not-a-real-provider-executable",
+      "required_for_startability": false
+    }
+  ]
+}

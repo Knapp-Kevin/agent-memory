@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/provider-probes.schema.json",
+  "title": "Agent Memory Provider Probe Manifest",
+  "description": "Read-only provider discovery/probe descriptors. Probe evidence does not grant configuration, qualification, maturity, currentness, or authority.",
+  "type": "object",
+  "required": ["schema_version", "probes"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "probes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/probe" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "probe": {
+      "type": "object",
+      "required": ["probe_id", "subject_kind", "subject_id", "probe_kind", "target", "required_for_startability"],
+      "properties": {
+        "probe_id": { "$ref": "#/$defs/nonEmptyString" },
+        "subject_kind": {
+          "type": "string",
+          "enum": ["component", "governance_peer"]
+        },
+        "subject_id": { "$ref": "#/$defs/nonEmptyString" },
+        "probe_kind": {
+          "type": "string",
+          "enum": ["executable", "python_import", "filesystem_path"]
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "not": { "pattern": "^(env|secret|vault|keyring)://" }
+        },
+        "required_for_startability": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

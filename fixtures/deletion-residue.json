@@ -1,0 +1,77 @@
+{
+  "fixture_id": "deletion-residue",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "The raw memory is deleted while a derived summary or index still preserves recoverable content.",
+  "expected_behavior": {
+    "raw_record_deleted": true,
+    "full_deletion_claimed": false,
+    "derived_dependencies_checked": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "declare_full_deletion_complete",
+    "permitted_actions": [
+      "continue_dependency_purge",
+      "report_residual_copy",
+      "verify_deletion"
+    ],
+    "prohibited_actions": [
+      "declare_full_deletion_complete"
+    ],
+    "selected_action": "continue_dependency_purge",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "raw_delete_not_equal_full_delete",
+      "derived_memory_checked",
+      "deletion_receipt_reports_residue"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:deletion-residue",
+    "type": "summary",
+    "state": "tombstoned",
+    "provenance": {
+      "origin": "synthetic deletion fixture",
+      "observer": "deletion-verifier",
+      "method": "dependency traversal",
+      "timestamp": "2026-08-10T00:00:00Z",
+      "derived_from": [
+        "uor:test:deleted-raw-memory"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:residual-summary",
+        "kind": "deletion_verification",
+        "ref": "fixture://derived-summary-still-present",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": true,
+      "durability_dimensions": [
+        "deletion_verification"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "collect_more_evidence",
+      "risk_class": "critical",
+      "permitted_actions": [
+        "continue_dependency_purge",
+        "report_residual_copy",
+        "verify_deletion"
+      ],
+      "prohibited_actions": [
+        "declare_full_deletion_complete"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "retention": {
+      "mode": "tombstoned",
+      "policy_version": "delete-policy-v2",
+      "tombstone_ref": "fixture://tombstone/raw-deleted"
+    },
+    "created_at": "2026-08-10T00:00:00Z"
+  }
+}

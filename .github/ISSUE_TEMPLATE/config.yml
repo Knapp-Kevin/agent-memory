@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/MythologIQ-Labs-LLC/agent-memory/security/policy
+    about: Please report security vulnerabilities privately according to SECURITY.md instead of opening a public issue.
+  - name: Questions and discussion
+    url: https://github.com/MythologIQ-Labs-LLC/agent-memory/discussions
+    about: Use Discussions for questions, exploratory ideas, and community conversation that are not yet actionable issues.

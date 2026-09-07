@@ -1,0 +1,132 @@
+{
+  "scenario_set_version": "1.0.0",
+  "status": "exploratory_research",
+  "canonical_authority": "none",
+  "issue": 227,
+  "fusion_cases": [
+    {
+      "id": "independent-positive-support",
+      "signals": [
+        {"root_ref": "root:a", "dependence_group": "group:a", "polarity": "support", "probability": 0.4},
+        {"root_ref": "root:b", "dependence_group": "group:b", "polarity": "support", "probability": 0.5}
+      ],
+      "expected": {"support_probability": 0.7, "support_groups": 2, "challenge_groups": 0}
+    },
+    {
+      "id": "replayed-evidence-not-independent",
+      "signals": [
+        {"root_ref": "root:a", "dependence_group": "group:a", "polarity": "support", "probability": 0.4},
+        {"root_ref": "root:a", "dependence_group": "group:a", "polarity": "support", "probability": 0.4},
+        {"root_ref": "root:a", "dependence_group": "group:a", "polarity": "support", "probability": 0.4}
+      ],
+      "expected": {"support_probability": 0.4, "support_groups": 1, "challenge_groups": 0}
+    },
+    {
+      "id": "derived-self-citation-not-independent",
+      "signals": [
+        {"root_ref": "root:a", "dependence_group": "group:a", "polarity": "support", "probability": 0.55},
+        {"root_ref": "derived:summary-a", "dependence_group": "group:a", "polarity": "support", "probability": 0.9, "derived_from": ["root:a"]}
+      ],
+      "expected": {"support_probability": 0.9, "support_groups": 1, "challenge_groups": 0}
+    },
+    {
+      "id": "correlated-sources-one-dependence-group",
+      "signals": [
+        {"root_ref": "root:news-a", "dependence_group": "syndicated-report", "polarity": "support", "probability": 0.6},
+        {"root_ref": "root:news-b", "dependence_group": "syndicated-report", "polarity": "support", "probability": 0.7}
+      ],
+      "expected": {"support_probability": 0.7, "support_groups": 1, "challenge_groups": 0}
+    },
+    {
+      "id": "challenge-evidence-remains-visible",
+      "signals": [
+        {"root_ref": "root:a", "dependence_group": "group:a", "polarity": "support", "probability": 0.9},
+        {"root_ref": "root:challenge", "dependence_group": "group:challenge", "polarity": "challenge", "probability": 0.8}
+      ],
+      "expected": {"support_probability": 0.9, "challenge_probability": 0.8, "support_groups": 1, "challenge_groups": 1}
+    }
+  ],
+  "governance_cases": [
+    {
+      "id": "high-fused-score-promotion",
+      "operation": "promotion",
+      "target_class": "M3",
+      "downstream_authority": "A1",
+      "risk_class": "medium",
+      "fused_support": 0.97,
+      "expected_outcome": "require_review"
+    },
+    {
+      "id": "protected-memory-deletion",
+      "operation": "permanent_deletion",
+      "target_class": "M4",
+      "downstream_authority": "A3",
+      "risk_class": "high",
+      "fused_support": 0.99,
+      "expected_outcome": "require_external_verification"
+    },
+    {
+      "id": "cross-scope-consolidation",
+      "operation": "scope_expansion",
+      "target_class": "M5",
+      "downstream_authority": "A5",
+      "risk_class": "critical",
+      "fused_support": 0.99,
+      "expected_outcome": "block"
+    }
+  ],
+  "transaction_cases": [
+    {
+      "id": "partial-apply-rolls-back",
+      "cursor_before": 41,
+      "commit_succeeded": false,
+      "validation_passed": false,
+      "rollback_supported": true,
+      "expected": {"status": "rolled_back", "cursor_after": 41, "cursor_advanced": false, "current_outputs": false}
+    },
+    {
+      "id": "validation-failure-retains-original",
+      "cursor_before": 52,
+      "commit_succeeded": true,
+      "validation_passed": false,
+      "rollback_supported": true,
+      "required_exception_preserved": false,
+      "expected": {"status": "rolled_back", "cursor_after": 52, "cursor_advanced": false, "current_outputs": false, "original_retained": true}
+    },
+    {
+      "id": "successful-validated-commit-advances-once",
+      "cursor_before": 68,
+      "commit_succeeded": true,
+      "validation_passed": true,
+      "rollback_supported": true,
+      "required_exception_preserved": true,
+      "expected": {"status": "committed", "cursor_after": 69, "cursor_advanced": true, "current_outputs": true}
+    },
+    {
+      "id": "failed-nonatomic-backend-quarantines",
+      "cursor_before": 73,
+      "commit_succeeded": true,
+      "validation_passed": false,
+      "rollback_supported": false,
+      "expected": {"status": "quarantined", "cursor_after": 73, "cursor_advanced": false, "current_outputs": false}
+    },
+    {
+      "id": "revoked-source-rebuild-not-current",
+      "cursor_before": 80,
+      "commit_succeeded": false,
+      "validation_passed": false,
+      "rollback_supported": true,
+      "source_currentness": "revoked",
+      "expected": {"status": "blocked_stale_source", "cursor_after": 80, "cursor_advanced": false, "current_outputs": false}
+    },
+    {
+      "id": "index-only-rebuild-can-be-ledgered-housekeeping",
+      "cursor_before": 91,
+      "commit_succeeded": true,
+      "validation_passed": true,
+      "rollback_supported": true,
+      "semantic_memory_changed": false,
+      "expected": {"status": "committed", "cursor_after": 92, "cursor_advanced": true, "current_outputs": true, "semantic_memory_changed": false}
+    }
+  ]
+}

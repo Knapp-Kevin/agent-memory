@@ -1,0 +1,61 @@
+{
+  "fixture_id": "durable-decision-stale-overwrite",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "An overwrite proposal bound to an older decision-state snapshot must fail before durable supersession even when authority evidence is otherwise valid.",
+  "expected_behavior": {
+    "commit_status": "rejected",
+    "reason": "stale_overwrite_proposal",
+    "target_status": "active",
+    "replacement_present": false,
+    "supersession_journal_count": 0
+  },
+  "memory_unit": {
+    "id": "decision:original",
+    "content_ref": "fixture://durable-decision/original",
+    "type": "decision",
+    "state": "crystallized",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "durable-decision-stale-overwrite-trap",
+      "timestamp": "2026-08-12T16:00:00Z",
+      "source_refs": ["fixture://durable-decision/original-source"]
+    },
+    "evidence": [
+      {"id": "evidence:decision-stale", "kind": "decision_record", "ref": "fixture://durable-decision/stale-evidence", "confidence": 1.0}
+    ],
+    "saturation": {
+      "sigma": 0.8,
+      "calibrated": false,
+      "durability_dimensions": ["durable_decision_fixture"]
+    },
+    "authority": {
+      "pama_outcome": "block",
+      "risk_class": "high",
+      "policy_refs": ["ADR-011", "ADR-025"],
+      "permitted_actions": [],
+      "prohibited_actions": ["decision_overwrite", "enter_pending_verification", "request_external_verification"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T16:00:00Z"
+  },
+  "overwrite_proposal": {
+    "proposal_id": "overwrite:fixture-stale",
+    "proposing_actor": "agent:planner",
+    "target_decision_id": "decision:original",
+    "replacement_decision_id": "decision:replacement",
+    "scope": "repo:agent-memory",
+    "state_snapshot": "v0",
+    "current_state": "v1",
+    "risk_class": "high"
+  },
+  "authority_grant": {
+    "grant_id": "grant:fixture-human",
+    "authority_kind": "human_confirmation",
+    "principal_id": "human:maintainer",
+    "issued_at": "2026-08-12T18:00:00Z",
+    "expires_at": "2026-08-12T19:00:00Z",
+    "max_risk_class": "critical"
+  }
+}

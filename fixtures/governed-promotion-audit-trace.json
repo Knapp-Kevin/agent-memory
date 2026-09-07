@@ -1,0 +1,213 @@
+{
+  "fixture_id": "governed-promotion-audit-trace",
+  "fixture_version": "1.0.0",
+  "class": "governance",
+  "description": "A governed promotion produces a complete audit trace: proposal, authority decision, action selection, state transition, and receipt, reconstructable without raw sensitive content in the events.",
+  "expected_behavior": {
+    "audit_trace_complete": true,
+    "estimator_distinct_from_authority": true,
+    "selected_action_in_permitted_set": true,
+    "state_change_ledgered": true,
+    "receipt_reconstructs_consequence": true,
+    "raw_content_in_events": false,
+    "reason": "Every consequential step emits a correlated audit event; the receipt chain reconstructs estimate, authority, selection, and consequence from references, not payloads."
+  },
+  "memory_unit": {
+    "id": "fixture:uor:governed-promotion-audit-trace",
+    "content_ref": "fixture://governed-promotion-audit-trace/raw",
+    "type": "decision",
+    "state": "pending_verification",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-governance-class",
+      "timestamp": "2026-08-11T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:corroborated-source",
+        "kind": "document",
+        "ref": "fixture://governed-promotion-audit-trace/source",
+        "confidence": 0.9
+      },
+      {
+        "id": "evidence:cross-reference",
+        "kind": "cross_reference",
+        "ref": "fixture://governed-promotion-audit-trace/xref",
+        "confidence": 0.85
+      }
+    ],
+    "saturation": {
+      "sigma": 0.86,
+      "calibrated": true,
+      "threshold": 0.8,
+      "durability_dimensions": [
+        "corroboration",
+        "cross_reference",
+        "meaningful_reuse"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "high",
+      "permitted_actions": [
+        "enter_pending_verification",
+        "collect_more_evidence",
+        "defer"
+      ],
+      "prohibited_actions": [
+        "crystallize_without_certification"
+      ],
+      "selection_mode": "deterministic",
+      "policy_refs": [
+        "ADR-004"
+      ]
+    },
+    "ledger_ref": "fixture://ledger/governed-promotion-audit-trace",
+    "created_at": "2026-08-11T00:00:00Z"
+  },
+  "audit_events": [
+    {
+      "event_id": "evt:gpat:001",
+      "event_type": "memory.propose",
+      "event_version": "1.0.0",
+      "timestamp": "2026-08-11T00:00:01Z",
+      "memory_id": "fixture:uor:governed-promotion-audit-trace",
+      "actor": "estimator:mts-saturation",
+      "component": "scoring",
+      "correlation_id": "corr:gpat",
+      "policy_version": "p-14",
+      "state_snapshot": "reinforced@v3",
+      "signal": {
+        "signal_type": "saturation",
+        "signal_semantics": "ordinal_routing_score",
+        "signal_value": 0.86,
+        "estimator_id": "mts-saturation",
+        "estimator_version": "v2",
+        "calibration_ref": "cal-2026-08",
+        "uncertainty": {
+          "band": [0.79, 0.91],
+          "estimator_disagreement": false
+        }
+      },
+      "payload": {
+        "proposal": "promotion_to_candidate",
+        "evidence_refs": [
+          "evidence:corroborated-source",
+          "evidence:cross-reference"
+        ]
+      },
+      "ledger_ref": "fixture://ledger/governed-promotion-audit-trace"
+    },
+    {
+      "event_id": "evt:gpat:002",
+      "event_type": "memory.authorize",
+      "event_version": "1.0.0",
+      "timestamp": "2026-08-11T00:00:02Z",
+      "memory_id": "fixture:uor:governed-promotion-audit-trace",
+      "actor": "pama:policy-engine",
+      "component": "governance",
+      "correlation_id": "corr:gpat",
+      "causation_id": "evt:gpat:001",
+      "policy_version": "p-14",
+      "state_snapshot": "reinforced@v3",
+      "authority": {
+        "authority_refs": ["pama:decision:gpat-5521"],
+        "permitted_actions": [
+          "enter_pending_verification",
+          "collect_more_evidence",
+          "defer"
+        ],
+        "prohibited_actions": [
+          "crystallize_without_certification"
+        ],
+        "selection_mode": "none"
+      },
+      "receipt_ref": "fixture://receipts/gpat-5521",
+      "ledger_ref": "fixture://ledger/governed-promotion-audit-trace"
+    },
+    {
+      "event_id": "evt:gpat:003",
+      "event_type": "memory.action.select",
+      "event_version": "1.0.0",
+      "timestamp": "2026-08-11T00:00:03Z",
+      "memory_id": "fixture:uor:governed-promotion-audit-trace",
+      "actor": "planner:lifecycle",
+      "component": "lifecycle",
+      "correlation_id": "corr:gpat",
+      "causation_id": "evt:gpat:002",
+      "policy_version": "p-14",
+      "authority": {
+        "authority_refs": ["pama:decision:gpat-5521"],
+        "permitted_actions": [
+          "enter_pending_verification",
+          "collect_more_evidence",
+          "defer"
+        ],
+        "selected_action": "enter_pending_verification",
+        "selection_mode": "deterministic"
+      },
+      "receipt_ref": "fixture://receipts/gpat-5521",
+      "ledger_ref": "fixture://ledger/governed-promotion-audit-trace"
+    },
+    {
+      "event_id": "evt:gpat:004",
+      "event_type": "memory.commit",
+      "event_version": "1.0.0",
+      "timestamp": "2026-08-11T00:00:04Z",
+      "memory_id": "fixture:uor:governed-promotion-audit-trace",
+      "actor": "lifecycle:committer",
+      "component": "lifecycle",
+      "correlation_id": "corr:gpat",
+      "causation_id": "evt:gpat:003",
+      "policy_version": "p-14",
+      "state_snapshot": {
+        "before": "reinforced@v3",
+        "after": "pending_verification@v4"
+      },
+      "payload": {
+        "transition": "reinforced -> pending_verification",
+        "rollback_path": "fixture://recovery/gpat-demote-v3"
+      },
+      "receipt_ref": "fixture://receipts/gpat-5521",
+      "ledger_ref": "fixture://ledger/governed-promotion-audit-trace"
+    },
+    {
+      "event_id": "evt:gpat:005",
+      "event_type": "memory.receipt",
+      "event_version": "1.0.0",
+      "timestamp": "2026-08-11T00:00:05Z",
+      "memory_id": "fixture:uor:governed-promotion-audit-trace",
+      "actor": "ledger:receipt-writer",
+      "component": "governance",
+      "correlation_id": "corr:gpat",
+      "causation_id": "evt:gpat:004",
+      "policy_version": "p-14",
+      "payload": {
+        "reconstructs": [
+          "estimate: evt:gpat:001",
+          "authority: evt:gpat:002",
+          "selection: evt:gpat:003",
+          "consequence: evt:gpat:004"
+        ],
+        "recovery_ref": "fixture://recovery/gpat-demote-v3"
+      },
+      "receipt_ref": "fixture://receipts/gpat-5521",
+      "ledger_ref": "fixture://ledger/governed-promotion-audit-trace"
+    }
+  ],
+  "interaction_history": [
+    {
+      "event": "observed",
+      "count": 3
+    },
+    {
+      "event": "meaningful_reuse",
+      "count": 2
+    },
+    {
+      "event": "proposed",
+      "count": 1
+    }
+  ]
+}

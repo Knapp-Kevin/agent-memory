@@ -1,0 +1,154 @@
+{
+  "qualification": {
+    "evidence": {
+      "adapter_results": [
+        {
+          "authority_effect": "none",
+          "currentness": "current",
+          "failure_result": "none",
+          "input_refs": ["hindsight-v090-document-lifecycle-v1"],
+          "normalized_refs": ["qualification:hindsight-v0.9.0:resource_artifact_memory"],
+          "operation": "retain_read_recall",
+          "raw_provider_refs": ["artifacts/hindsight-v090/raw-provider-evidence.json"],
+          "runtime_identity": "hindsight-embed:0.9.0:pg0",
+          "trace_ref": "qualification:hindsight:initial-retain"
+        },
+        {
+          "authority_effect": "none",
+          "currentness": "replacement_current",
+          "failure_result": "none",
+          "input_refs": ["hindsight-v090-document-lifecycle-v1"],
+          "normalized_refs": ["qualification:hindsight-v0.9.0:resource_artifact_memory"],
+          "operation": "stable_key_replace",
+          "raw_provider_refs": ["artifacts/hindsight-v090/raw-provider-evidence.json"],
+          "runtime_identity": "hindsight-embed:0.9.0:pg0",
+          "trace_ref": "qualification:hindsight:stable-key-replace"
+        },
+        {
+          "authority_effect": "none",
+          "currentness": "reconstructed_current",
+          "failure_result": "none",
+          "input_refs": ["hindsight-v090-document-lifecycle-v1"],
+          "normalized_refs": ["qualification:hindsight-v0.9.0:resource_artifact_memory"],
+          "operation": "restart_readback",
+          "raw_provider_refs": ["artifacts/hindsight-v090/raw-provider-evidence.json"],
+          "runtime_identity": "hindsight-embed:0.9.0:pg0",
+          "trace_ref": "qualification:hindsight:restart-readback"
+        },
+        {
+          "authority_effect": "none",
+          "currentness": "deleted_no_recall_residue",
+          "failure_result": "none",
+          "input_refs": ["hindsight-v090-document-lifecycle-v1"],
+          "normalized_refs": ["qualification:hindsight-v0.9.0:resource_artifact_memory"],
+          "operation": "document_delete_residue_scan",
+          "raw_provider_refs": ["artifacts/hindsight-v090/raw-provider-evidence.json"],
+          "runtime_identity": "hindsight-embed:0.9.0:pg0",
+          "trace_ref": "qualification:hindsight:delete-residue"
+        }
+      ],
+      "artifact_digests": ["sha256:f27c544747033bd456e6b7c3e6d01dc1309731bce8e19130e20a5161d43bd04d"],
+      "checks": [
+        {"check_id":"exact-provider-identity","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"mit-runtime-rights","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"llm-free-chunk-path","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"initial-document-readback","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"stable-key-repeat-idempotency","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"stable-key-replacement-currentness","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"restart-reconstruction","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"durable-key-after-restart","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"delete-readback-and-recall-residue","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true},
+        {"check_id":"provider-identity-is-not-agent-memory-identity","evidence_ref":"artifacts/hindsight-v090/raw-provider-evidence.json","passed":true}
+      ],
+      "normalized_refs": [
+        "qualification:hindsight-v0.9.0:resource_artifact_memory",
+        "qualification:hindsight-v0.9.0:resource_artifact_memory",
+        "qualification:hindsight-v0.9.0:resource_artifact_memory",
+        "qualification:hindsight-v0.9.0:resource_artifact_memory"
+      ],
+      "operations": ["retain_read_recall","stable_key_replace","restart_readback","document_delete_residue_scan"],
+      "raw_provider_refs": [
+        "artifacts/hindsight-v090/raw-provider-evidence.json",
+        "artifacts/hindsight-v090/raw-provider-evidence.json",
+        "artifacts/hindsight-v090/raw-provider-evidence.json",
+        "artifacts/hindsight-v090/raw-provider-evidence.json"
+      ]
+    },
+    "qualified_contract": {
+      "authority_effect": "none",
+      "behavior_contract": {
+        "correction_model": "provider_revalidation",
+        "currentness_model": "provider_revalidated",
+        "deletion_model": "provider_revalidation",
+        "invalidation_model": "provider_revalidation",
+        "migration_rebuild_model": "requires_requalification",
+        "operation_support": {"read":true,"recall_candidate":true,"write":true},
+        "residue_model": "scan_required",
+        "structural_mutation_requirement": "none"
+      },
+      "component_profile_version": "component-capability-v3",
+      "failure_posture": "fail_closed",
+      "operational_contract": {
+        "concurrency_control": "none",
+        "idempotency": "durable_keyed",
+        "reconciliation": "deterministic_readback",
+        "restart_recovery": "reconstructable",
+        "write_atomicity": "none"
+      },
+      "scope_posture": "external_scope_bridge",
+      "state_posture": "derived"
+    },
+    "result": {
+      "applicability_digest": "sha256:a1776c55d7984706f75f429a605e13cd56e14cd02bfa334697e8509982bd7f5e",
+      "authority_effect": "none",
+      "earned_maturity": "evidence_proven",
+      "limitations": [
+        "Qualification is exact to Hindsight v0.9.0 and source commit b12646f49ec512136b9f709e608524ffed969668.",
+        "Only chunk-backed resource_artifact_memory is qualified; richer LLM-backed Hindsight modes are outside this evidence boundary.",
+        "Write atomicity and concurrent mutation ordering remain unqualified and are declared none.",
+        "Provider-native recall ranking remains candidate/relevance evidence and carries no Agent Memory authority.",
+        "The v0.9 prose documentation omitted chunks although the exact v0.9.0 source allowed it; source truth controls this fixture and the discrepancy is retained as provenance."
+      ],
+      "maturity_before": "runtime_wired",
+      "profile_maturity_ceiling": "evidence_proven",
+      "qualification_current": true
+    },
+    "runtime": {
+      "configuration_digest": "sha256:ea13f055644145f4dd74abc8ff02cb650963de0ea09a480746940eca8fefd8a3",
+      "dependency_refs": [
+        "pypi:hindsight-embed==0.9.0",
+        "github:vectorize-io/hindsight@b12646f49ec512136b9f709e608524ffed969668"
+      ],
+      "fixture_digest": "sha256:089ac14c1f9489864bb871055e8583475ac04c44022cf5994dd863fb68a8c3d4",
+      "fixture_id": "hindsight-v090-document-lifecycle-v1",
+      "runtime_refs": ["hindsight-embed:local-daemon","hindsight:chunk-extraction","hindsight:pg0"]
+    },
+    "schema_version": "1.2.0",
+    "source_rights": {
+      "license_id": "MIT",
+      "license_ref": "github:vectorize-io/hindsight@b12646f49ec512136b9f709e608524ffed969668:LICENSE",
+      "use_posture": "runtime_allowed"
+    },
+    "subject": {
+      "adapter_id": "hindsight-v090-chunk-document-adapter",
+      "adapter_version": "1.0.0",
+      "capability_id": "resource_artifact_memory",
+      "capability_version": "1.0",
+      "component_id": "hindsight-v0.9.0",
+      "component_version": "0.9.0",
+      "implementation_ref": "github:vectorize-io/hindsight@b12646f49ec512136b9f709e608524ffed969668",
+      "qualification_profile_id": "hindsight-v090-chunk-resource-artifact",
+      "qualification_profile_version": "1.0.0"
+    }
+  },
+  "source": {
+    "agent_memory_exact_head": "6274070fac248c38dc2b1a7c13fafab79881d681",
+    "agent_memory_merge": "24707456a9bc89f50a49cb2a889aaeb6998ada54",
+    "agent_memory_pr": 353,
+    "applicability_digest": "sha256:a1776c55d7984706f75f429a605e13cd56e14cd02bfa334697e8509982bd7f5e",
+    "artifact_digest": "sha256:f27c544747033bd456e6b7c3e6d01dc1309731bce8e19130e20a5161d43bd04d",
+    "provider": "vectorize-io/hindsight@v0.9.0",
+    "provider_commit": "b12646f49ec512136b9f709e608524ffed969668",
+    "workflow_run": 33341188586
+  }
+}

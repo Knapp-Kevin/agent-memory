@@ -1,0 +1,82 @@
+name: Atlas Research Intake
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/programs/atlas-research/**'
+      - 'scripts/build_atlas_research_inventory.py'
+      - 'scripts/validate_atlas_research_scaffold.py'
+      - 'scripts/validate_atlas_research_synthesis.py'
+      - '.github/workflows/atlas-research-intake.yml'
+  pull_request:
+    paths:
+      - 'docs/programs/atlas-research/**'
+      - 'scripts/build_atlas_research_inventory.py'
+      - 'scripts/validate_atlas_research_scaffold.py'
+      - 'scripts/validate_atlas_research_synthesis.py'
+      - '.github/workflows/atlas-research-intake.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-atlas-intake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Checkout pinned Agent Memory Atlas
+        uses: actions/checkout@v7
+        with:
+          repository: neoneye/agent-memory-atlas
+          ref: 90bfeed14764e268c82c925d4c39645c7480d015
+          path: _atlas
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install schema validator
+        run: python -m pip install jsonschema==4.26.0
+
+      - name: Validate committed scaffold and inventory lock
+        run: python scripts/validate_atlas_research_scaffold.py --allow-missing-inventory
+
+      - name: Validate bounded corpus synthesis
+        run: python scripts/validate_atlas_research_synthesis.py
+
+      - name: Generate exact-pinned report inventory
+        run: >-
+          python scripts/build_atlas_research_inventory.py
+          --atlas-root _atlas
+          --output /tmp/report-inventory.jsonl
+
+      - name: Validate generated inventory against durable lock
+        run: >-
+          python scripts/validate_atlas_research_scaffold.py
+          --inventory /tmp/report-inventory.jsonl
+
+      - name: Record durable research digests
+        run: |
+          sha256sum /tmp/report-inventory.jsonl | tee /tmp/report-inventory.sha256
+          sha256sum docs/programs/atlas-research/corpus-synthesis.json | tee /tmp/corpus-synthesis.sha256
+          cat /tmp/report-inventory.sha256 >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/corpus-synthesis.sha256 >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Preserve generated inventory convenience evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: atlas-research-90bfeed-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/report-inventory.jsonl
+            /tmp/report-inventory.sha256
+            /tmp/corpus-synthesis.sha256
+            docs/programs/atlas-research/corpus-synthesis.json
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,43 @@
+name: Domain Schema Discovery Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  domain-schema-discovery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute progressive domain-schema regressions
+        env:
+          PYTHONPATH: reference
+        run: python -m unittest tests.test_domain_schema_discovery
+
+      - name: Emit progressive domain-schema evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          PYTHONPATH=reference python reference/run_domain_schema_discovery.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output domain-schema-discovery-evidence.json
+
+      - name: Upload progressive domain-schema evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: domain-schema-discovery-evidence
+          path: domain-schema-discovery-evidence.json
+          if-no-files-found: error

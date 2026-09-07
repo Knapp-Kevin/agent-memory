@@ -1,0 +1,74 @@
+name: Temporal Commitment Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  temporal-commitment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r reference/requirements.txt
+          python -m pip install --disable-pip-version-check 'uor-addr==0.2.0'
+          python -c 'import importlib.metadata; assert importlib.metadata.version("uor-addr") == "0.2.0"'
+
+      - name: Validate schemas and adversarial tests
+        env:
+          PYTHONPATH: reference
+        run: |
+          set -o pipefail
+          python scripts/validate_schemas.py
+          python -m unittest reference/tests/test_temporal_commitment.py 2>&1 | tee temporal-commitment-tests.txt
+
+      - name: Execute temporal commitment evidence harness
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+          PYTHONPATH: reference
+        run: |
+          python reference/run_temporal_commitment_workflow.py \
+            --agent-memory-commit "$AGENT_MEMORY_COMMIT" \
+            --output temporal-commitment-evidence.json
+
+      - name: Inspect evidence invariants
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          report = json.load(open('temporal-commitment-evidence.json', encoding='utf-8'))
+          assert report['agent_memory_commit'] == os.environ['AGENT_MEMORY_COMMIT']
+          assert report['uor']['release'] == 'v0.2.0'
+          assert report['uor']['source_commit'] == 'd78f82f26034880e91b1d54c21900a33ab73f695'
+          assert report['metrics']['check_count'] == 16
+          assert report['metrics']['failed_checks'] == 0
+          assert report['interpretation']['complete_history_claimed'] is False
+          assert report['interpretation']['event_occurrence_time_proven_by_witness'] is False
+          assert report['interpretation']['content_identity_authority_effect'] == 'none'
+          assert report['interpretation']['signature_authority_effect'] == 'none'
+          assert report['interpretation']['witness_authority_effect'] == 'none'
+          assert report['interpretation']['currentness_authority_effect'] == 'none'
+          assert report['currentness']['interpretation']['historical_commitment_mutated'] is False
+          assert report['currentness']['interpretation']['cryptographic_validity_changed'] is False
+          PY
+
+      - name: Upload temporal commitment evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: temporal-commitment-evidence
+          path: |
+            temporal-commitment-evidence.json
+            temporal-commitment-tests.txt
+          if-no-files-found: error

@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.0",
+  "atlas_repository": "neoneye/agent-memory-atlas",
+  "atlas_commit": "90bfeed14764e268c82c925d4c39645c7480d015",
+  "captured_at": "2026-08-15T01:58:00Z",
+  "git_object_identity": {
+    "root_tree_sha": "70dfb11b65863e0af98c7b32387eb2837ab02a8c",
+    "content_tree_sha": "9b98810d489c7aa4526d8e6d8005d60a351cfebe",
+    "systems_tree_sha": "c7695782e17e3b17143267e671d064917d57ed0c",
+    "patterns_tree_sha": "f3f71d4f31ea2958560684aec8ae7897f6e34721",
+    "methodology_tree_sha": "53ceee8ff528458b9e8386d5ab60e45a26ed671e"
+  },
+  "system_report_count": {
+    "value": 283,
+    "source": "content/systems-index.md",
+    "source_blob_sha": "11cd4119006ca0858c97b86475b573b6ebed9f57",
+    "interpretation": "source-declared generated report count at the pinned commit, not an independently inferred ecosystem prevalence statistic"
+  },
+  "pattern_count": {
+    "value": 21,
+    "source": "content/patterns tree",
+    "interpretation": "named pattern documents excluding content/patterns/index.md"
+  },
+  "methodology_files": [
+    {
+      "path": "content/methodology/atlas-rubric.md",
+      "blob_sha": "4196204231237e936d644b936474cd0132960d41"
+    },
+    {
+      "path": "content/methodology/overview-report-format.md",
+      "blob_sha": "b3bd8b0d32bbd994d25f9777a23b1f49926f65ad"
+    },
+    {
+      "path": "content/methodology/per-repo-report-format.md",
+      "blob_sha": "1236de58fe3572962ff9fa6732c5cfa20958ac23"
+    }
+  ],
+  "source_digests": {
+    "digest_type": "git_blob_sha",
+    "benchmarks": {
+      "path": "content/benchmarks.md",
+      "digest": "40b5a37353ea8209dd5e716e677a522dcc7db10e"
+    },
+    "capabilities": {
+      "path": "content/capabilities.md",
+      "digest": "cd766a88e3a63a673bdc54b9063dd05be6f7f015"
+    },
+    "verdicts": {
+      "path": "content/verdicts.md",
+      "digest": "e37238d53a7a26aaba18255257a1c0bc3bf35aed"
+    }
+  },
+  "generated_site_drift": {
+    "generated_page_count_from_commit_message": 316,
+    "authority": "informational_only",
+    "note": "The generated site count is preserved only as drift context. Source-tree identities and source records govern this intake."
+  },
+  "methodology_limits": [
+    "Atlas capability marks are source-reading claims at pinned commits, not Agent Memory runtime conformance evidence.",
+    "Atlas records an LLM reviewer directed and reviewed by one person.",
+    "Strict binary capability marks can hide near-misses and subsystem distinctions.",
+    "Repository-scoped review can miss behavior implemented by dependencies or deployment configuration.",
+    "Atlas origin establishes provenance for a claim, not evidentiary privilege inside Agent Memory."
+  ]
+}

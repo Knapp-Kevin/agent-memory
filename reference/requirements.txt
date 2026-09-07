@@ -1,0 +1,7 @@
+# Reproducible dependency set for the main reference-implementation validation profile.
+# Keep comparator-only environments (for example cmcp-runtime and Mem0) isolated in CI.
+jsonschema==4.26.0
+cryptography==50.0.1
+agent-manifest==0.11.2
+agentrust-trace==0.9.0
+rfc8785==0.1.4

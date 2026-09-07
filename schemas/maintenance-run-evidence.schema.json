@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/maintenance-run-evidence.schema.json",
+  "title": "Maintenance Run Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile_version", "run_id", "maintenance_actor", "policy_version", "commit_policy_version", "scope", "cursor_before", "cursor_after", "input_snapshot_ref", "source_currentness", "source_evidence_refs", "proposal_refs", "constituent_decisions", "planned_operations", "transaction_ref", "atomicity_mode", "transaction_status", "commit_status", "validation_status", "validation_refs", "output_refs", "supersession_refs", "tombstone_refs", "estimator_evidence_refs", "semantic_memory_changed", "housekeeping_only", "started_at", "completed_at", "evidence_id", "evidence_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "profile_version": {"const": "0.1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "maintenance_actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "charter_ref", "authority_refs"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "charter_ref": {"type": "string", "minLength": 1},
+        "authority_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "policy_version": {"type": "string", "minLength": 1},
+    "commit_policy_version": {"type": "string", "minLength": 1},
+    "policy_revalidation_ref": {"type": "string", "minLength": 1},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_ref", "purpose", "isolation_domain_refs"],
+      "properties": {
+        "tenant_ref": {"type": "string", "minLength": 1},
+        "project_ref": {"type": "string", "minLength": 1},
+        "task_ref": {"type": "string", "minLength": 1},
+        "purpose": {"type": "string", "minLength": 1},
+        "isolation_domain_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+      }
+    },
+    "cursor_before": {"type": ["string", "integer"]},
+    "cursor_after": {"type": ["string", "integer"]},
+    "input_snapshot_ref": {"type": "string", "minLength": 1},
+    "source_currentness": {"type": "string", "enum": ["current", "stale", "revoked", "unknown"]},
+    "source_evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "proposal_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "constituent_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["decision_ref", "operation", "outcome"],
+        "properties": {
+          "decision_ref": {"type": "string", "minLength": 1},
+          "operation": {"type": "string", "minLength": 1},
+          "outcome": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "planned_operations": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "transaction_ref": {"type": "string", "minLength": 1},
+    "atomicity_mode": {"type": "string", "enum": ["atomic", "compensating"]},
+    "transaction_status": {"type": "string", "enum": ["planned", "staged", "committed", "rolled_back", "quarantined", "blocked_stale_source", "failed"]},
+    "commit_status": {"type": "string", "enum": ["not_attempted", "succeeded", "failed", "partial", "rolled_back"]},
+    "validation_status": {"type": "string", "enum": ["not_run", "passed", "failed"]},
+    "validation_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "output_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "supersession_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "tombstone_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "rollback_ref": {"type": "string", "minLength": 1},
+    "quarantine_ref": {"type": "string", "minLength": 1},
+    "estimator_evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "semantic_memory_changed": {"type": "boolean"},
+    "housekeeping_only": {"type": "boolean"},
+    "started_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "evidence_id": {"type": "string", "minLength": 1},
+    "evidence_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

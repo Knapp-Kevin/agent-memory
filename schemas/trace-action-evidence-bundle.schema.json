@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mythologiq-labs-llc.github.io/agent-memory/schemas/trace-action-evidence-bundle.schema.json",
+  "title": "Agent Memory TRACE-Compatible Action Evidence Bundle",
+  "description": "Content-free detached Agent Memory action evidence carried through the existing cMCP external_execution_evidence envelope.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["external_execution_evidence", "detached_payload"],
+  "properties": {
+    "external_execution_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuer",
+        "issuer_key_id",
+        "signature",
+        "evidence_hash",
+        "evidence_type",
+        "linked_call_id"
+      ],
+      "properties": {
+        "issuer": {"type": "string", "minLength": 1},
+        "issuer_key_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "signature": {"type": "string", "minLength": 1},
+        "evidence_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "evidence_type": {"const": "opaque-receipt"},
+        "linked_call_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "detached_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "call_id",
+        "action_ref",
+        "portable_evidence_ref",
+        "canonical_receipt_ref",
+        "execution_outcome",
+        "execution_time"
+      ],
+      "properties": {
+        "profile": {"const": "agent-memory.trace-action-evidence.v1"},
+        "call_id": {"type": "string", "minLength": 1},
+        "action_ref": {"type": "string", "minLength": 1},
+        "portable_evidence_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "canonical_receipt_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "execution_outcome": {"enum": ["accepted", "rejected"]},
+        "execution_time": {"type": "string", "format": "date-time"},
+        "source_domain_ref": {"type": "string", "minLength": 1},
+        "destination_domain_ref": {"type": "string", "minLength": 1},
+        "domain_authorization_state_ref": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

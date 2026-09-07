@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-proposal-envelope.schema.json",
+  "title": "Agent Memory Public API: Proposal Envelope",
+  "description": "The public, versioned form of a proposal (Sprint 4a, contract 1.0.0). Exactly the Proposal fields a consumer may set; the evaluator-side fields (review_satisfied, approval_refs, approves_own_authority, actor_authority_resolved) are not part of the contract and are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "proposal_id",
+    "actor_id",
+    "charter_version",
+    "target_reference",
+    "target_class",
+    "scope",
+    "operation",
+    "current_strength",
+    "proposed_strength",
+    "downstream_authority",
+    "reversibility",
+    "risk_class",
+    "evidence_refs"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": [
+        "1.0.0",
+        "1.1.0"
+      ]
+    },
+    "proposal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "charter_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_reference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_class": {
+      "type": "string",
+      "enum": [
+        "M0_EXECUTION_LOCAL_CONTEXT",
+        "M1_LOW_RISK_PERSONAL_PREFERENCE",
+        "M2_OPERATIONAL_ASSOCIATION",
+        "M3_REUSABLE_PROCEDURE_OR_CAPABILITY",
+        "M4_SHARED_OR_IDENTITY_BEARING_STATE",
+        "M5_GOVERNANCE_SECURITY_OR_AUTONOMOUS_AUTHORITY"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "runtime_assembly",
+        "score_adjustment",
+        "link_creation",
+        "link_deletion",
+        "correction",
+        "decision_overwrite",
+        "domain_schema_mutation",
+        "promotion",
+        "crystallization",
+        "pruning",
+        "permanent_deletion",
+        "scope_expansion",
+        "policy_mutation",
+        "capability_promotion",
+        "authority_change",
+        "other"
+      ]
+    },
+    "current_strength": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "tentative",
+        "reinforced",
+        "promoted",
+        "canonical",
+        "decaying",
+        "archived",
+        "deprecated",
+        "blocked",
+        "not_applicable"
+      ]
+    },
+    "proposed_strength": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "tentative",
+        "reinforced",
+        "promoted",
+        "canonical",
+        "decaying",
+        "archived",
+        "deprecated",
+        "blocked",
+        "not_applicable"
+      ]
+    },
+    "downstream_authority": {
+      "type": "string",
+      "enum": [
+        "A0_RETRIEVAL_ONLY",
+        "A1_RECOMMENDATION_INFLUENCE",
+        "A2_DRAFT_GENERATION",
+        "A3_LOCAL_WORKFLOW_MUTATION",
+        "A4_EXTERNAL_ACTION",
+        "A5_GOVERNANCE_CHANGE"
+      ]
+    },
+    "reversibility": {
+      "type": "string",
+      "enum": [
+        "ephemeral",
+        "reversible",
+        "versioned_revocable",
+        "compensatable",
+        "irreversible",
+        "unknown"
+      ]
+    },
+    "risk_class": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "estimator_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "estimator_versions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "requested_scope_change": {
+      "type": "string"
+    },
+    "state_snapshot": {
+      "type": "string"
+    },
+    "tenant_ref": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "isolation_domain_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_isolation_domain_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "project_ref": {
+      "type": "string"
+    },
+    "task_ref": {
+      "type": "string"
+    }
+  }
+}

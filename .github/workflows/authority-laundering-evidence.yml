@@ -1,0 +1,52 @@
+name: Authority Laundering Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  authority-laundering:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Validate schemas and fixtures
+        run: python scripts/validate_schemas.py
+
+      - name: Execute derivation and authority-laundering tests
+        env:
+          PYTHONPATH: reference
+        run: >-
+          python -m unittest
+          tests.test_derivation_evidence
+          tests.test_authority_laundering_depth
+
+      - name: Validate derivation profile links
+        run: python scripts/validate_markdown_links.py docs/profiles/derivation-provenance-profile.md
+
+      - name: Emit exact-head authority-laundering evidence depth
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_authority_laundering_depth.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output authority-laundering-depth.json
+
+      - name: Upload authority laundering evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: authority-laundering-evidence-depth
+          path: authority-laundering-depth.json
+          if-no-files-found: error

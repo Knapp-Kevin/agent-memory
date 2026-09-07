@@ -1,0 +1,43 @@
+name: Conditional Memory Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  conditional-memory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute conditional-memory regressions
+        env:
+          PYTHONPATH: reference
+        run: python -m unittest tests.test_conditional_memory
+
+      - name: Emit conditional-memory evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          PYTHONPATH=reference python reference/run_conditional_memory.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output conditional-memory-evidence.json
+
+      - name: Upload conditional-memory evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: conditional-memory-evidence
+          path: conditional-memory-evidence.json
+          if-no-files-found: error

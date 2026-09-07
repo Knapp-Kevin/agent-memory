@@ -1,0 +1,138 @@
+{
+  "fixture_id": "external-policy-composition-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "Vendor-neutral decision-composition cases prove that external policy may tighten Agent Memory authority but cannot silently loosen it, and that decision evidence remains distinct from enforcement evidence.",
+  "expected_behavior": {
+    "all_cases_pass": true,
+    "composition_rule_version": "0.1.0",
+    "execution_status_without_witness": "unknown"
+  },
+  "memory_unit": {
+    "id": "mem:external-policy-composition",
+    "content_ref": "fixture://external-policy-composition/action",
+    "type": "decision",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "external-policy-composition-matrix",
+      "timestamp": "2026-08-12T18:00:00Z",
+      "source_refs": ["issue://152"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:external-policy-composition",
+        "kind": "policy_composition_fixture",
+        "ref": "issue://152",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["interoperability_contract"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": ["ADR-020", "ADR-021", "issue:152"],
+      "permitted_actions": ["enter_pending_verification", "collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T18:00:00Z"
+  },
+  "composition_cases": [
+    {
+      "case_id": "local-deny-external-allow",
+      "local_pama_outcome": "block",
+      "provider_mode": "advisory",
+      "external_decision": "allow",
+      "identity_mode": "current",
+      "expected_provider_status": "available",
+      "expected_effective_decision": "deny",
+      "expected_execution_status": "unknown"
+    },
+    {
+      "case_id": "local-review-external-allow",
+      "local_pama_outcome": "require_review",
+      "provider_mode": "advisory",
+      "external_decision": "allow",
+      "identity_mode": "current",
+      "expected_provider_status": "available",
+      "expected_effective_decision": "require_approval",
+      "expected_execution_status": "unknown"
+    },
+    {
+      "case_id": "local-allow-external-deny",
+      "local_pama_outcome": "allow_with_ledger",
+      "provider_mode": "advisory",
+      "external_decision": "deny",
+      "identity_mode": "current",
+      "expected_provider_status": "available",
+      "expected_effective_decision": "deny",
+      "expected_execution_status": "unknown"
+    },
+    {
+      "case_id": "local-allow-external-escalate",
+      "local_pama_outcome": "allow_with_ledger",
+      "provider_mode": "advisory",
+      "external_decision": "escalate",
+      "identity_mode": "current",
+      "expected_provider_status": "available",
+      "expected_effective_decision": "require_approval",
+      "expected_execution_status": "unknown"
+    },
+    {
+      "case_id": "advisory-unavailable-preserves-local",
+      "local_pama_outcome": "allow_with_ledger",
+      "provider_mode": "advisory",
+      "external_decision": null,
+      "identity_mode": "none",
+      "expected_provider_status": "unavailable",
+      "expected_effective_decision": "allow",
+      "expected_execution_status": "unknown"
+    },
+    {
+      "case_id": "authoritative-unavailable-denies",
+      "local_pama_outcome": "allow_with_ledger",
+      "provider_mode": "authoritative",
+      "external_decision": null,
+      "identity_mode": "none",
+      "expected_provider_status": "unavailable",
+      "expected_effective_decision": "deny",
+      "expected_execution_status": "unknown"
+    },
+    {
+      "case_id": "advisory-stale-identity-ignored",
+      "local_pama_outcome": "allow_with_ledger",
+      "provider_mode": "advisory",
+      "external_decision": "deny",
+      "identity_mode": "stale",
+      "expected_provider_status": "stale_identity",
+      "expected_effective_decision": "allow",
+      "expected_execution_status": "unknown"
+    },
+    {
+      "case_id": "authoritative-stale-identity-denies",
+      "local_pama_outcome": "allow_with_ledger",
+      "provider_mode": "authoritative",
+      "external_decision": "allow",
+      "identity_mode": "stale",
+      "expected_provider_status": "stale_identity",
+      "expected_effective_decision": "deny",
+      "expected_execution_status": "unknown"
+    },
+    {
+      "case_id": "decision-issued-execution-unknown",
+      "local_pama_outcome": "allow_with_ledger",
+      "provider_mode": "none",
+      "external_decision": null,
+      "identity_mode": "none",
+      "expected_provider_status": "not_configured",
+      "expected_effective_decision": "allow",
+      "expected_execution_status": "unknown"
+    }
+  ]
+}

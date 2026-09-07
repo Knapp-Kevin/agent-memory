@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.0.0",
+  "runtime": {
+    "runtime_id": "example-existing-agent-runtime",
+    "runtime_version": "operator-managed",
+    "profile_id": "attached-existing-stack",
+    "profile_version": "1.0.0",
+    "entry_mode": "attach_existing_stack"
+  },
+  "canonical_state": {
+    "owner_component_id": "existing-canonical-store",
+    "owner_capability_id": "memory_record_store",
+    "owner_capability_version": "1.0"
+  },
+  "durable_governance": {
+    "profile_id": "reference_file_checkpoint_v1",
+    "profile_version": "1.0.0",
+    "state_ref": "state://agent-memory/governance"
+  },
+  "components": [
+    {
+      "declaration": {
+        "component_id": "existing-canonical-store",
+        "component_version": "operator-managed-2026.08",
+        "profile_version": "component-capability-v1",
+        "enabled": true,
+        "runtime_ref": "connector://existing-canonical-store",
+        "failure_posture": "fail_closed",
+        "provenance_refs": ["operator:existing-stack"],
+        "capabilities": [
+          {
+            "capability_id": "memory_record_store",
+            "capability_version": "1.0",
+            "maturity": "runtime_wired",
+            "state_posture": "canonical",
+            "scope_posture": "enforces_agent_memory_scope",
+            "failure_posture": "fail_closed",
+            "authority_effect": "none",
+            "enabled": true,
+            "evidence_refs": ["operator:existing-store-runtime"],
+            "limitations": ["example_operator_supplied_component"]
+          }
+        ]
+      },
+      "adapter": {
+        "adapter_id": "existing-memory-store-adapter",
+        "adapter_version": "1.0.0",
+        "runtime_ref": "connector://existing-canonical-store",
+        "secret_refs": {
+          "connection": "env://EXISTING_MEMORY_DSN"
+        }
+      },
+      "source_rights": {
+        "license_id": "Proprietary",
+        "license_ref": "operator://existing-canonical-store/rights",
+        "use_posture": "runtime_allowed"
+      }
+    },
+    {
+      "declaration": {
+        "component_id": "codegenome",
+        "component_version": "43a6b7147ec78ec5c616723fa1dd30f342174860",
+        "profile_version": "component-capability-v1",
+        "enabled": true,
+        "runtime_ref": "MythologIQ-Labs-LLC/CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860",
+        "failure_posture": "explicit_unavailable",
+        "provenance_refs": ["qualification:#300"],
+        "capabilities": [
+          {
+            "capability_id": "code_graph_traversal",
+            "capability_version": "1.0",
+            "maturity": "evidence_proven",
+            "state_posture": "derived",
+            "scope_posture": "inherits_agent_memory_scope",
+            "failure_posture": "explicit_unavailable",
+            "authority_effect": "none",
+            "enabled": true,
+            "evidence_refs": ["qualification:#300:codegenome"],
+            "limitations": ["full_rebuild_currentness_only"]
+          }
+        ]
+      },
+      "adapter": {
+        "adapter_id": "codegenome-cli",
+        "adapter_version": "1.0.0",
+        "runtime_ref": "MythologIQ-Labs-LLC/CodeGenome@43a6b7147ec78ec5c616723fa1dd30f342174860"
+      },
+      "source_rights": {
+        "license_id": "MIT",
+        "license_ref": "MythologIQ-Labs-LLC/CodeGenome/LICENSE@43a6b7147ec78ec5c616723fa1dd30f342174860",
+        "use_posture": "runtime_allowed"
+      }
+    },
+    {
+      "declaration": {
+        "component_id": "graphify",
+        "component_version": "v0.9.43",
+        "profile_version": "component-capability-v1",
+        "enabled": true,
+        "runtime_ref": "Graphify-Labs/graphify@7281f27eac568f77f50910f59f84543458f5dfd1",
+        "failure_posture": "explicit_unavailable",
+        "provenance_refs": ["qualification:#300"],
+        "capabilities": [
+          {
+            "capability_id": "code_graph_traversal",
+            "capability_version": "1.0",
+            "maturity": "evidence_proven",
+            "state_posture": "derived",
+            "scope_posture": "inherits_agent_memory_scope",
+            "failure_posture": "explicit_unavailable",
+            "authority_effect": "none",
+            "enabled": true,
+            "evidence_refs": ["qualification:#300:graphify"],
+            "limitations": ["full_rebuild_currentness_only"]
+          }
+        ]
+      },
+      "adapter": {
+        "adapter_id": "graphify-cli",
+        "adapter_version": "1.0.0",
+        "runtime_ref": "Graphify-Labs/graphify@7281f27eac568f77f50910f59f84543458f5dfd1"
+      },
+      "source_rights": {
+        "license_id": "Apache-2.0",
+        "license_ref": "Graphify-Labs/graphify/LICENSE@7281f27eac568f77f50910f59f84543458f5dfd1",
+        "use_posture": "runtime_allowed"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "route_id": "canonical-record-store",
+      "capability_id": "memory_record_store",
+      "capability_version": "1.0",
+      "minimum_maturity": "runtime_wired",
+      "allowed_components": ["existing-canonical-store"],
+      "preferred_component": "existing-canonical-store",
+      "fallback_components": [],
+      "required_state_postures": ["canonical"],
+      "required_scope_postures": ["enforces_agent_memory_scope"],
+      "qualification": {
+        "required": false
+      },
+      "currentness": {
+        "required": false
+      }
+    },
+    {
+      "route_id": "derived-code-graph",
+      "capability_id": "code_graph_traversal",
+      "capability_version": "1.0",
+      "minimum_maturity": "evidence_proven",
+      "allowed_components": ["codegenome", "graphify"],
+      "preferred_component": "codegenome",
+      "fallback_components": ["graphify"],
+      "required_state_postures": ["derived"],
+      "required_scope_postures": ["inherits_agent_memory_scope"],
+      "qualification": {
+        "required": true,
+        "adapter_id": "codegenome-cli",
+        "adapter_version": "1.0.0",
+        "profile_id": "code-graph-traversal-currentness",
+        "profile_version": "1.1.0",
+        "minimum_earned_maturity": "evidence_proven",
+        "applicability_digest": "sha256:915a093171623702ea39df6e37a5588b7fdf2fb7bd88f81f7d3d41445a41af2e"
+      },
+      "currentness": {
+        "required": true,
+        "projection_id": "code-graph"
+      }
+    }
+  ],
+  "governance_peers": [
+    {
+      "peer_id": "dashclaw",
+      "adapter_ref": "reference/agentmem_ref/dashclaw_external_verdict.py",
+      "required": false,
+      "secret_refs": {
+        "credential": "env://DASHCLAW_TOKEN"
+      }
+    }
+  ],
+  "evidence": {
+    "qualification_store_refs": [
+      "artifact://component-qualification-1db939deb903a6685830cfdcb43db0993e2f650f"
+    ],
+    "receipt_store_ref": "state://agent-memory/receipts",
+    "runtime_evidence_ref": "evidence://agent-memory/runtime"
+  }
+}

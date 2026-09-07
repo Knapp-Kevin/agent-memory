@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/temporal-currentness-evaluation.schema.json",
+  "title": "Agent Memory Temporal Commitment Currentness Evaluation",
+  "description": "Append-only evidence about current applicability of an immutable temporal commitment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evaluation_id", "commitment_reference_profile", "commitment_ref", "status", "evidence_refs", "superseding_refs", "evaluated_at", "interpretation"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "evaluation_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "commitment_reference_profile": {"type": "string", "minLength": 1},
+    "commitment_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "status": {"type": "string", "enum": ["current", "superseded", "revoked", "disputed", "unknown"]},
+    "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "superseding_refs": {"type": "array", "items": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}, "uniqueItems": true},
+    "evaluated_at": {"type": "string", "minLength": 1},
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_effect", "historical_commitment_mutated", "cryptographic_validity_changed", "memory_admission"],
+      "properties": {
+        "authority_effect": {"const": "none"},
+        "historical_commitment_mutated": {"const": false},
+        "cryptographic_validity_changed": {"const": false},
+        "memory_admission": {"const": "not_established"}
+      }
+    }
+  }
+}

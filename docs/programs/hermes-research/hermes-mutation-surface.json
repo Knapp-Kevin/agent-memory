@@ -1,0 +1,266 @@
+{
+  "schema_version": "1.0.0",
+  "research_issue": "#317",
+  "hermes": {
+    "repository": "NousResearch/hermes-agent",
+    "commit": "165c889e5b4277b56dadd42949a4112c1e6175a6",
+    "license": "MIT",
+    "source_rights_posture": "reference_and_runtime_integration_allowed_subject_to_license"
+  },
+  "agent_memory_evidence_boundary": "0df4cf3337b3752105e1b5a110f38eee31f46fef",
+  "research_conclusion": "generic_durable_state_mutation_middleware_needed_for_strict_mode",
+  "doctrine_disposition": "no_new_adr",
+  "authority_effect": "none",
+  "surfaces": [
+    {
+      "id": "foreground_builtin_memory_tool",
+      "state_kind": "semantic_memory",
+      "origin": "foreground_model",
+      "mutation_path": "tool_executor -> pre_tool_call -> AIAgent._invoke_tool -> memory_tool -> MemoryStore",
+      "pre_tool_interceptable": true,
+      "external_memory_provider_complete_observer": true,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": true,
+      "source_refs": ["agent/tool_executor.py", "tools/memory_tool.py", "agent/memory_manager.py"],
+      "notes": "Normal model-driven built-in memory writes pass through resolve_pre_tool_block before persistence. Successful non-staged writes may then be mirrored post-commit to an external provider."
+    },
+    {
+      "id": "foreground_skill_manage",
+      "state_kind": "procedural_memory",
+      "origin": "foreground_model",
+      "mutation_path": "tool_executor -> pre_tool_call -> AIAgent._invoke_tool -> skill_manage",
+      "pre_tool_interceptable": true,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": true,
+      "source_refs": ["agent/tool_executor.py", "tools/skill_manager_tool.py"],
+      "notes": "Normal skill creation/edit/patch/delete/supporting-file writes are interceptable before skill_manage executes."
+    },
+    {
+      "id": "background_review_memory",
+      "state_kind": "semantic_memory",
+      "origin": "background_review",
+      "mutation_path": "forked AIAgent.run_conversation -> tool_executor -> pre_tool_call -> shared parent MemoryStore",
+      "pre_tool_interceptable": true,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": true,
+      "source_refs": ["agent/background_review.py", "agent/tool_executor.py"],
+      "notes": "The review fork uses the normal tool executor and shares the parent MemoryStore, but is created with skip_memory=True for external provider setup. Provider-only observation is therefore not a complete recursive-learning record."
+    },
+    {
+      "id": "background_review_skill_manage",
+      "state_kind": "procedural_memory",
+      "origin": "background_review",
+      "mutation_path": "forked AIAgent.run_conversation -> tool_executor -> pre_tool_call -> skill_manage",
+      "pre_tool_interceptable": true,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": true,
+      "source_refs": ["agent/background_review.py", "agent/tool_executor.py", "tools/skill_manager_tool.py"],
+      "notes": "Background review restricts its mutation tools and carries provenance/read-before-write guards; the normal tool-level governor can intercept the model proposal."
+    },
+    {
+      "id": "approved_pending_memory_replay",
+      "state_kind": "semantic_memory",
+      "origin": "human_approval_replay",
+      "mutation_path": "slash/gateway approval -> write_approval_commands._apply_one -> apply_memory_pending -> MemoryStore",
+      "pre_tool_interceptable": false,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": false,
+      "source_refs": ["hermes_cli/write_approval_commands.py", "tools/memory_tool.py"],
+      "notes": "Replay deliberately bypasses the Hermes write gate and does not traverse the normal tool executor. It also bypasses the agent-loop memory-write bridge used to mirror committed writes to external providers."
+    },
+    {
+      "id": "approved_pending_skill_replay",
+      "state_kind": "procedural_memory",
+      "origin": "human_approval_replay",
+      "mutation_path": "slash/gateway approval -> write_approval_commands._apply_one -> apply_skill_pending -> skill_manage with gate-bypass ContextVar",
+      "pre_tool_interceptable": false,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": false,
+      "source_refs": ["hermes_cli/write_approval_commands.py", "tools/skill_manager_tool.py"],
+      "notes": "Approved skill replay directly calls skill_manage and explicitly bypasses its write-approval gate; it does not re-enter the outer tool middleware."
+    },
+    {
+      "id": "deterministic_curator_archive",
+      "state_kind": "procedural_memory_lifecycle",
+      "origin": "curator_automatic_transition",
+      "mutation_path": "agent.curator.apply_automatic_transitions -> skill_usage.archive_skill",
+      "pre_tool_interceptable": false,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": false,
+      "source_refs": ["agent/curator.py", "tools/skill_usage.py"],
+      "notes": "The non-LLM curator path can durably archive skills without skill_manage. Disabling this path to claim strictness would make lifecycle behavior less capable rather than govern it."
+    },
+    {
+      "id": "curator_llm_consolidation",
+      "state_kind": "procedural_memory_lifecycle",
+      "origin": "curator_background_model",
+      "mutation_path": "curator fork -> normal AIAgent tool execution -> pre_tool_call -> skill_manage",
+      "pre_tool_interceptable": true,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": true,
+      "source_refs": ["agent/curator.py", "agent/tool_executor.py", "tools/skill_manager_tool.py"],
+      "notes": "The optional LLM consolidation pass uses normal tool execution; this differs from deterministic automatic archival."
+    },
+    {
+      "id": "journey_memory_edit_delete",
+      "state_kind": "semantic_memory",
+      "origin": "user_initiated_journey_edit",
+      "mutation_path": "agent.learning_mutations -> direct MemoryStore._write_file",
+      "pre_tool_interceptable": false,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": false,
+      "source_refs": ["agent/learning_mutations.py", "tools/memory_tool.py"],
+      "notes": "CLI/TUI/Desktop Journey mutations are explicitly user initiated but still bypass tool middleware and normal provider mirroring. Human approval is authority evidence, not execution evidence by itself."
+    },
+    {
+      "id": "journey_skill_edit_delete",
+      "state_kind": "procedural_memory",
+      "origin": "user_initiated_journey_edit",
+      "mutation_path": "agent.learning_mutations -> _edit_skill or skill_usage.archive_skill",
+      "pre_tool_interceptable": false,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": false,
+      "source_refs": ["agent/learning_mutations.py", "tools/skill_manager_tool.py", "tools/skill_usage.py"],
+      "notes": "User-facing Journey edits and recoverable archives are real durable procedural-state mutations outside the model tool executor."
+    },
+    {
+      "id": "external_memory_provider_mirror",
+      "state_kind": "external_derived_or_parallel_memory",
+      "origin": "post_commit_bridge",
+      "mutation_path": "committed built-in memory tool result -> MemoryManager.notify_memory_tool_write -> provider.on_memory_write",
+      "pre_tool_interceptable": false,
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": "provider_dependent",
+      "strict_plugin_only_covered": false,
+      "source_refs": ["agent/memory_manager.py", "agent/memory_provider.py"],
+      "notes": "The provider callback occurs after built-in commit and provider exceptions are logged. It cannot be the built-in-state admission gate and does not cover every non-tool mutation path."
+    },
+    {
+      "id": "out_of_band_memory_skill_filesystem_write",
+      "state_kind": "semantic_or_procedural_memory",
+      "origin": "agent_terminal_or_external_writer",
+      "mutation_path": "terminal/script/manual/direct filesystem -> MEMORY.md/USER.md/SKILL.md",
+      "pre_tool_interceptable": "tool_call_only_not_semantic_write",
+      "external_memory_provider_complete_observer": false,
+      "durable_mutation": true,
+      "strict_plugin_only_covered": false,
+      "source_refs": ["tools/memory_tool.py", "tools/skill_manager_tool.py"],
+      "notes": "Hermes explicitly defends against external/drifted memory files and acknowledges that agent code can reach equivalent filesystem paths. Command-level interception is not a reliable semantic durable-state boundary."
+    }
+  ],
+  "integration_postures": {
+    "observe": {
+      "supported_today": true,
+      "recommended_components": ["external_memory_provider", "general_plugin", "durable_file_or_event_observation_where_needed"],
+      "coverage": "partial_without_additional_observation",
+      "limitations": [
+        "MemoryProvider is additive and post-commit for built-in memory mirroring.",
+        "Background review is instantiated without the external provider.",
+        "Approved replay, deterministic curator mutations, Journey mutations, and direct filesystem mutations can bypass provider mirroring."
+      ]
+    },
+    "govern": {
+      "supported_today": true,
+      "recommended_components": ["general_plugin_pre_tool_call", "external_memory_provider"],
+      "coverage": "model_driven_mutations_only_unless_bypass_surfaces_are_disabled_or_separately_wrapped",
+      "limitations": [
+        "Normal foreground/background memory and skill_manage proposals can be admitted or blocked before tool execution.",
+        "Human-approved replay, deterministic curator archival, Journey mutations, and equivalent direct durable writes require separate handling.",
+        "Provider/plugin failure must be translated into an explicit policy decision; exception behavior cannot be treated as fail-closed governance."
+      ]
+    },
+    "strict": {
+      "supported_today": false,
+      "coverage": "not_honestly_claimable_without_disabling_legitimate_mutation_surfaces_or_modifying_Hermes",
+      "blocking_gaps": [
+        "approved_pending_memory_replay",
+        "approved_pending_skill_replay",
+        "deterministic_curator_archive",
+        "journey_memory_edit_delete",
+        "journey_skill_edit_delete",
+        "out_of_band_memory_skill_filesystem_write"
+      ]
+    }
+  },
+  "recommended_interoperability_primitive": {
+    "name": "generic_durable_state_mutation_middleware",
+    "placement": "immediately_before_and_after_canonical_durable_state_mutation",
+    "scope": ["built_in_memory", "user_profile", "skills_and_supporting_files", "skill_lifecycle_archive_restore"],
+    "before_phase": {
+      "decision": ["allow", "stage", "reject"],
+      "required_fields": [
+        "mutation_id",
+        "subsystem",
+        "operation",
+        "origin",
+        "execution_context",
+        "target_identity",
+        "before_digest_or_absence",
+        "candidate_digest_or_absence",
+        "scope",
+        "provenance_refs",
+        "approval_refs"
+      ],
+      "strict_failure_posture": "reject_when_required_governor_is_unavailable_or_returns_no_valid_decision"
+    },
+    "after_phase": {
+      "purpose": "separate admission_or_approval_from_actual_execution",
+      "required_fields": ["mutation_id", "outcome", "committed_digest_or_absence", "error_or_none", "receipt_refs"]
+    },
+    "requirements": [
+      "Normal model-driven memory/skill mutations must route through it.",
+      "Pending approval replay must route through it before applying staged payloads.",
+      "Deterministic curator lifecycle mutations must route through it.",
+      "Journey edit/delete mutations must route through it.",
+      "It must be generic and vendor-neutral rather than Agent Memory-specific.",
+      "Existing Hermes human approval may remain the presentation/authority UX; approval does not bypass admission/currentness checks.",
+      "The hook must not grant truth, recall, mutation, or execution authority by source identity."
+    ]
+  },
+  "recursive_evidence_scenarios": [
+    {
+      "id": "self_reinforcing_skill_lineage",
+      "sequence": ["experience_A", "skill_B_created", "B_produces_C", "C_supports_skill_D"],
+      "required_agent_memory_rule": "B_C_D_share_derivation_lineage_and_do_not_count_as_independent_corroboration"
+    },
+    {
+      "id": "correction_relearned_by_background_review",
+      "sequence": ["value_X_recorded", "X_corrected_to_Y", "later_transcript_contains_X", "background_review_proposes_X_again"],
+      "required_agent_memory_rule": "rejected_or_superseded_X_remains_non_current_and_requires_new_independent_evidence_for_readmission"
+    },
+    {
+      "id": "stale_human_approval_replay",
+      "sequence": ["mutation_M_staged", "underlying_skill_or_memory_changes", "old_M_approved"],
+      "required_agent_memory_rule": "approval_replay_must_revalidate_before_digest_scope_and_candidate_identity_before_commit"
+    },
+    {
+      "id": "curator_archive_during_pending_dependency",
+      "sequence": ["skill_S_referenced_by_durable_state", "curator_marks_S_archive_candidate", "archive_runs"],
+      "required_agent_memory_rule": "retirement_requires_dependency_and_residue_checks_and_execution_receipt"
+    },
+    {
+      "id": "provider_mirror_failure_after_builtin_commit",
+      "sequence": ["builtin_memory_commit", "external_provider_mirror_throws", "next_turn_recall_uses_divergent_stores"],
+      "required_agent_memory_rule": "canonical_currentness_and_projection_obligations_must_distinguish_committed_from_settled_and_quiescent"
+    }
+  ],
+  "capability_mapping": [
+    {"capability": "semantic_memory", "hermes_surface": "MEMORY.md", "agent_memory_role": "governed_durable_state", "authority_effect": "none"},
+    {"capability": "user_profile_memory", "hermes_surface": "USER.md", "agent_memory_role": "governed_scoped_durable_state", "authority_effect": "none"},
+    {"capability": "procedural_memory", "hermes_surface": "skills", "agent_memory_role": "retain_lineage_and_admission_evidence_not_execution_authority", "authority_effect": "none"},
+    {"capability": "background_recursive_learning", "hermes_surface": "background_review", "agent_memory_role": "candidate_mutation_origin_and_derivation_evidence", "authority_effect": "none"},
+    {"capability": "skill_lifecycle_maintenance", "hermes_surface": "curator", "agent_memory_role": "govern_retirement_archive_and_dependency_obligations", "authority_effect": "none"},
+    {"capability": "external_memory_provider", "hermes_surface": "MemoryProvider", "agent_memory_role": "recall_sync_and_observation_surface_not_builtin_admission_authority", "authority_effect": "none"}
+  ],
+  "stopping_rule_result": "stop_source_audit_after_all_consequential_mutation_families_are_classified_and_the_strict_mode_gap_is_reproducible_from_exact_source",
+  "follow_on_recommendation": "one_bounded_Hermes_integration_issue_after_this_research_merges; implementation_should_target_observe_and_govern_today_and_prepare_for_strict_only_after_generic_Hermes_durable_state_middleware_exists_or_is_upstreamed"
+}

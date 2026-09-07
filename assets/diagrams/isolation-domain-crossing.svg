@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="2440" viewBox="0 0 540 2440" role="img" aria-labelledby="title desc">
+  <title id="title">Isolation domains and governed boundary crossing</title>
+  <desc id="desc">A mobile-first Agent Memory diagram showing multiple logical memory isolation domains inside one physical store. The same agent may work in Project A Task 1, Project B Task 2, and a shared security space without receiving automatic authority to move memory among them. A highly relevant cross-domain candidate must resolve the target domain, current membership, scope, purpose, destination, consent or delegation, sensitivity, and revocation state before PAMA evaluates the crossing. Blocked crossings remain blocked regardless of relevance. Permitted crossings use an allowed representation and produce a reconstructable receipt. Derived state keeps inherited source constraints, and later correction, revocation, scope reduction, or purge may create propagation obligations.</desc>
+<style>
+:root{--bg:#0d1117;--border:#30363d;--text:#f0f6fc;--muted:#8b949e;--blue:#58a6ff;--purple:#bc8cff;--green:#3fb950;--red:#ff7b72;--amber:#d29922;--line:#6e7681;--neutral:#161b22;--blueBox:#111b2e;--purpleBox:#1c162e;--greenBox:#12261b;--amberBox:#2b2111;--redBox:#2d1618;}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--text)}
+.frame{fill:var(--bg);stroke:var(--border)}.neutral{fill:var(--neutral);stroke:var(--border)}.blueBox{fill:var(--blueBox);stroke:var(--blue);stroke-width:1.2}.purpleBox{fill:var(--purpleBox);stroke:var(--purple);stroke-width:1.2}.greenBox{fill:var(--greenBox);stroke:var(--green);stroke-width:1.2}.amberBox{fill:var(--amberBox);stroke:var(--amber);stroke-width:1.2}.redBox{fill:var(--redBox);stroke:var(--red);stroke-width:1.2}
+.title{font-size:26px;font-weight:700}.sub{font-size:15px;fill:var(--muted)}.eyebrow{font-size:14px;font-weight:700;letter-spacing:1px}.cardTitle{font-size:18px;font-weight:700}.body{font-size:14px}.bodyStrong{font-size:14px;font-weight:700}.small{font-size:13.4px}.tiny{font-size:12.8px}.muted{fill:var(--muted)}.blueText{fill:var(--blue)}.purpleText{fill:var(--purple)}.greenText{fill:var(--green)}.amberText{fill:var(--amber)}.redText{fill:var(--red)}.redStrong{fill:var(--red);font-weight:700}.greenStrong{fill:var(--green);font-weight:700}.purpleStrong{fill:var(--purple);font-weight:700}
+.line{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.blueLine{fill:none;stroke:var(--blue);stroke-width:2.3}.purpleLine{fill:none;stroke:var(--purple);stroke-width:2.3}.greenLine{fill:none;stroke:var(--green);stroke-width:2.3}.redLine{fill:none;stroke:var(--red);stroke-width:2.3}
+</style>
+<defs>
+  <marker id="a" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--line)"/></marker>
+  <marker id="ab" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--blue)"/></marker>
+  <marker id="ap" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--purple)"/></marker>
+  <marker id="ag" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--green)"/></marker>
+  <marker id="ar" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L0 6L8 3z" fill="var(--red)"/></marker>
+</defs>
+<rect x="1" y="1" width="538" height="2438" rx="18" class="frame"/>
+<text x="28" y="44" class="title">Isolation domains and governed crossing</text>
+<text x="28" y="70" class="sub">One physical store can hold many logical authority boundaries.</text>
+
+<rect x="28" y="94" width="484" height="154" rx="11" class="neutral"/>
+<text x="46" y="121" class="eyebrow redText">HARD INVARIANTS</text>
+<text x="46" y="148" class="bodyStrong">physical store != isolation domain</text>
+<text x="46" y="174" class="bodyStrong">same agent != same memory scope</text>
+<text x="46" y="200" class="bodyStrong">relevance != permission to cross</text>
+<text x="46" y="228" class="tiny redStrong">A perfect semantic match cannot authorize another domain.</text>
+
+<line x1="270" y1="248" x2="270" y2="280" class="line" marker-end="url(#a)"/>
+<text x="28" y="314" class="eyebrow blueText">01  SHARED PHYSICAL SUBSTRATE</text>
+<rect x="28" y="332" width="484" height="330" rx="11" class="blueBox"/>
+<text x="48" y="364" class="cardTitle">One store, three governed domains</text>
+<text x="48" y="394" class="body muted">The storage service is shared. Authority is not.</text>
+
+<rect x="48" y="418" width="444" height="64" rx="9" class="neutral"/>
+<text x="66" y="444" class="bodyStrong">Project A / Task 1</text>
+<text x="66" y="466" class="small muted">project-local memory boundary</text>
+<rect x="48" y="494" width="444" height="64" rx="9" class="neutral"/>
+<text x="66" y="520" class="bodyStrong">Project B / Task 2</text>
+<text x="66" y="542" class="small muted">separate project and task authority</text>
+<rect x="48" y="570" width="444" height="64" rx="9" class="neutral"/>
+<text x="66" y="596" class="bodyStrong">Shared security space</text>
+<text x="66" y="618" class="small muted">broader membership, still a governed isolation domain</text>
+<text x="48" y="650" class="tiny redStrong">The same agent may participate in all three without free memory flow.</text>
+
+<line x1="270" y1="662" x2="270" y2="694" class="blueLine" marker-end="url(#ab)"/>
+<text x="28" y="728" class="eyebrow blueText">02  CANDIDATE OR CROSSING REQUEST</text>
+<rect x="28" y="746" width="484" height="180" rx="11" class="blueBox"/>
+<text x="48" y="778" class="cardTitle">Useful does not mean reachable</text>
+<text x="48" y="808" class="body muted">Agent is operating in Project A / Task 1.</text>
+<text x="48" y="834" class="body muted">Retriever discovers a Project B / Task 2 memory.</text>
+<text x="48" y="866" class="bodyStrong">semantic relevance = 1.0 · same agent = true</text>
+<text x="48" y="894" class="tiny redStrong">source domain != target domain => crossing requires governance</text>
+
+<line x1="270" y1="926" x2="270" y2="958" class="purpleLine" marker-end="url(#ap)"/>
+<text x="28" y="992" class="eyebrow purpleText">03  RESOLVE TARGET DOMAIN + CURRENT AUTHORITY</text>
+<rect x="28" y="1010" width="484" height="260" rx="11" class="purpleBox"/>
+<text x="48" y="1042" class="cardTitle">Establish what boundary authorizes use now</text>
+<text x="48" y="1072" class="small muted">principal / actor · target isolation domain · project / task · purpose</text>
+<text x="48" y="1096" class="small muted">membership · consent / delegation · sensitivity · destination</text>
+<text x="48" y="1120" class="small muted">re-sharing policy · expiry / revocation · policy version</text>
+<text x="48" y="1154" class="bodyStrong">Membership creates eligibility, not automatic admission.</text>
+<text x="48" y="1182" class="bodyStrong">Unknown or ambiguous scope does not become broad permission.</text>
+<text x="48" y="1212" class="small muted">Unresolved authority must block, narrow, verify, or require review.</text>
+<text x="48" y="1248" class="tiny redStrong">current authority beats prior access, identity, and relevance</text>
+
+<line x1="270" y1="1270" x2="270" y2="1302" class="purpleLine" marker-end="url(#ap)"/>
+<text x="28" y="1336" class="eyebrow purpleText">04  PAMA EVALUATES THE CROSSING CONSEQUENCE</text>
+<rect x="28" y="1354" width="484" height="250" rx="11" class="purpleBox"/>
+<text x="48" y="1386" class="cardTitle">Source authorization does not authorize destination use</text>
+<text x="48" y="1416" class="small muted">source domain · destination domain · fan-out / audience expansion</text>
+<text x="48" y="1440" class="small muted">purpose change · sensitivity · persistence · reversibility</text>
+<text x="48" y="1464" class="small muted">representation · shared/canonical status · downstream authority</text>
+<text x="48" y="1498" class="bodyStrong">PAMA resolves the permitted consequence envelope.</text>
+<text x="48" y="1526" class="body muted">Prior source approval, high confidence, saturation, or retrieval score</text>
+<text x="48" y="1548" class="body muted">cannot silently relax the destination authority requirement.</text>
+<text x="48" y="1582" class="tiny redStrong">read authorized != export authorized != scope-promotion authority</text>
+
+<line x1="270" y1="1604" x2="270" y2="1636" class="line" marker-end="url(#a)"/>
+<text x="28" y="1670" class="eyebrow amberText">05  GOVERNED OUTCOME</text>
+<rect x="28" y="1688" width="484" height="238" rx="11" class="amberBox"/>
+<text x="48" y="1720" class="cardTitle">Only a permitted treatment may cross</text>
+<text x="48" y="1752" class="bodyStrong redText">Blocked path</text>
+<text x="48" y="1778" class="small muted">block · require review · require verification · narrow destination</text>
+<text x="48" y="1810" class="bodyStrong greenText">Permitted path</text>
+<text x="48" y="1836" class="small muted">raw · redacted · summary-only · other policy-permitted representation</text>
+<text x="48" y="1870" class="body muted">The selected treatment must stay inside the permitted action set.</text>
+<text x="48" y="1902" class="tiny redStrong">A blocked crossing is not reopened by a stronger semantic score.</text>
+
+<line x1="270" y1="1926" x2="270" y2="1958" class="greenLine" marker-end="url(#ag)"/>
+<text x="28" y="1992" class="eyebrow greenText">06  CROSSING RECEIPT</text>
+<rect x="28" y="2010" width="484" height="190" rx="11" class="greenBox"/>
+<text x="48" y="2042" class="cardTitle">Make the decision reconstructable</text>
+<text x="48" y="2072" class="small muted">operation · source / destination domains · actor / principal · purpose</text>
+<text x="48" y="2096" class="small muted">representation · sensitivity · consent / delegation · PAMA outcome</text>
+<text x="48" y="2120" class="small muted">policy version · provenance · expiry / revocation · receipt ID</text>
+<text x="48" y="2152" class="bodyStrong">A receipt proves the bound decision, not permanent future validity.</text>
+<text x="48" y="2182" class="tiny redStrong">later authority changes can create new lifecycle obligations</text>
+
+<line x1="270" y1="2200" x2="270" y2="2232" class="greenLine" marker-end="url(#ag)"/>
+<text x="28" y="2266" class="eyebrow greenText">07  DERIVED STATE + LIFECYCLE PROPAGATION</text>
+<rect x="28" y="2284" width="484" height="112" rx="11" class="greenBox"/>
+<text x="48" y="2316" class="bodyStrong">Transformation does not erase inherited authority or provenance.</text>
+<text x="48" y="2344" class="small muted">Correction, revocation, scope reduction, or purge may propagate across</text>
+<text x="48" y="2368" class="small muted">authorized crossings and downstream derived state where policy requires.</text>
+
+<text x="28" y="2410" class="tiny muted">Canonical: docs/41-memory-isolation-domains-and-governed-crossing.md</text>
+<text x="28" y="2428" class="tiny muted">Accepted boundary: ADR-022 Memory Isolation Domains and Controlled Boundary Crossing</text>
+</svg>

@@ -1,0 +1,136 @@
+name: Provider Discovery Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Install Agent Memory distribution from repository
+        run: python -m pip install --disable-pip-version-check .
+
+      - name: Smoke-test installed discovery command
+        run: |
+          if ! agent-memory discover \
+            --config reference/fixtures/runtime-configuration/reference-composed-runtime.json \
+            --probes reference/fixtures/runtime-configuration/reference-provider-probes.json \
+            --json > installed-provider-discovery.json; then
+            cat installed-provider-discovery.json
+            exit 1
+          fi
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("installed-provider-discovery.json").read_text())
+          if report["startability"] != "proven_for_declared_probes":
+              raise SystemExit("installed discovery did not prove declared required probes")
+          if report["status_counts"]["unavailable"] != 1:
+              raise SystemExit("installed discovery did not preserve optional unavailable evidence")
+          if report["mutated_configuration"] is not False:
+              raise SystemExit("discovery must remain read-only")
+          if report["authority_effect"] != "none":
+              raise SystemExit("discovery cannot create authority")
+          PY
+
+      - name: Smoke-test installed doctor probe path
+        run: |
+          if ! agent-memory doctor \
+            --config reference/fixtures/runtime-configuration/reference-composed-runtime.json \
+            --probe \
+            --probes reference/fixtures/runtime-configuration/reference-provider-probes.json \
+            --json > installed-doctor-probed.json; then
+            cat installed-doctor-probed.json
+            exit 1
+          fi
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("installed-doctor-probed.json").read_text())
+          if report["provider_availability"]["status"] != "partial":
+              raise SystemExit("doctor did not preserve mixed provider availability as partial")
+          if report["provider_availability"]["status_counts"]["unavailable"] != 1:
+              raise SystemExit("doctor hid optional unavailable provider evidence")
+          if report["provider_availability"]["startability"] != "proven_for_declared_probes":
+              raise SystemExit("doctor lost declared probe startability")
+          if report["operational_readiness"] != "provider_probe_observed_state_not_checked":
+              raise SystemExit("doctor must not turn availability into full health")
+          if report["authority_effect"] != "none":
+              raise SystemExit("doctor probe path cannot create authority")
+          PY
+
+      - name: Execute targeted provider discovery tests
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_provider_discovery.py'
+
+      - name: Execute full reference regression suite
+        run: python -m unittest discover -s reference/tests -t reference
+
+      - name: Emit exact-head provider discovery evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_provider_discovery.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output provider-discovery-evidence.json
+
+      - name: Validate emitted provider discovery evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("provider-discovery-evidence.json").read_text())
+          if len(report["agent_memory_commit"]) != 40:
+              raise SystemExit("provider discovery evidence is not exact-head bound")
+          invariants = report["structural_invariants"]
+          non_boolean = [name for name, value in invariants.items() if type(value) is not bool]
+          if non_boolean:
+              raise SystemExit(f"provider discovery invariants are not JSON booleans: {non_boolean}")
+          failed = [name for name, passed in invariants.items() if not passed]
+          if failed:
+              raise SystemExit(f"provider discovery invariants failed: {failed}")
+          if report["authority_effect"] != "none":
+              raise SystemExit("provider discovery evidence cannot create authority")
+          print(f"validated {len(invariants)} provider discovery invariants")
+          PY
+
+      - name: Upload provider discovery evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: provider-discovery-evidence
+          path: |
+            provider-discovery-evidence.json
+            installed-provider-discovery.json
+            installed-doctor-probed.json
+          if-no-files-found: error
+
+      - name: Publish provider discovery summary
+        if: always()
+        run: |
+          {
+            echo "## Attach-mode discovery and provider probes"
+            echo ""
+            echo "Discovery is read-only and bound to explicit configured subjects plus explicit probe descriptors."
+            echo ""
+            echo '```'
+            echo "agent-memory discover --config <config.json> --probes <probes.json>"
+            echo "agent-memory doctor --config <config.json> --probe --probes <probes.json>"
+            echo '```'
+            echo ""
+            echo "Mixed optional availability is reported as partial while required-probe startability remains separate. Probe success does not grant qualification, currentness, health, fallback authority, or mutation permission."
+          } >> "$GITHUB_STEP_SUMMARY"

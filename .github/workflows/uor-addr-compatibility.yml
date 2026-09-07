@@ -1,0 +1,89 @@
+name: UOR Addr Compatibility
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  uor-addr-compatibility:
+    runs-on: ubuntu-latest
+    env:
+      UOR_RELEASE: v0.2.0
+      UOR_TAG_OBJECT: 4bdc4ec022bbc99b3c1ec01a67b40a7e25f30de4
+      UOR_SOURCE_COMMIT: d78f82f26034880e91b1d54c21900a33ab73f695
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r reference/requirements.txt
+          python -m pip install --disable-pip-version-check 'uor-addr==0.2.0'
+          python -c 'import importlib.metadata; assert importlib.metadata.version("uor-addr") == "0.2.0"'
+      - name: Checkout exact UOR source
+        uses: actions/checkout@v7
+        with:
+          repository: UOR-Foundation/uor-addr
+          ref: ${{ env.UOR_SOURCE_COMMIT }}
+          path: uor-addr-source
+          fetch-depth: 1
+      - name: Verify exact UOR release pin
+        run: |
+          test "$(git -C uor-addr-source rev-parse HEAD)" = "$UOR_SOURCE_COMMIT"
+          git -C uor-addr-source fetch --force origin "refs/tags/$UOR_RELEASE:refs/tags/$UOR_RELEASE"
+          test "$(git -C uor-addr-source rev-parse "refs/tags/$UOR_RELEASE")" = "$UOR_TAG_OBJECT"
+          test "$(git -C uor-addr-source rev-parse "refs/tags/$UOR_RELEASE^{commit}")" = "$UOR_SOURCE_COMMIT"
+          grep -F 'version       = "0.2.0"' uor-addr-source/Cargo.toml
+          grep -F 'license       = "Apache-2.0"' uor-addr-source/Cargo.toml
+      - name: Build isolated released Rust probe
+        run: |
+          rustup toolchain install 1.89.0 --profile minimal
+          rustup default 1.89.0
+          mkdir -p /tmp/uor-probe/src
+          cp reference/uor_addr_rust_probe.rs /tmp/uor-probe/src/main.rs
+          printf '%s\n' '[package]' 'name = "agent-memory-uor-probe"' 'version = "0.0.0"' 'edition = "2021"' '' '[dependencies]' 'uor-addr = { version = "=0.2.0", default-features = false, features = ["std"] }' > /tmp/uor-probe/Cargo.toml
+          cargo generate-lockfile --manifest-path /tmp/uor-probe/Cargo.toml
+          cargo build --locked --manifest-path /tmp/uor-probe/Cargo.toml
+          rustc --version
+          cargo --version
+      - name: Validate focused Agent Memory boundaries
+        env:
+          PYTHONPATH: reference
+        run: |
+          python scripts/validate_schemas.py
+          python -m unittest tests.test_uor_content_reference tests.test_uor_content_reference_pama
+      - name: Compare released Python and Rust labels
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+          PYTHONPATH: reference
+        run: |
+          mkdir -p fixtures
+          cp reference/testdata/uor-addr-v0.2.0-json-vectors.json fixtures/uor-addr-v0.2.0-json-vectors.json
+          python reference/run_uor_addr_workflow.py --agent-memory-commit "$AGENT_MEMORY_COMMIT" --rust-probe /tmp/uor-probe/target/debug/agent-memory-uor-probe --output uor-addr-compatibility.json
+      - name: Inspect evidence invariants
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          report = json.load(open('uor-addr-compatibility.json', encoding='utf-8'))
+          assert report['agent_memory_commit'] == os.environ['AGENT_MEMORY_COMMIT']
+          assert report['metrics']['vector_count'] == 7
+          assert report['metrics']['cross_language_mismatches'] == 0
+          assert report['metrics']['canonical_equivalence_failures'] == 0
+          assert report['metrics']['typed_distinction_failures'] == 0
+          assert report['metrics']['failure_posture_failures'] == 0
+          assert all(value is False for value in report['non_authority'].values())
+          PY
+      - name: Upload UOR compatibility evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: uor-addr-compatibility-evidence
+          path: uor-addr-compatibility.json
+          if-no-files-found: error

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UOR Content Reference Evidence",
+  "type": "object",
+  "required": ["schema_version", "profile_id", "profile_version", "optional_profile", "uor", "binding", "status", "authority_effect"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "profile_id": {"const": "agent-memory/uor-addr-json-content-reference"},
+    "profile_version": {"const": "0.1.0"},
+    "optional_profile": {"const": true},
+    "ordinary_agent_memory_requires_uor_runtime": {"const": false},
+    "uor": {
+      "type": "object",
+      "required": ["repository", "release", "tag_object", "source_commit", "license", "realization"],
+      "properties": {
+        "repository": {"const": "UOR-Foundation/uor-addr"},
+        "release": {"const": "v0.2.0"},
+        "tag_object": {"const": "4bdc4ec022bbc99b3c1ec01a67b40a7e25f30de4"},
+        "source_commit": {"const": "d78f82f26034880e91b1d54c21900a33ab73f695"},
+        "license": {"const": "Apache-2.0"},
+        "realization": {"const": "json:rfc8259+rfc8785-jcs+uax15-nfc+sha256"}
+      }
+    },
+    "binding": {"type": "object", "required": ["name", "version"]},
+    "profile_metadata": {"type": "object"},
+    "status": {"enum": ["generated", "verified", "mismatch", "invalid_label", "invalid_input", "unavailable", "unsupported"]},
+    "generated_label": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "claimed_label": {"type": "string"},
+    "matches_claimed_label": {"type": "boolean"},
+    "content_identity_only": {"const": true},
+    "authority_effect": {"const": "none"},
+    "failure": {"type": "object", "required": ["kind", "message", "fail_open"], "properties": {"fail_open": {"const": false}}}
+  },
+  "additionalProperties": true
+}

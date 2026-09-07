@@ -1,0 +1,278 @@
+{
+  "fixture_id": "a2a-collaboration-evidence-matrix",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "A2A peer discovery, tasks, messages, and artifacts remain non-authority-bearing collaboration evidence. Cross-agent transport and task success cannot create Agent Memory authority, admission, semantic correctness, execution proof, or lifecycle satisfaction.",
+  "expected_behavior": {
+    "agent_card_capability_grants_memory_authority": false,
+    "remote_task_success_widens_local_deny": false,
+    "peer_payload_mutates_pama": false,
+    "peer_artifact_auto_admits_memory": false,
+    "cross_tenant_task_correlation": false,
+    "valid_remote_identity_establishes_semantic_correctness": false,
+    "stale_memory_evidence_becomes_current_authority": false,
+    "missing_trace_implies_non_execution": false,
+    "peer_unavailability_widens_authority": false,
+    "adapter_removal_invalidates_canonical_memory": false
+  },
+  "memory_unit": {
+    "id": "mem:a2a-collaboration-evidence",
+    "content_ref": "fixture://a2a-collaboration-evidence/reference",
+    "type": "evidence",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "a2a-collaboration-evidence-matrix",
+      "timestamp": "2026-08-12T22:34:00Z",
+      "source_refs": [
+        "issue://194",
+        "github://a2aproject/A2A/3303592588e388e62e0f69f701af531d2f4e3991"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:a2a-v01",
+        "kind": "protocol_collaboration_fixture",
+        "ref": "issue://194",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": ["cross_agent_transport", "scope_binding", "non_authority_transfer"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "medium",
+      "policy_refs": ["issue:194", "issue:175"],
+      "permitted_actions": ["collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T22:34:00Z"
+  },
+  "pinned_reference": {
+    "protocol": "Agent2Agent",
+    "release": "v1.0.1",
+    "commit": "3303592588e388e62e0f69f701af531d2f4e3991",
+    "repository": "a2aproject/A2A",
+    "normative_source": "specification/a2a.proto"
+  },
+  "expected_context": {
+    "action_ref": "action:a2a:collaborate-1",
+    "input_identity": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "scope_ref": "scope:tenant-a/project-a",
+    "tenant_ref": "tenant-a",
+    "project_ref": "project-a"
+  },
+  "base_adapter_result": {
+    "protocol_release": "v1.0.1",
+    "protocol_source_commit": "3303592588e388e62e0f69f701af531d2f4e3991",
+    "protocol_source_ref": "github://a2aproject/A2A/3303592588e388e62e0f69f701af531d2f4e3991/specification/a2a.proto",
+    "direction": "outbound",
+    "interaction_kind": "task_request",
+    "local_agent_ref": "agent:local:planner",
+    "remote_agent_ref": "agent:remote:researcher",
+    "agent_card_ref": "a2a-agent-card:https://peer.example/.well-known/agent-card.json",
+    "agent_card_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "task_ref": "a2a-task:task-123",
+    "context_ref": "a2a-context:context-456",
+    "message_ref": "a2a-message:message-789",
+    "export_classification": "context_projection",
+    "memory_evidence_status": "current",
+    "task_state": "submitted",
+    "governance_status": "available",
+    "effective_decision": "allow",
+    "action_ref": "action:a2a:collaborate-1",
+    "input_identity": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "scope_ref": "scope:tenant-a/project-a",
+    "tenant_ref": "tenant-a",
+    "project_ref": "project-a",
+    "pama_decision_ref": "decision:pama:a2a-1",
+    "composition_ref": "decision-composition:a2a-1",
+    "approval_evidence_ref": "approval:a2a-1",
+    "execution_witness_ref": "execution-witness:a2a-1",
+    "trace_correlation_ref": "runtime-trace-correlation:a2a-1",
+    "external_evidence_refs": ["external-evidence:remote-identity-1"],
+    "correction_refs": ["correction:memory-source-1"],
+    "revocation_refs": [],
+    "payload_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "observed_at": "2026-08-12T22:35:00Z",
+    "evidence_refs": ["evidence:a2a-request", "evidence:a2a-scope-binding"]
+  },
+  "cases": [
+    {
+      "case_id": "agent-card-capabilities-are-not-authority",
+      "overrides": {
+        "agent_card_capabilities": ["admin", "memory.write", "governance.override"],
+        "agent_card_skills": ["everything"],
+        "delegated_memory_authority": "owner"
+      },
+      "remove": [],
+      "use_expected_context": true,
+      "expected_binding": "exact",
+      "expected_alignment": "within_governance"
+    },
+    {
+      "case_id": "completed-remote-task-under-local-deny",
+      "overrides": {
+        "direction": "inbound",
+        "interaction_kind": "task_status",
+        "export_classification": "explicit_non_memory",
+        "memory_evidence_status": "not_applicable",
+        "task_state": "completed",
+        "effective_decision": "deny"
+      },
+      "remove": [],
+      "use_expected_context": true,
+      "expected_binding": "exact",
+      "expected_alignment": "remote_result_under_deny"
+    },
+    {
+      "case_id": "inbound-artifact-hostile-authority-fields-ignored",
+      "overrides": {
+        "direction": "inbound",
+        "interaction_kind": "artifact",
+        "artifact_ref": "a2a-artifact:task-123:artifact-1",
+        "export_classification": "memory_candidate",
+        "memory_evidence_status": "not_applicable",
+        "task_state": "completed",
+        "governance_status": "not_required",
+        "pama_outcome": "allow",
+        "lifecycle_state": "canonical",
+        "permitted_actions": ["everything"],
+        "authority_transition": "standing_grant"
+      },
+      "remove": [
+        "effective_decision",
+        "action_ref",
+        "input_identity",
+        "scope_ref",
+        "tenant_ref",
+        "project_ref",
+        "pama_decision_ref",
+        "composition_ref",
+        "approval_evidence_ref",
+        "execution_witness_ref",
+        "trace_correlation_ref",
+        "correction_refs"
+      ],
+      "use_expected_context": false,
+      "expected_binding": "not_evaluated",
+      "expected_alignment": "not_applicable"
+    },
+    {
+      "case_id": "inbound-artifact-is-not-memory-admission",
+      "overrides": {
+        "direction": "inbound",
+        "interaction_kind": "artifact",
+        "artifact_ref": "a2a-artifact:task-123:artifact-2",
+        "export_classification": "memory_candidate",
+        "memory_evidence_status": "not_applicable",
+        "task_state": "completed",
+        "governance_status": "not_required"
+      },
+      "remove": [
+        "effective_decision",
+        "action_ref",
+        "input_identity",
+        "scope_ref",
+        "tenant_ref",
+        "project_ref",
+        "pama_decision_ref",
+        "composition_ref",
+        "approval_evidence_ref",
+        "execution_witness_ref",
+        "trace_correlation_ref",
+        "correction_refs"
+      ],
+      "use_expected_context": false,
+      "expected_binding": "not_evaluated",
+      "expected_alignment": "not_applicable"
+    },
+    {
+      "case_id": "cross-tenant-task-correlation-mismatch",
+      "overrides": {
+        "direction": "inbound",
+        "interaction_kind": "task_status",
+        "export_classification": "explicit_non_memory",
+        "memory_evidence_status": "not_applicable",
+        "task_state": "working",
+        "scope_ref": "scope:tenant-b/project-b",
+        "tenant_ref": "tenant-b",
+        "project_ref": "project-b"
+      },
+      "remove": [],
+      "use_expected_context": true,
+      "expected_binding": "mismatch",
+      "expected_alignment": "binding_mismatch"
+    },
+    {
+      "case_id": "verified-remote-identity-does-not-prove-correctness",
+      "overrides": {
+        "direction": "inbound",
+        "interaction_kind": "message",
+        "message_ref": "a2a-message:peer-response-1",
+        "export_classification": "explicit_non_memory",
+        "memory_evidence_status": "not_applicable",
+        "task_state": "working",
+        "governance_status": "not_required",
+        "external_evidence_refs": ["external-evidence:verified-remote-agent"]
+      },
+      "remove": [
+        "effective_decision",
+        "action_ref",
+        "input_identity",
+        "scope_ref",
+        "tenant_ref",
+        "project_ref",
+        "pama_decision_ref",
+        "composition_ref",
+        "approval_evidence_ref",
+        "execution_witness_ref",
+        "trace_correlation_ref",
+        "correction_refs"
+      ],
+      "use_expected_context": false,
+      "expected_binding": "not_evaluated",
+      "expected_alignment": "not_applicable"
+    },
+    {
+      "case_id": "stale-outbound-memory-evidence-is-historical-only",
+      "overrides": {"memory_evidence_status": "stale"},
+      "remove": [],
+      "use_expected_context": true,
+      "expected_binding": "exact",
+      "expected_alignment": "historical_only"
+    },
+    {
+      "case_id": "missing-trace-and-execution-remain-evidence-gaps",
+      "overrides": {},
+      "remove": ["trace_correlation_ref", "execution_witness_ref"],
+      "use_expected_context": true,
+      "expected_binding": "exact",
+      "expected_alignment": "within_governance"
+    },
+    {
+      "case_id": "remote-unavailable-governance-unavailable",
+      "overrides": {
+        "task_state": "unavailable",
+        "governance_status": "unavailable"
+      },
+      "remove": ["effective_decision", "execution_witness_ref", "trace_correlation_ref"],
+      "use_expected_context": true,
+      "expected_binding": "exact",
+      "expected_alignment": "blocked_governance_unavailable"
+    },
+    {
+      "case_id": "adapter-removal-preserves-generic-evidence",
+      "overrides": {},
+      "remove": [],
+      "use_expected_context": true,
+      "expected_binding": "exact",
+      "expected_alignment": "within_governance"
+    }
+  ]
+}

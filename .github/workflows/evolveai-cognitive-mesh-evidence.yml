@@ -1,0 +1,128 @@
+name: EvolveAI Cognitive Mesh Evidence
+
+on:
+  pull_request:
+    paths:
+      - 'reference/agentmem_ref/memory/cognitive_mesh.py'
+      - 'reference/agentmem_ref/memory/evolveai_cognitive_mesh.py'
+      - 'reference/agentmem_ref/contracts/evolveai_profile.py'
+      - 'reference/fixtures/evolveai-qualification-driver/**'
+      - 'reference/run_evolveai_cognitive_mesh.py'
+      - 'reference/tests/test_evolveai_cognitive_mesh.py'
+      - 'docs/programs/runtime-evidence/evolveai-cognitive-mesh.md'
+      - '.github/workflows/evolveai-cognitive-mesh-evidence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evolveai-cognitive-mesh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Checkout exact EvolveAI provider
+        uses: actions/checkout@v7
+        with:
+          repository: MythologIQ-Labs-LLC/EvolveAI
+          ref: 21161ce7b88dbffeb7ed59757b4d02d24a9c2acd
+          path: _evolveai
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Verify exact provider and source boundary
+        run: |
+          test "$(git -C _evolveai rev-parse HEAD)" = "21161ce7b88dbffeb7ed59757b4d02d24a9c2acd"
+          test -f _evolveai/crates/evolve-core/Cargo.toml
+          test -f _evolveai/vendor/GG-CORE/core-runtime/Cargo.toml
+          grep -q "Apache License" _evolveai/LICENSE
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Validate Agent Memory schemas
+        run: python scripts/validate_schemas.py
+
+      - name: Build native EvolveAI public-facade workload
+        run: cargo build --manifest-path reference/fixtures/evolveai-qualification-driver/Cargo.toml
+
+      - name: Execute native EvolveAI workload
+        run: |
+          mkdir -p /tmp/evolveai-cognitive-mesh
+          reference/fixtures/evolveai-qualification-driver/target/debug/agent-memory-evolveai-qualification-driver \
+            > /tmp/evolveai-cognitive-mesh/evolveai-native-observation.json
+          cat /tmp/evolveai-cognitive-mesh/evolveai-native-observation.json
+
+      - name: Test native Cognitive Mesh adapter
+        env:
+          PYTHONPATH: reference
+        run: |
+          python -m unittest reference/tests/test_evolveai_cognitive_mesh.py
+          python -m unittest reference/tests/test_cognitive_mesh.py
+
+      - name: Carry native provider output through Cognitive Mesh
+        env:
+          PYTHONPATH: reference
+        run: |
+          python reference/run_evolveai_cognitive_mesh.py \
+            --raw /tmp/evolveai-cognitive-mesh/evolveai-native-observation.json \
+            --output /tmp/evolveai-cognitive-mesh/evolveai-cognitive-mesh-evidence.json
+
+      - name: Validate exact evidence boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          raw = json.loads(Path('/tmp/evolveai-cognitive-mesh/evolveai-native-observation.json').read_text())
+          report = json.loads(Path('/tmp/evolveai-cognitive-mesh/evolveai-cognitive-mesh-evidence.json').read_text())
+
+          assert raw['provider'] == 'evolveai'
+          assert raw['provider_version'] == '21161ce7b88dbffeb7ed59757b4d02d24a9c2acd'
+          assert raw['observations']['lifecycle_synthesis'] is True
+          assert raw['native_evidence']['detach_traces_processed'] >= 3
+
+          assert report['provider']['component_version'] == raw['provider_version']
+          assert report['provider']['native_traces_processed'] == raw['native_evidence']['detach_traces_processed']
+          assert report['adapter']['authority_effect'] == 'proposal_only'
+          assert report['normalized_signal']['source_component'] == 'evolveai'
+          assert report['normalized_signal']['module_role'] == 'cognitive_metabolism'
+          assert report['normalized_signal']['confidence'] is None
+          assert report['normalized_signal']['provider_verdict'] == ''
+          assert report['governed_positive_path']['pama_outcome'] == 'allow_with_ledger'
+          assert report['governed_positive_path']['committed'] is True
+          assert report['governed_positive_path']['active_object_refs'] == ['memory:evolveai-native-rem-synthesis']
+          assert report['authority_containment']['pama_outcome'] == 'require_review'
+          assert report['authority_containment']['committed'] is False
+          assert 'crystallization' in report['authority_containment']['prohibited_actions']
+          assert report['authority_containment']['confidence_was_invented'] is False
+          PY
+
+      - name: Record evidence digests
+        run: |
+          sha256sum \
+            /tmp/evolveai-cognitive-mesh/evolveai-native-observation.json \
+            /tmp/evolveai-cognitive-mesh/evolveai-cognitive-mesh-evidence.json \
+            | tee /tmp/evolveai-cognitive-mesh/evidence.sha256
+          cat /tmp/evolveai-cognitive-mesh/evidence.sha256 >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload native Cognitive Mesh evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: evolveai-cognitive-mesh-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/evolveai-cognitive-mesh/evolveai-native-observation.json
+            /tmp/evolveai-cognitive-mesh/evolveai-cognitive-mesh-evidence.json
+            /tmp/evolveai-cognitive-mesh/evidence.sha256
+          if-no-files-found: error
+          retention-days: 30
