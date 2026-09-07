@@ -1,0 +1,78 @@
+{
+  "fixture_id": "uncertain-sensitivity-before-export",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "A sensitivity classifier is uncertain before a high-consequence external export.",
+  "expected_behavior": {
+    "uncertain_treated_as_non_sensitive": false,
+    "export_allowed": false,
+    "stricter_handling_or_review": true
+  },
+  "governed_uncertainty": {
+    "requested_action": "export_external",
+    "permitted_actions": [
+      "block_export",
+      "require_review",
+      "redact_then_reclassify"
+    ],
+    "prohibited_actions": [
+      "export_external"
+    ],
+    "selected_action": "block_export",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "uncertain_not_equal_non_sensitive",
+      "high_consequence_disclosure_requires_governance",
+      "prohibited_action_not_selected"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:uncertain-sensitivity",
+    "type": "observation",
+    "state": "observed",
+    "sensitivity": {
+      "labels": [
+        "unknown"
+      ],
+      "uncertainty": {
+        "representation": "categorical",
+        "level": "high"
+      }
+    },
+    "provenance": {
+      "origin": "synthetic export fixture",
+      "observer": "sensitivity-classifier",
+      "method": "probabilistic classification",
+      "timestamp": "2026-08-10T00:00:00Z"
+    },
+    "evidence": [
+      {
+        "id": "evidence:sensitivity-uncertain",
+        "kind": "classifier_output",
+        "ref": "fixture://sensitivity/uncertain",
+        "confidence": 0.55
+      }
+    ],
+    "saturation": {
+      "sigma": 0.7,
+      "calibrated": true,
+      "durability_dimensions": [
+        "not_export_authority"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "block",
+      "risk_class": "critical",
+      "permitted_actions": [
+        "block_export",
+        "require_review",
+        "redact_then_reclassify"
+      ],
+      "prohibited_actions": [
+        "export_external"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-10T00:00:00Z"
+  }
+}

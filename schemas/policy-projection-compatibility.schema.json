@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/policy-projection-compatibility.schema.json",
+  "title": "Agent Memory Policy Projection Compatibility Evaluation",
+  "description": "Append-only evidence about whether a memory-derived projection is currently compatible with an exact external policy or temporal-consumer contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evaluation_id", "projection", "source_currentness", "target", "compatibility", "evaluated_at", "interpretation"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "evaluation_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projection_ref", "projection_profile", "projection_version", "projection_digest", "source_memory_refs", "source_domain_schema_ref", "source_domain_schema_digest"],
+      "properties": {
+        "projection_ref": {"type": "string", "minLength": 1},
+        "projection_profile": {"type": "string", "minLength": 1},
+        "projection_version": {"type": "string", "minLength": 1},
+        "projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "source_memory_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "source_domain_schema_ref": {"type": "string", "minLength": 1},
+        "source_domain_schema_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "source_currentness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluation_ref", "status", "evidence_refs"],
+      "properties": {
+        "evaluation_ref": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "enum": ["current", "revalidation_required", "unknown"]},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["consumer_kind", "consumer_version_or_source_pin", "action_schema_digest", "semantic_mapping_status", "policy_validation_status", "isolation", "evidence_refs"],
+      "properties": {
+        "consumer_kind": {"type": "string", "enum": ["dogwood", "cedar", "cedarling", "other"]},
+        "consumer_version_or_source_pin": {"type": "string", "minLength": 1},
+        "action_schema_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "event_schema_digest": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+        "policy_ref": {"type": ["string", "null"]},
+        "policy_digest_or_version": {"type": ["string", "null"]},
+        "semantic_mapping_status": {"type": "string", "enum": ["compatible", "migration_required", "incompatible", "unknown"]},
+        "policy_validation_status": {"type": "string", "enum": ["valid", "revalidation_required", "invalid", "unknown", "not_applicable"]},
+        "required_temporal_horizon_seconds": {"type": ["integer", "null"], "minimum": 0},
+        "target_temporal_horizon_seconds": {"type": ["integer", "null"], "minimum": 0},
+        "projected_context_digest": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+        "evaluated_context_digest": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+        "isolation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "strategy", "validated", "evidence_refs"],
+          "properties": {
+            "required": {"type": "boolean"},
+            "strategy": {"type": "string", "enum": ["host_partition", "universal_symmetric_pin", "not_required", "unknown", "none"]},
+            "validated": {"type": "boolean"},
+            "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+          }
+        },
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "consequential_use_current", "revalidation_required", "reason_codes"],
+      "properties": {
+        "status": {"type": "string", "enum": ["current", "migration_required", "incompatible", "unknown"]},
+        "consequential_use_current": {"type": "boolean"},
+        "revalidation_required": {"type": "boolean"},
+        "reason_codes": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "evaluated_at": {"type": "string", "minLength": 1},
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_effect", "historical_projection_mutated", "memory_admission", "external_policy_effect", "execution_evidence", "human_adjudication", "consumer_trace_role"],
+      "properties": {
+        "authority_effect": {"const": "none"},
+        "historical_projection_mutated": {"const": false},
+        "memory_admission": {"const": "not_established"},
+        "external_policy_effect": {"const": "may_only_tighten_existing_boundary"},
+        "execution_evidence": {"const": "not_established"},
+        "human_adjudication": {"const": "not_established"},
+        "consumer_trace_role": {"const": "derived_noncanonical"}
+      }
+    }
+  }
+}

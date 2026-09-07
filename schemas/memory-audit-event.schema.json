@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/memory-audit-event.schema.json",
+  "title": "Agent Memory Audit Event",
+  "type": "object",
+  "required": ["event_id", "event_type", "event_version", "timestamp", "component"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "event_id": { "type": "string" },
+    "event_type": { "type": "string" },
+    "event_version": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "memory_id": { "type": "string" },
+    "actor": { "type": "string" },
+    "principal": { "type": "string" },
+    "component": { "type": "string" },
+    "correlation_id": { "type": "string" },
+    "causation_id": { "type": "string" },
+    "policy_version": { "type": "string" },
+    "state_snapshot": { "type": ["string", "object"] },
+    "sensitivity": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "signal": {
+      "type": "object",
+      "properties": {
+        "signal_type": { "type": "string" },
+        "signal_semantics": { "type": "string" },
+        "signal_value": {},
+        "estimator_id": { "type": "string" },
+        "estimator_version": { "type": "string" },
+        "calibration_ref": { "type": "string" },
+        "uncertainty": { "type": ["string", "object"] }
+      },
+      "additionalProperties": false
+    },
+    "authority": {
+      "type": "object",
+      "properties": {
+        "authority_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "permitted_actions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "prohibited_actions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "selected_action": { "type": "string" },
+        "selection_mode": {
+          "type": "string",
+          "enum": ["none", "deterministic", "stochastic", "learned", "human", "external"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "receipt_ref": { "type": "string" },
+    "ledger_ref": { "type": "string" }
+  },
+  "additionalProperties": false
+}

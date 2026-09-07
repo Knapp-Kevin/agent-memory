@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/contextual-recall-admission.schema.json",
+  "title": "Agent Memory Contextual Recall Admission Decision",
+  "description": "Deterministic current-context recall admission evidence. Prior admission, relevance, estimator output, or stored content does not create standing recall permission.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_version",
+    "decision_id",
+    "candidate_ref",
+    "policy",
+    "context",
+    "outcome",
+    "reason_code",
+    "evidence_refs",
+    "evaluated_at",
+    "interpretation"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "profile_version": { "const": "0.1.0" },
+    "decision_id": { "type": "string", "minLength": 1 },
+    "candidate_ref": { "type": "string", "minLength": 1 },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_ref", "policy_version", "status", "selection_mode"],
+      "properties": {
+        "policy_ref": { "type": "string", "minLength": 1 },
+        "policy_version": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["evaluated", "unavailable", "error", "invalid"] },
+        "selection_mode": { "const": "deterministic" }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_domain_refs", "principal_ref", "project_ref", "task_ref", "purpose", "destination_ref"],
+      "properties": {
+        "target_domain_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "principal_ref": { "type": "string" },
+        "project_ref": { "type": "string" },
+        "task_ref": { "type": "string" },
+        "purpose": { "type": "string" },
+        "destination_ref": { "type": "string" }
+      }
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["admit", "admit_with_warning", "require_verification", "require_review", "quarantine", "block"]
+    },
+    "reason_code": { "type": "string", "minLength": 1 },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "risk_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signal_ref", "signal_semantics", "estimator_ref", "estimator_version"],
+      "properties": {
+        "signal_ref": { "type": "string", "minLength": 1 },
+        "signal_semantics": { "type": "string", "minLength": 1 },
+        "estimator_ref": { "type": "string", "minLength": 1 },
+        "estimator_version": { "type": "string", "minLength": 1 },
+        "signal_value": { "type": "number" },
+        "uncertainty_summary": { "type": "string" }
+      }
+    },
+    "evaluated_at": { "type": "string", "format": "date-time" },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_effect",
+        "prior_admission_authority",
+        "memory_mutation",
+        "relevance_authority",
+        "risk_signal_authority"
+      ],
+      "properties": {
+        "authority_effect": { "const": "current_recall_only" },
+        "prior_admission_authority": { "const": "none" },
+        "memory_mutation": { "const": "not_performed" },
+        "relevance_authority": { "const": "none" },
+        "risk_signal_authority": { "const": "none" }
+      }
+    }
+  }
+}

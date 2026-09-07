@@ -1,0 +1,55 @@
+name: Bug or documentation problem
+description: Report something broken, inaccurate, confusing, or misleading
+title: "[Defect] "
+labels:
+  - agent-memory
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. A clear description is enough to get started. You do not need to classify the issue against Agent Memory doctrine or governance rules.
+
+        Do not report security vulnerabilities publicly; use the repository's security reporting process instead.
+
+  - type: dropdown
+    id: defect_type
+    attributes:
+      label: What kind of problem is this?
+      options:
+        - Documentation is inaccurate or confusing
+        - Broken link or navigation
+        - README, diagram, or presentation problem
+        - Schema, fixture, or data problem
+        - Validation or CI problem
+        - Citation, provenance, or attribution problem
+        - Code or implementation problem
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened or what is wrong?
+      description: Tell us what you observed. Include a file, URL, component, screenshot, or command if useful.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+      description: Optional. If the expected behavior or correction is obvious to you, describe it here.
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction or supporting evidence
+      description: Optional. Include steps, commands, screenshots, commit references, or other evidence when applicable.
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Why does this matter?
+      description: Optional. Note user impact, confusion, validation failure, or other consequences if known.

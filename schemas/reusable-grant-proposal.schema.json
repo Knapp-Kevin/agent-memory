@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/reusable-grant-proposal.schema.json",
+  "title": "Reusable Grant Proposal",
+  "type": "object",
+  "required": ["schema_version","proposal_id","status","source_projection_id","source_applicability","requested_operation","scope_refs","material_conditions","policy_version_ref","generated_at","requested_valid_until","revocation_mechanism_ref","supporting_precedent_refs","supporting_human_decision_refs","independent_human_evidence_count","minimum_independent_human_evidence","reasons","authority_effect","can_authorize_execution","can_self_ratify","can_create_autonomy_policy"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "proposal_id": {"type": "string", "pattern": "^grant-proposal:sha256:[0-9a-f]{64}$"},
+    "status": {"enum": ["proposed", "not_proposed"]},
+    "source_projection_id": {"type": "string", "minLength": 1},
+    "source_applicability": {"enum": ["exact_match","materially_equivalent","materially_different","stale","conflicting","insufficient_evidence"]},
+    "requested_operation": {"type": "string", "minLength": 1},
+    "scope_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "material_conditions": {"type": "array", "items": {"type": "object", "required": ["name","value"], "properties": {"name": {"type": "string", "minLength": 1}, "value": {}}, "additionalProperties": false}},
+    "policy_version_ref": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "requested_valid_until": {"type": "string", "format": "date-time"},
+    "revocation_mechanism_ref": {"type": "string", "minLength": 1},
+    "supporting_precedent_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "supporting_human_decision_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "independent_human_evidence_count": {"type": "integer", "minimum": 0},
+    "minimum_independent_human_evidence": {"type": "integer", "minimum": 2},
+    "reasons": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "authority_effect": {"const": "none"},
+    "can_authorize_execution": {"const": false},
+    "can_self_ratify": {"const": false},
+    "can_create_autonomy_policy": {"const": false}
+  },
+  "additionalProperties": false
+}

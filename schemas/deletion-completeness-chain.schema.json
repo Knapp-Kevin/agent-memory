@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mythologiq-labs-llc.github.io/agent-memory/schemas/deletion-completeness-chain.schema.json",
+  "title": "Agent Memory Deletion Completeness Evidence Chain",
+  "description": "Content-free composition of a P4 residue measurement with signed P4.5 portable governance evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile",
+    "version",
+    "agent_memory_commit",
+    "canonical_receipt_ref",
+    "action_ref",
+    "measurement_ref",
+    "measurement",
+    "portable_evidence_ref",
+    "portable_evidence"
+  ],
+  "properties": {
+    "profile": {"const": "agent-memory-deletion-completeness-chain"},
+    "version": {"const": "1.0.0"},
+    "agent_memory_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "canonical_receipt_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "action_ref": {"type": "string", "minLength": 1},
+    "measurement_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "portable_evidence_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "purged_count",
+        "declared_residual_controlled_count",
+        "declared_residual_uncontrollable_count",
+        "undeclared_residual_count",
+        "independently_observed_residual_count",
+        "total_residual_count",
+        "hard_gate_passed",
+        "lifecycle_satisfaction"
+      ],
+      "properties": {
+        "purged_count": {"type": "integer", "minimum": 0},
+        "declared_residual_controlled_count": {"type": "integer", "minimum": 0},
+        "declared_residual_uncontrollable_count": {"type": "integer", "minimum": 0},
+        "undeclared_residual_count": {"type": "integer", "minimum": 0},
+        "independently_observed_residual_count": {"type": "integer", "minimum": 0},
+        "total_residual_count": {"type": "integer", "minimum": 0},
+        "hard_gate_passed": {"type": "boolean"},
+        "lifecycle_satisfaction": {"enum": ["satisfied", "residual"]}
+      }
+    },
+    "portable_evidence": {
+      "$ref": "portable-governance-evidence.schema.json"
+    }
+  }
+}

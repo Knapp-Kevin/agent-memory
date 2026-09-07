@@ -1,0 +1,63 @@
+{
+  "fixture_id": "rejected-value-semantic-reentry",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "A paraphrase of an actively rejected value may be identified by an estimator as a reconciliation candidate, but similarity cannot itself authorize rejection or re-admission.",
+  "expected_behavior": {
+    "exact_reentry_reason": "rejected_value_requires_reconciliation",
+    "semantic_candidate_match": true,
+    "semantic_consequence": "require_reconciliation",
+    "semantic_signal_is_authority": false,
+    "ordinary_semantic_reentry_commits": false,
+    "approved_correction_may_reenter_through_pama": true,
+    "permanent_deletion_purges_rejection_history": true
+  },
+  "memory_unit": {
+    "id": "mem:deploy-window",
+    "content_ref": "fixture://rejected-value-semantic-reentry/current",
+    "type": "fact",
+    "state": "corrected",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "semantic-reentry-adversarial-trap",
+      "timestamp": "2026-08-12T18:00:00Z",
+      "source_refs": ["fixture://rejected-value-semantic-reentry/source"]
+    },
+    "evidence": [
+      {
+        "id": "evidence:semantic-reentry",
+        "kind": "correction_and_similarity_fixture",
+        "ref": "fixture://rejected-value-semantic-reentry/source",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.7,
+      "calibrated": false,
+      "durability_dimensions": ["correction_history", "reentry_governance"]
+    },
+    "authority": {
+      "pama_outcome": "require_review",
+      "risk_class": "low",
+      "policy_refs": ["ADR-020", "ADR-023", "ADR-027"],
+      "permitted_actions": ["enter_pending_verification", "collect_more_evidence", "defer"],
+      "prohibited_actions": ["promotion"],
+      "selection_mode": "none"
+    },
+    "created_at": "2026-08-12T18:00:00Z"
+  },
+  "rejected_value": {
+    "original": "deploy window is Thursday",
+    "current_correction": "deploy window is Friday",
+    "semantic_paraphrase": "Thursday is the deployment window"
+  },
+  "semantic_signal": {
+    "signal_type": "semantic_rejected_value_similarity",
+    "signal_semantics": "candidate_match_for_reconciliation_not_authority",
+    "estimator_id": "semantic-paraphrase-test",
+    "estimator_version": "1.0.0",
+    "candidate_match": true,
+    "confidence": 0.93
+  }
+}

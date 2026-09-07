@@ -1,0 +1,52 @@
+name: Unsafe Composition Evidence
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unsafe-composition:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Validate schemas and fixtures
+        run: python scripts/validate_schemas.py
+
+      - name: Execute existing and fixture-linked composition tests
+        env:
+          PYTHONPATH: reference
+        run: >-
+          python -m unittest
+          tests.test_composition_gate
+          tests.test_unsafe_composition_evidence
+
+      - name: Validate unsafe-composition profile links
+        run: python scripts/validate_markdown_links.py docs/profiles/unsafe-composition-evidence-profile.md
+
+      - name: Emit exact-head unsafe-composition evidence depth
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_unsafe_composition_depth.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output unsafe-composition-depth.json
+
+      - name: Upload unsafe composition evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: unsafe-composition-evidence-depth
+          path: unsafe-composition-depth.json
+          if-no-files-found: error

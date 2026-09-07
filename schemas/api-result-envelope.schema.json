@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-result-envelope.schema.json",
+  "title": "Agent Memory Public API: Result Envelope",
+  "description": "What every public stage returns (Sprint 4a, contract 1.0.0): the contract version, the ADR-030 compatibility state of the input envelope, the stage that ran, and the decision projection; a receipt when a commit happened; a refusal when the adapter refused; candidates and admissions for recall; contract 1.2.0 (Sprint 4c-2, ADR-038) adds the action_authority and execution_evidence stages, the action_authority object and the witness document, and the decision's active constraints.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "compatibility",
+    "stage"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": [
+        "1.0.0",
+        "1.1.0",
+        "1.2.0"
+      ]
+    },
+    "compatibility": {
+      "type": "string",
+      "enum": [
+        "current",
+        "migration_required",
+        "incompatible",
+        "unknown"
+      ]
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "none",
+        "proposal",
+        "approval",
+        "commit",
+        "recall",
+        "forget",
+        "history",
+        "posture",
+        "action_authority",
+        "execution_evidence"
+      ]
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "allow_with_ledger",
+        "require_review",
+        "require_external_verification",
+        "block",
+        "abstain",
+        "quarantine",
+        "collect_more_evidence"
+      ]
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "permitted_actions",
+        "prohibited_actions",
+        "reasons",
+        "policy_version",
+        "discharge_authority"
+      ],
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "permitted_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prohibited_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "discharge_authority": {
+          "type": "string"
+        },
+        "review_discharge": {
+          "type": "string"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "receipt": {
+      "type": "object"
+    },
+    "committed": {
+      "type": "boolean"
+    },
+    "fact_uuid": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "refusal": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "admissions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "admitted": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validation_error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_fact_uuid",
+        "state_version",
+        "tombstoned",
+        "events"
+      ],
+      "properties": {
+        "current_fact_uuid": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tombstoned": {
+          "type": "boolean"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "rejected_values": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "posture": {
+      "type": "object"
+    },
+    "action_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_ref",
+        "bound",
+        "execution_status",
+        "ledger_required",
+        "requirement",
+        "composition_id"
+      ],
+      "properties": {
+        "decision_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bound": {
+          "type": "boolean"
+        },
+        "execution_status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ledger_required": {
+          "type": "boolean"
+        },
+        "requirement": {
+          "type": "string"
+        },
+        "composition_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "witness": {
+      "type": "object"
+    }
+  }
+}

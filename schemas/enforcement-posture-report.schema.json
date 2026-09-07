@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/enforcement-posture-report.schema.json",
+  "title": "Agent Memory Enforcement Posture Report",
+  "description": "Machine-readable statement of configured enforcement modes, witness coverage, liveness, and the evidence scope actually observed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "posture_version",
+    "report_id",
+    "policy_context_ref",
+    "configured_governance",
+    "surfaces",
+    "execution_witness",
+    "observed_witness_count",
+    "liveness_status",
+    "evidence_scope",
+    "generated_at",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "posture_version": { "const": "0.1.0" },
+    "report_id": { "type": "string", "minLength": 1 },
+    "policy_context_ref": { "type": "string", "minLength": 1 },
+    "configured_governance": { "type": "boolean" },
+    "surfaces": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memory_write", "recall_admission", "background_maintenance", "external_import"],
+      "properties": {
+        "memory_write": { "$ref": "#/$defs/enforcementMode" },
+        "recall_admission": { "$ref": "#/$defs/enforcementMode" },
+        "background_maintenance": { "$ref": "#/$defs/enforcementMode" },
+        "external_import": { "$ref": "#/$defs/enforcementMode" }
+      }
+    },
+    "execution_witness": {
+      "type": "string",
+      "enum": ["available", "partial", "absent"]
+    },
+    "observed_witness_count": { "type": "integer", "minimum": 0 },
+    "liveness_status": {
+      "type": "string",
+      "enum": ["healthy", "degraded", "unavailable", "unknown"]
+    },
+    "evidence_scope": {
+      "type": "string",
+      "enum": ["configuration_only", "witness_capability_only", "observed_enforcement"]
+    },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "enforcementMode": {
+      "type": "string",
+      "enum": ["mechanical", "cooperative", "unknown"]
+    }
+  }
+}

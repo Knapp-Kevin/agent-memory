@@ -1,0 +1,85 @@
+name: External Evidence Contract
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  external-evidence-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Memory
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Validate schemas and evidence boundaries
+        env:
+          PYTHONPATH: reference
+        run: |
+          python scripts/validate_schemas.py
+          python -m unittest reference/tests/test_temporal_trust.py reference/tests/test_temporal_transparency.py
+
+      - name: Checkout exact OpenSSL source
+        uses: actions/checkout@v7
+        with:
+          repository: openssl/openssl
+          ref: aae016bfd52fcad2bc9657c2c782cfdf73b1ed5f
+          path: .external/openssl
+          persist-credentials: false
+
+      - name: Build exact OpenSSL source
+        run: |
+          cd .external/openssl
+          ./Configure no-shared no-tests
+          make -j2 build_sw
+          test "$(git rev-parse HEAD)" = "aae016bfd52fcad2bc9657c2c782cfdf73b1ed5f"
+          OPENSSL_CONF="$PWD/apps/openssl.cnf" ./apps/openssl version
+
+      - name: Verify exact RFC 3161 fixture directly
+        env:
+          OPENSSL_CONF: ${{ github.workspace }}/.external/openssl/apps/openssl.cnf
+        run: |
+          OPENSSL=.external/openssl/apps/openssl
+          DATA=.external/openssl/test/recipes/80-test_tsa_data
+          "$OPENSSL" asn1parse -inform DER -in "$DATA/sectigo-all-zero.tsr" -i > rfc3161-asn1.txt
+          "$OPENSSL" ts -reply -in "$DATA/sectigo-all-zero.tsr" -text > rfc3161-reply.txt
+          "$OPENSSL" ts -verify -no_check_time -queryfile "$DATA/all-zero.tsq" -in "$DATA/sectigo-all-zero.tsr" -CAfile "$DATA/user-trust-ca.pem" > rfc3161-verify.txt 2>&1
+          set +e
+          "$OPENSSL" ts -verify -no_check_time -queryfile "$DATA/all-zero.tsq" -in "$DATA/sectigo-all-zero.tsr" -CAfile "$DATA/comodo-aaa.pem" > rfc3161-wrong-root.txt 2>&1
+          WRONG_ROOT_RC=$?
+          set -e
+          test "$WRONG_ROOT_RC" -ne 0
+
+      - name: Execute exact RFC 3161 comparator
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+          OPENSSL_CONF: ${{ github.workspace }}/.external/openssl/apps/openssl.cnf
+        run: |
+          python reference/run_rfc3161_comparator.py \
+            --openssl-bin .external/openssl/apps/openssl \
+            --fixture-dir .external/openssl/test/recipes/80-test_tsa_data \
+            --agent-memory-commit "$AGENT_MEMORY_COMMIT" \
+            --output external-trust-evidence.json
+
+      - name: Upload external evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: external-trust-evidence
+          path: |
+            external-trust-evidence.json
+            rfc3161-asn1.txt
+            rfc3161-reply.txt
+            rfc3161-verify.txt
+            rfc3161-wrong-root.txt
+          if-no-files-found: warn

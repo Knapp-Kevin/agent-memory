@@ -1,0 +1,62 @@
+{
+  "fixture_id": "derived-self-corroboration",
+  "fixture_version": "1.0.0",
+  "class": "trap",
+  "description": "Multiple derived restatements of one source must remain one independent origin rather than manufacturing corroboration.",
+  "expected_behavior": {
+    "candidate": true,
+    "crystallized": false,
+    "trap_class_check": "pass",
+    "reason": "Derivation depth and repeated restatement do not create independent evidence."
+  },
+  "memory_unit": {
+    "id": "fixture:epistemic:derived-self-corroboration",
+    "content_ref": "fixture://derived-self-corroboration/claim",
+    "type": "semantic",
+    "state": "candidate",
+    "provenance": {
+      "origin": "fixture",
+      "observer": "conformance-suite",
+      "method": "synthetic-derived-lineage-trap",
+      "timestamp": "2026-08-12T00:00:00Z",
+      "source_refs": ["fixture://source/origin-a"]
+    },
+    "evidence": [
+      {"id": "evidence:origin-a", "kind": "single_source_assertion", "ref": "fixture://source/origin-a", "confidence": 0.78},
+      {"id": "evidence:summary-b", "kind": "derived_summary", "ref": "fixture://derived/summary-b", "confidence": 0.9},
+      {"id": "evidence:summary-c", "kind": "derived_summary", "ref": "fixture://derived/summary-c", "confidence": 0.94}
+    ],
+    "saturation": {
+      "sigma": 0.88,
+      "calibrated": true,
+      "threshold": 0.8,
+      "durability_dimensions": ["reuse", "apparent_corroboration"]
+    },
+    "authority": {
+      "pama_outcome": "require_external_verification",
+      "risk_class": "medium",
+      "policy_refs": ["ADR-003", "ADR-009"],
+      "permitted_actions": ["retain_candidate", "request_independent_evidence"],
+      "prohibited_actions": ["crystallize"],
+      "selection_mode": "deterministic"
+    },
+    "certification": {"status": "none", "scope": "fixture"},
+    "created_at": "2026-08-12T00:00:00Z"
+  },
+  "epistemic_promotion": {
+    "lineage": [
+      {"evidence_id": "evidence:origin-a", "origin_refs": ["origin:a"], "derived_from": []},
+      {"evidence_id": "evidence:summary-b", "origin_refs": ["origin:a"], "derived_from": ["evidence:origin-a"]},
+      {"evidence_id": "evidence:summary-c", "origin_refs": ["origin:a"], "derived_from": ["evidence:summary-b"]}
+    ],
+    "retrieval_count": 60,
+    "downstream_use_count": 25,
+    "corroboration_threshold": 2,
+    "certification_gate_passed": false,
+    "expected": {
+      "independent_origin_count": 1,
+      "corroboration_threshold_met": false,
+      "certification_status": "none"
+    }
+  }
+}

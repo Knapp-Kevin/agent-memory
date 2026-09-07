@@ -1,0 +1,58 @@
+{
+  "component_id": "memos-local-plugin-v2.0.17",
+  "component_version": "2.0.17",
+  "profile_version": "component-capability-v3",
+  "enabled": true,
+  "runtime_ref": "npm:@memtensor/memos-local-plugin@2.0.17",
+  "failure_posture": "fail_closed",
+  "provenance_refs": [
+    "https://github.com/MemTensor/MemOS/releases/tag/memos-local-plugin-v2.0.17",
+    "https://github.com/MemTensor/MemOS/commit/d3d1bcfaff65f31b621d58bc236ece6d1e0da5ab",
+    "https://github.com/MythologIQ-Labs-LLC/agent-memory/issues/354"
+  ],
+  "capabilities": [
+    {
+      "capability_id": "resource_artifact_memory",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "fail_closed",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "reference/agentmem_ref/memos_qualification.py",
+        "reference/tests/test_memos_qualification.py",
+        ".github/workflows/memos-v2017-substitution.yml"
+      ],
+      "limitations": [
+        "Qualification is limited to @memtensor/memos-local-plugin v2.0.17 trace-bundle resource memory.",
+        "Stable-key evidence uses caller-supplied trace IDs through importBundle plus updateTrace; conversational onTurnEnd writes are not claimed idempotent.",
+        "Candidate retrieval is the deterministic listTraces query surface; semantic ranking, L2/L3 memory, skills, and agent adapters are outside this evidence boundary.",
+        "Write atomicity and concurrent mutation ordering are not fault-injection qualified and remain declared none.",
+        "Repository root LICENSE is Apache-2.0 while the package manifest declares MIT; the discrepancy is retained as provenance and runtime rights rely on the exact tagged repository license grant."
+      ],
+      "behavior_contract": {
+        "operation_support": {
+          "write": true,
+          "read": true,
+          "recall_candidate": true
+        },
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "explicit_signal",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "scan_required",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      },
+      "operational_contract": {
+        "write_atomicity": "none",
+        "concurrency_control": "none",
+        "idempotency": "durable_keyed",
+        "restart_recovery": "reconstructable",
+        "reconciliation": "deterministic_readback"
+      }
+    }
+  ]
+}

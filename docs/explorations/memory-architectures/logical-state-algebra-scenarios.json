@@ -1,0 +1,152 @@
+{
+  "schema_version": "0.1.0",
+  "issue": 276,
+  "status": "exploratory",
+  "current_leading_hypothesis": "no_new_algebra",
+  "claim_boundary": "These scenarios pressure-test whether existing Agent Memory contracts are sufficient across substrates. A passing scenario is evidence against adding a new generic algebra unless implementation duplication exposes a separate interoperability problem.",
+  "outcomes": [
+    "no_new_algebra",
+    "narrow_transition_contract",
+    "profile_specific",
+    "stronger_engine"
+  ],
+  "scenarios": [
+    {
+      "id": "LSA-01",
+      "name": "relational_correction_with_stale_projection",
+      "substrate_family": "relational_document",
+      "setup": "Canonical state S1 is transactionally revised to S2 while a derived materialized/indexed projection D1 remains physically present.",
+      "existing_primitives_expected": [
+        "logical identity/versioning",
+        "derivation provenance",
+        "derivation currentness",
+        "correction/supersession lifecycle",
+        "PAMA for consequential mutation",
+        "residue/rebuild evidence"
+      ],
+      "success_condition": "S2 is current, S1 remains historical where permitted, D1 is stale/rebuild-required, and physical projection presence does not imply currentness.",
+      "candidate_gap_trigger": "Two or more relational/module adapters cannot bind the correction, transaction, validation, and lifecycle result consistently using existing contracts."
+    },
+    {
+      "id": "LSA-02",
+      "name": "graph_correction_with_reachable_stale_edge",
+      "substrate_family": "knowledge_temporal_graph",
+      "setup": "A source correction invalidates an inferred edge/path, but the old edge/path remains physically reachable.",
+      "existing_primitives_expected": [
+        "source/derivation provenance",
+        "currentness",
+        "scope/isolation",
+        "recall admission",
+        "PAMA",
+        "rebuild evidence"
+      ],
+      "success_condition": "Reachability remains observable but cannot establish current truth, recall permission, or mutation authority.",
+      "candidate_gap_trigger": "Graph and non-graph modules need an otherwise-missing common transition binding to distinguish physical availability from logical eligibility."
+    },
+    {
+      "id": "LSA-03",
+      "name": "append_only_history_current_truth",
+      "substrate_family": "event_log_ledger",
+      "setup": "S1 is appended, then S2 supersedes/corrects it without rewriting history; a current view is materialized from the log.",
+      "existing_primitives_expected": [
+        "historical identity",
+        "temporal causality",
+        "supersession/currentness",
+        "projection derivation",
+        "receipt/evidence continuity"
+      ],
+      "success_condition": "Historical integrity and present truth remain separately reconstructable and a valid append-only advance does not imply semantic correctness by itself.",
+      "candidate_gap_trigger": "Currentness/replay semantics cannot be represented consistently without a new generic transition primitive."
+    },
+    {
+      "id": "LSA-04",
+      "name": "delete_with_cross_module_residue",
+      "substrate_family": "hybrid",
+      "setup": "Canonical memory is deleted from one module while a graph edge, embedding, summary, cache, or learned projection survives in another.",
+      "existing_primitives_expected": [
+        "deletion consequence",
+        "derivation closure",
+        "output custody",
+        "independent residue check",
+        "lifecycle satisfaction",
+        "maintenance transaction evidence"
+      ],
+      "success_condition": "Canonical deletion and forgetting completeness remain separate; surviving residue prevents a satisfied lifecycle claim.",
+      "candidate_gap_trigger": "Cross-module lifecycle closure cannot be coordinated or evidenced without a shared logical transaction construct."
+    },
+    {
+      "id": "LSA-05",
+      "name": "concurrent_contradictory_writers",
+      "substrate_family": "distributed_or_shared",
+      "setup": "Two authorized writers produce incompatible claims from the same base state at roughly the same time.",
+      "existing_primitives_expected": [
+        "conflict evidence",
+        "provenance",
+        "version/currentness",
+        "PAMA consequence classification",
+        "correction/reconciliation lifecycle"
+      ],
+      "success_condition": "Competing evidence remains reconstructable and backend last-write-wins behavior is not silently elevated into Agent Memory truth semantics.",
+      "candidate_gap_trigger": "Conflict/reconciliation semantics must be uniform across modules for correctness and existing contracts cannot express the required atomic/replay behavior."
+    },
+    {
+      "id": "LSA-06",
+      "name": "partial_autonomous_maintenance",
+      "substrate_family": "hybrid_maintenance",
+      "setup": "A maintenance run stages several authorized derived mutations, one write or required validation fails, and the backend cannot complete the batch cleanly.",
+      "existing_primitives_expected": [
+        "constituent PAMA decisions",
+        "maintenance-run transaction state",
+        "validation result",
+        "rollback/quarantine",
+        "cursor/checkpoint discipline"
+      ],
+      "success_condition": "No clean commit or durable cursor advance is reported until the run is both committed and successfully validated.",
+      "candidate_gap_trigger": "Several backends require the same missing cross-module commit/recovery primitive beyond the existing maintenance evidence profile."
+    },
+    {
+      "id": "LSA-07",
+      "name": "predictive_influence_after_source_revocation",
+      "substrate_family": "learned_latent",
+      "setup": "A learned or conditional memory remains highly predictive after one of its source bases is revoked, corrected, or scope-restricted.",
+      "existing_primitives_expected": [
+        "source-basis provenance",
+        "currentness",
+        "conditional-memory influence gate",
+        "scope/isolation",
+        "PAMA separation from influence"
+      ],
+      "success_condition": "Predictive utility remains measurable but cannot restore currentness, scope eligibility, or durable action authority.",
+      "candidate_gap_trigger": "Opaque state cannot be governed across multiple learned implementations without a missing generic logical transition/currentness primitive."
+    },
+    {
+      "id": "LSA-08",
+      "name": "backend_replacement_preserves_logical_identity",
+      "substrate_family": "module_replacement",
+      "setup": "A module is rebuilt or replaced with a different physical backend whose row keys, graph IDs, addresses, or index IDs differ.",
+      "existing_primitives_expected": [
+        "logical memory identity",
+        "content/reference identity separation",
+        "migration/rebuild provenance",
+        "currentness",
+        "module/profile version evidence"
+      ],
+      "success_condition": "Logical history and governance references survive backend replacement without treating physical IDs as canonical identity.",
+      "candidate_gap_trigger": "At least two module families cannot preserve logical continuity without duplicating an incompatible migration/transition envelope."
+    }
+  ],
+  "promotion_gate": {
+    "narrow_transition_contract": [
+      "same missing binding recurs across at least two materially different module/substrate families",
+      "existing contracts leave a concrete interoperability, correctness, recovery, or evidence ambiguity",
+      "the proposed envelope references rather than replaces PAMA/lifecycle/currentness semantics",
+      "backend capability mismatches remain explicit"
+    ],
+    "stronger_engine": [
+      "cross-module atomic logical transitions are required for correctness and cannot be composed safely today",
+      "durable conflict/reconciliation or replay semantics must be uniform across backends",
+      "shared logical versioning cannot safely remain adapter-owned",
+      "the need is reproduced through implementation rather than inferred from design aesthetics"
+    ]
+  }
+}

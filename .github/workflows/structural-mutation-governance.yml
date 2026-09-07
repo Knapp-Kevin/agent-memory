@@ -1,0 +1,94 @@
+name: Structural Mutation Governance
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Execute targeted structural mutation tests
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_structural_mutation_governance.py'
+
+      - name: Execute PAMA 1.2 compatibility regressions
+        run: python -m unittest discover -s reference/tests -t reference -p 'test_domain_schema_mutation_*.py'
+
+      - name: Execute full reference regression suite
+        run: python -m unittest discover -s reference/tests -t reference
+
+      - name: Emit exact-head structural mutation evidence
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          python reference/run_structural_mutation_governance.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --output structural-mutation-governance.json
+
+      - name: Validate emitted structural mutation evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("structural-mutation-governance.json").read_text())
+          if len(report["agent_memory_commit"]) != 40:
+              raise SystemExit("structural mutation evidence is not exact-head bound")
+          invariants = report["structural_invariants"]
+          non_boolean = [name for name, value in invariants.items() if type(value) is not bool]
+          if non_boolean:
+              raise SystemExit(f"structural mutation invariants are not JSON booleans: {non_boolean}")
+          failed = [name for name, passed in invariants.items() if not passed]
+          if failed:
+              raise SystemExit(f"structural mutation invariants failed: {failed}")
+          s1 = report["cases"]["s1_autonomous_additive"]
+          if s1["pama_decision"]["schema_version"] != "1.3.0":
+              raise SystemExit("autonomous S1 evidence is not PAMA 1.3 bound")
+          if s1["pama_decision"]["basis"]["structural_class"] != "S1":
+              raise SystemExit("autonomous evidence lost S1 classification")
+          if s1["pama_decision"]["decision"]["outcome"] != "allow_with_ledger":
+              raise SystemExit("bounded S1 did not earn allow_with_ledger")
+          if s1["pama_decision"]["decision"]["selection_mode"] != "deterministic":
+              raise SystemExit("bounded S1 selection was not deterministic")
+          if report["cases"]["s2_semantic_migration"]["pending_outcome"] != "require_review":
+              raise SystemExit("S2 semantic migration did not preserve review floor")
+          if report["cases"]["s3_destructive_scope_authority"]["outcome"] != "block":
+              raise SystemExit("S3 destructive authority-bearing case did not block")
+          if report["authority_effect"] != "none":
+              raise SystemExit("structural evidence itself cannot create authority")
+          print(f"validated {len(invariants)} structural mutation invariants")
+          PY
+
+      - name: Upload structural mutation evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: structural-mutation-governance
+          path: structural-mutation-governance.json
+          if-no-files-found: error
+
+      - name: Publish structural mutation summary
+        if: always()
+        run: |
+          {
+            echo "## ADR-032 structural mutation governance"
+            echo ""
+            echo "PAMA 1.3 introduces one bounded deterministic S1 delegation while preserving 1.2 historical behavior and S2/S3 human-authority floors."
+            echo ""
+            echo "S0 remains derived maintenance, not domain_schema_mutation."
+            echo ""
+            echo "Structural impact evidence is bound to exact state/dependency digests and cannot create authority by itself."
+          } >> "$GITHUB_STEP_SUMMARY"

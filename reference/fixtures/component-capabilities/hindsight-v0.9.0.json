@@ -1,0 +1,58 @@
+{
+  "component_id": "hindsight-v0.9.0",
+  "component_version": "0.9.0",
+  "profile_version": "component-capability-v3",
+  "enabled": true,
+  "runtime_ref": "pypi:hindsight-embed==0.9.0",
+  "failure_posture": "fail_closed",
+  "provenance_refs": [
+    "https://github.com/vectorize-io/hindsight/releases/tag/v0.9.0",
+    "https://github.com/vectorize-io/hindsight/commit/b12646f49ec512136b9f709e608524ffed969668",
+    "https://github.com/MythologIQ-Labs-LLC/agent-memory/issues/352"
+  ],
+  "capabilities": [
+    {
+      "capability_id": "resource_artifact_memory",
+      "capability_version": "1.0",
+      "maturity": "evidence_proven",
+      "state_posture": "derived",
+      "scope_posture": "external_scope_bridge",
+      "failure_posture": "fail_closed",
+      "authority_effect": "none",
+      "enabled": true,
+      "evidence_refs": [
+        "reference/agentmem_ref/hindsight_qualification.py",
+        "reference/tests/test_hindsight_qualification.py",
+        ".github/workflows/hindsight-v090-qualification.yml"
+      ],
+      "limitations": [
+        "Qualification is limited to Hindsight v0.9.0 chunk-backed document memory with LLM provider disabled.",
+        "Provider bank/document identities are provider-native and do not become Agent Memory logical identity.",
+        "Write atomicity and concurrent mutation ordering are not qualified by this slice.",
+        "Deletion completeness is accepted only when exact-head document readback and recall residue scans pass.",
+        "No semantic-fact, epistemic-belief, predictive, graph, causal, or policy-memory capability is earned by this profile."
+      ],
+      "behavior_contract": {
+        "operation_support": {
+          "write": true,
+          "read": true,
+          "recall_candidate": true
+        },
+        "currentness_model": "provider_revalidated",
+        "invalidation_model": "provider_revalidation",
+        "correction_model": "provider_revalidation",
+        "deletion_model": "provider_revalidation",
+        "residue_model": "scan_required",
+        "migration_rebuild_model": "requires_requalification",
+        "structural_mutation_requirement": "none"
+      },
+      "operational_contract": {
+        "write_atomicity": "none",
+        "concurrency_control": "none",
+        "idempotency": "durable_keyed",
+        "restart_recovery": "reconstructable",
+        "reconciliation": "deterministic_readback"
+      }
+    }
+  ]
+}

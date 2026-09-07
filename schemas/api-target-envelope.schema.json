@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-target-envelope.schema.json",
+  "title": "Agent Memory Public API: Target Envelope",
+  "description": "Names one governed memory target for a read-only stage (Sprint 4c-1, contract 1.1.0).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "target_reference"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": [
+        "1.0.0",
+        "1.1.0",
+        "1.2.0"
+      ]
+    },
+    "target_reference": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

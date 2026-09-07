@@ -1,0 +1,111 @@
+name: Research or evidence submission
+description: Submit research, standards, benchmarks, or evidence that supports, challenges, or narrows Agent Memory doctrine
+title: "[Evidence] "
+labels:
+  - agent-memory
+  - evidence
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to introduce external evidence. Agent Memory values evidence that challenges current doctrine as much as evidence that supports it. Public accessibility is not reuse permission; link and independently summarize by default.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched the research bibliography, source index, and existing issues for this source or equivalent evidence.
+          required: true
+        - label: I have not pasted substantial third-party copyrighted text, figures, tables, or code into this issue without a verified reuse basis.
+          required: true
+
+  - type: input
+    id: source_title
+    attributes:
+      label: Source title
+    validations:
+      required: true
+
+  - type: input
+    id: source_url
+    attributes:
+      label: Public or canonical source URL
+      description: Prefer the most specific authoritative public locator when one exists.
+      placeholder: https://...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source_type
+    attributes:
+      label: Source type
+      options:
+        - Peer-reviewed research
+        - Preprint
+        - Standard or Internet-Draft
+        - Benchmark or dataset
+        - Public technical report
+        - Open-source implementation
+        - Issue, discussion, or technical commentary
+        - Government or institutional publication
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: evidence_role
+    attributes:
+      label: Evidence role
+      options:
+        - Supports current doctrine
+        - Challenges current doctrine
+        - Narrows or adds boundary conditions
+        - Provides implementation evidence
+        - Provides conformance or benchmark evidence
+        - Discovery only / relevance not yet established
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Relevant finding, in your own words
+      description: Summarize only the parts materially relevant to Agent Memory. Do not paste large excerpts.
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctrine_mapping
+    attributes:
+      label: Agent Memory mapping
+      description: Identify the doctrine, ADR, schema, fixture, threat, benchmark, or open hypothesis this evidence affects.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rights_status
+    attributes:
+      label: Rights or reuse status
+      description: This classifies reuse, not whether the source may be cited.
+      options:
+        - Citation / independent synthesis only
+        - Explicit open license verified
+        - Public domain or government work verified
+        - Author-owned contribution / permission available
+        - Unknown; treat as citation-only
+        - Other; explain below
+    validations:
+      required: true
+
+  - type: textarea
+    id: rights_details
+    attributes:
+      label: License or rights details
+      description: Include license/permission URL or explain why citation-only treatment is appropriate when relevant.
+
+  - type: textarea
+    id: challenge
+    attributes:
+      label: What would weaken this evidence?
+      description: Note methodological limits, scope limits, contradictory evidence, implementation assumptions, or reasons not to generalize the finding.

@@ -1,0 +1,351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/memory-unit.schema.json",
+  "title": "Agent Memory Unit",
+  "description": "Doctrine-level memory unit schema. New governed-uncertainty and isolation-domain fields are additive for backward compatibility with early fixtures.",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "state",
+    "provenance",
+    "evidence",
+    "saturation",
+    "authority",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version of the memory-unit semantic contract. Recommended for new objects."
+    },
+    "id": {
+      "type": "string",
+      "description": "UOR address or stable implementation-specific memory identifier."
+    },
+    "content_ref": {
+      "type": "string",
+      "description": "Pointer to raw, canonical, or external content."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "observation",
+        "decision",
+        "fact",
+        "trace",
+        "code_artifact",
+        "preference",
+        "policy",
+        "failure",
+        "correction",
+        "summary",
+        "episodic",
+        "semantic",
+        "procedural",
+        "prospective",
+        "relationship",
+        "evidence",
+        "model",
+        "inherited"
+      ]
+    },
+    "acquisition_mode": {
+      "type": "string",
+      "enum": ["observed", "inferred", "taught", "inherited", "imported", "synthesized"]
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "transient",
+        "observed",
+        "linked",
+        "reinforced",
+        "candidate",
+        "pending_verification",
+        "crystallized",
+        "operationally_reused",
+        "stale",
+        "disputed",
+        "corrected",
+        "reconciled",
+        "pruned",
+        "archived",
+        "tombstoned"
+      ]
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/sensitivity"
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["origin", "observer", "method", "timestamp"],
+      "properties": {
+        "origin": { "type": "string" },
+        "observer": { "type": "string" },
+        "method": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "source_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "derived_from": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "ref", "confidence"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string" },
+          "ref": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "confidence_kind": {
+            "type": "string",
+            "description": "Semantic meaning of the legacy confidence field, e.g. calibrated_probability, direct_record, heuristic_support."
+          },
+          "estimator": { "$ref": "#/$defs/estimator" },
+          "uncertainty": { "$ref": "#/$defs/uncertainty" },
+          "source_scope": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "signals": {
+      "type": "array",
+      "description": "Typed estimator or heuristic signals such as relevance, trust, sensitivity, contradiction, or utility.",
+      "items": { "$ref": "#/$defs/signal" }
+    },
+    "saturation": {
+      "type": "object",
+      "required": ["sigma", "calibrated", "durability_dimensions"],
+      "properties": {
+        "sigma": { "type": "number", "minimum": 0, "maximum": 1 },
+        "score_kind": {
+          "type": "string",
+          "default": "lifecycle_routing_score",
+          "description": "Declares score semantics; sigma is not automatically a probability."
+        },
+        "calibrated": { "type": "boolean" },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+        "estimator": { "$ref": "#/$defs/estimator" },
+        "uncertainty": { "$ref": "#/$defs/uncertainty" },
+        "calibration_scope": { "type": "string" },
+        "durability_dimensions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "authority": {
+      "type": "object",
+      "required": ["pama_outcome", "risk_class"],
+      "properties": {
+        "pama_outcome": {
+          "type": "string",
+          "enum": [
+            "allow",
+            "allow_with_ledger",
+            "require_review",
+            "require_external_verification",
+            "abstain",
+            "quarantine",
+            "collect_more_evidence",
+            "block"
+          ]
+        },
+        "risk_class": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "policy_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "policy_version": { "type": "string" },
+        "authority_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "permitted_actions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "prohibited_actions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "selection_mode": {
+          "type": "string",
+          "enum": ["none", "deterministic", "stochastic", "learned", "human", "external"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "certification": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["none", "pending", "pass", "fail", "expired", "revoked"]
+        },
+        "ref": { "type": "string" },
+        "scope": { "type": "string" },
+        "policy_version": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "decay_profile": {
+      "type": "object",
+      "properties": {
+        "lambda_base": { "type": "number", "minimum": 0 },
+        "lambda_eff": { "type": "number", "minimum": 0 },
+        "last_accessed_at": { "type": "string", "format": "date-time" },
+        "pressure": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "retention": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["active", "deprioritized", "suppressed", "archived", "redacted", "tombstoned", "cryptographically_deleted", "purged"]
+        },
+        "policy_version": { "type": "string" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "tombstone_ref": { "type": "string" },
+        "deletion_receipt_ref": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "decision_receipt_ref": { "type": "string" },
+    "ledger_ref": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "estimator": {
+      "type": "object",
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "type": "string" },
+        "version": { "type": "string" },
+        "calibration_ref": { "type": "string" },
+        "calibration_scope": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "uncertainty": {
+      "type": "object",
+      "required": ["representation"],
+      "properties": {
+        "representation": {
+          "type": "string",
+          "enum": ["categorical", "interval", "probability", "distribution_summary", "ensemble_disagreement", "conformal_set", "unknown"]
+        },
+        "level": { "type": "string", "enum": ["low", "medium", "high", "unknown"] },
+        "lower": { "type": "number" },
+        "upper": { "type": "number" },
+        "probability": { "type": "number", "minimum": 0, "maximum": 1 },
+        "details": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "signal": {
+      "type": "object",
+      "required": ["signal_type", "value_semantics"],
+      "properties": {
+        "signal_type": { "type": "string" },
+        "value": {},
+        "value_semantics": { "type": "string" },
+        "estimator": { "$ref": "#/$defs/estimator" },
+        "uncertainty": { "$ref": "#/$defs/uncertainty" },
+        "scope": { "type": "string" },
+        "computed_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "owner_principal": { "type": "string" },
+        "origin_actor": { "type": "string" },
+        "tenant": { "type": "string" },
+        "organization": { "type": "string" },
+        "workspace": { "type": "string" },
+        "project": { "type": "string" },
+        "repository": { "type": "string" },
+        "task": { "type": "string" },
+        "session": { "type": "string" },
+        "purpose": { "type": "string" },
+        "consent_state": { "type": "string" },
+        "delegation_ref": { "type": "string" },
+        "valid_until": { "type": "string", "format": "date-time" },
+        "allowed_destinations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "revocation_ref": { "type": "string" },
+        "isolation_domain_refs": {
+          "type": "array",
+          "description": "Logical authority-domain identifiers that currently govern this memory. Order does not imply hierarchy.",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "primary_isolation_domain_ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional primary domain for implementations that need one routing anchor. It does not make other bound domains subordinate."
+        },
+        "source_isolation_domain_refs": {
+          "type": "array",
+          "description": "Source-domain provenance relevant to inherited or derived scope constraints.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "shared_memory_domain_refs": {
+          "type": "array",
+          "description": "Governed shared-memory domains in which this memory is eligible. Membership alone does not imply recall, mutation, export, or re-sharing authority.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "domain_membership_refs": {
+          "type": "array",
+          "description": "References to current membership or authorization state used to evaluate domain access.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "sensitivity": {
+      "type": "object",
+      "properties": {
+        "labels": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "classifier": { "$ref": "#/$defs/estimator" },
+        "uncertainty": { "$ref": "#/$defs/uncertainty" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

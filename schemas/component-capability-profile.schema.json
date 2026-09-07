@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/component-capability-profile.schema.json",
+  "title": "Agent Memory Component Capability Profile",
+  "description": "Machine-readable reference contract for independently matured component capabilities. component-capability-v2 requires explicit lifecycle behavior metadata; component-capability-v3 additionally requires an operational substrate contract. Capability selection and contract declarations do not create memory authority.",
+  "type": "object",
+  "required": [
+    "component_id",
+    "component_version",
+    "profile_version",
+    "enabled",
+    "failure_posture",
+    "capabilities"
+  ],
+  "properties": {
+    "component_id": { "type": "string", "minLength": 1 },
+    "component_version": { "type": "string", "minLength": 1 },
+    "profile_version": { "type": "string", "minLength": 1 },
+    "enabled": { "type": "boolean" },
+    "runtime_ref": { "type": "string" },
+    "failure_posture": {
+      "type": "string",
+      "enum": ["fail_closed", "explicit_unavailable", "fail_open_candidate_only"]
+    },
+    "provenance_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/capability" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "profile_version": { "enum": ["component-capability-v2", "component-capability-v3"] }
+        },
+        "required": ["profile_version"]
+      },
+      "then": {
+        "properties": {
+          "capabilities": {
+            "items": {
+              "allOf": [
+                { "$ref": "#/$defs/capability" },
+                { "required": ["behavior_contract"] }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "profile_version": { "const": "component-capability-v3" }
+        },
+        "required": ["profile_version"]
+      },
+      "then": {
+        "properties": {
+          "capabilities": {
+            "items": {
+              "allOf": [
+                { "$ref": "#/$defs/capability" },
+                { "required": ["operational_contract"] }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "behaviorContract": {
+      "type": "object",
+      "required": [
+        "operation_support",
+        "currentness_model",
+        "invalidation_model",
+        "correction_model",
+        "deletion_model",
+        "residue_model",
+        "migration_rebuild_model",
+        "structural_mutation_requirement"
+      ],
+      "properties": {
+        "operation_support": {
+          "type": "object",
+          "required": ["write", "read", "recall_candidate"],
+          "properties": {
+            "write": { "type": "boolean" },
+            "read": { "type": "boolean" },
+            "recall_candidate": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "currentness_model": {
+          "type": "string",
+          "enum": [
+            "not_applicable",
+            "canonical_version",
+            "basis_versioned",
+            "provider_revalidated",
+            "external_asserted"
+          ]
+        },
+        "invalidation_model": {
+          "type": "string",
+          "enum": [
+            "not_applicable",
+            "version_relation",
+            "explicit_signal",
+            "provider_revalidation"
+          ]
+        },
+        "correction_model": {
+          "type": "string",
+          "enum": [
+            "not_applicable",
+            "canonical_supersession",
+            "invalidate_derived",
+            "candidate_only",
+            "provider_revalidation"
+          ]
+        },
+        "deletion_model": {
+          "type": "string",
+          "enum": [
+            "not_applicable",
+            "canonical_delete",
+            "derived_residue_then_purge",
+            "candidate_drop",
+            "provider_revalidation"
+          ]
+        },
+        "residue_model": {
+          "type": "string",
+          "enum": [
+            "not_applicable",
+            "none_expected",
+            "scan_required",
+            "derived_residual",
+            "provider_managed"
+          ]
+        },
+        "migration_rebuild_model": {
+          "type": "string",
+          "enum": [
+            "not_applicable",
+            "rebuild_from_canonical",
+            "explicit_migration",
+            "requires_requalification",
+            "unsupported"
+          ]
+        },
+        "structural_mutation_requirement": {
+          "type": "string",
+          "enum": [
+            "none",
+            "proposal_only",
+            "pama_required",
+            "external_authorization_required"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "operationalContract": {
+      "type": "object",
+      "required": [
+        "write_atomicity",
+        "concurrency_control",
+        "idempotency",
+        "restart_recovery",
+        "reconciliation"
+      ],
+      "properties": {
+        "write_atomicity": {
+          "type": "string",
+          "enum": [
+            "none",
+            "process_local",
+            "single_record_atomic",
+            "transactional_multi_record"
+          ]
+        },
+        "concurrency_control": {
+          "type": "string",
+          "enum": [
+            "none",
+            "process_local",
+            "optimistic_revision",
+            "pessimistic_lock",
+            "serializable"
+          ]
+        },
+        "idempotency": {
+          "type": "string",
+          "enum": ["none", "process_local", "durable_keyed"]
+        },
+        "restart_recovery": {
+          "type": "string",
+          "enum": ["none", "process_local_only", "reconstructable", "checkpoint_replay"]
+        },
+        "reconciliation": {
+          "type": "string",
+          "enum": [
+            "none",
+            "process_local_only",
+            "deterministic_readback",
+            "authoritative_rebuild"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "capability": {
+      "type": "object",
+      "required": [
+        "capability_id",
+        "capability_version",
+        "maturity",
+        "state_posture",
+        "scope_posture",
+        "failure_posture",
+        "authority_effect",
+        "enabled"
+      ],
+      "properties": {
+        "capability_id": { "type": "string", "minLength": 1 },
+        "capability_version": { "type": "string", "minLength": 1 },
+        "maturity": {
+          "type": "string",
+          "enum": [
+            "declared",
+            "implemented",
+            "runtime_wired",
+            "evidence_proven",
+            "reference_qualified"
+          ]
+        },
+        "state_posture": {
+          "type": "string",
+          "enum": ["canonical", "historical", "derived", "learned", "external"]
+        },
+        "scope_posture": {
+          "type": "string",
+          "enum": [
+            "enforces_agent_memory_scope",
+            "inherits_agent_memory_scope",
+            "external_scope_bridge"
+          ]
+        },
+        "failure_posture": {
+          "type": "string",
+          "enum": ["fail_closed", "explicit_unavailable", "fail_open_candidate_only"]
+        },
+        "authority_effect": {
+          "type": "string",
+          "enum": ["none", "proposal_only"]
+        },
+        "enabled": { "type": "boolean" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "behavior_contract": { "$ref": "#/$defs/behaviorContract" },
+        "operational_contract": { "$ref": "#/$defs/operationalContract" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

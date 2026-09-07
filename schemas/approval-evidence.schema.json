@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/approval-evidence.schema.json",
+  "title": "Agent Memory Approval Evidence",
+  "description": "Vendor-neutral one-action approval evidence bound to an exact decision-composition input identity. Approval evidence is not a standing grant and is not execution proof.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "approval_version",
+    "approval_id",
+    "input_identity",
+    "composition_id",
+    "principal_ref",
+    "authority_evidence_ref",
+    "scope_ref",
+    "outcome",
+    "mechanism_ref",
+    "issued_at",
+    "evidence_refs",
+    "reusable_authority"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "approval_version": { "const": "0.1.0" },
+    "approval_id": { "type": "string", "minLength": 1 },
+    "input_identity": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "composition_id": { "type": "string", "minLength": 1 },
+    "principal_ref": { "type": "string", "minLength": 1 },
+    "authority_evidence_ref": { "type": "string", "minLength": 1 },
+    "scope_ref": { "type": "string", "minLength": 1 },
+    "outcome": { "type": "string", "enum": ["approved", "denied", "revoked"] },
+    "mechanism_ref": { "type": "string", "minLength": 1 },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "revoked_at": { "type": "string", "format": "date-time" },
+    "revocation_evidence_ref": { "type": "string", "minLength": 1 },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "reusable_authority": { "const": false }
+  }
+}

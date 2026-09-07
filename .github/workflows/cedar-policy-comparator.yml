@@ -1,0 +1,72 @@
+name: Cedar Policy Comparator
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  cedar-policy-comparator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install reference dependencies
+        run: python -m pip install --disable-pip-version-check -r reference/requirements.txt
+
+      - name: Install exact Rust toolchain
+        run: |
+          rustup toolchain install 1.89.0 --profile minimal
+          rustup default 1.89.0
+          rustc --version
+          cargo --version
+
+      - name: Build pinned Cedar CLI from exact source commit
+        env:
+          CEDAR_SOURCE_COMMIT: fdcbaed32bdb8c8d13e4eaf2b58db5555e9fb8c5
+          CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+        run: >-
+          cargo install
+          --locked
+          --root /tmp/cedar-install
+          --git https://github.com/cedar-policy/cedar
+          --rev "$CEDAR_SOURCE_COMMIT"
+          cedar-policy-cli
+
+      - name: Verify pinned Cedar version and policy artifact
+        env:
+          CEDAR_POLICY_SHA256: a369c1423d48b6656e5e19f2589cc4660e00695e3b084c0a732b3f7f7ba6e18f
+        run: |
+          /tmp/cedar-install/bin/cedar --version
+          /tmp/cedar-install/bin/cedar --version | grep -F "4.12.0"
+          echo "$CEDAR_POLICY_SHA256  reference/policies/cedar_agent_memory_v01.cedar" | sha256sum --check --strict
+
+      - name: Execute Cedar adapter parser regressions
+        env:
+          PYTHONPATH: reference
+        run: python -m unittest tests.test_cedar_policy_comparator
+
+      - name: Execute real Cedar external-policy comparator
+        env:
+          AGENT_MEMORY_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          PYTHONPATH=reference
+          python reference/run_cedar_policy_comparator.py
+          --agent-memory-commit "$AGENT_MEMORY_COMMIT"
+          --cedar-binary /tmp/cedar-install/bin/cedar
+          --output cedar-policy-comparator.json
+
+      - name: Upload Cedar policy composition evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: cedar-policy-comparator-evidence
+          path: cedar-policy-comparator.json
+          if-no-files-found: error

@@ -1,0 +1,184 @@
+{
+  "fixture_id": "forbidden-hit-lifecycle-matrix",
+  "fixture_version": "1.0.0",
+  "class": "governed_uncertainty",
+  "description": "Reusable negative assertions distinguish candidate discovery, governed admission, context surfacing, and downstream influence across lifecycle and authority failure classes. Entries reference existing fixture/test semantics rather than redefining those doctrines.",
+  "expected_behavior": {
+    "all_assertions_pass": true,
+    "forbidden_classes_covered": 9,
+    "explicit_pipeline_stages": [
+      "candidate_discovered",
+      "admitted",
+      "context_surfaced",
+      "downstream_influence"
+    ]
+  },
+  "governed_uncertainty": {
+    "requested_action": "claim_forbidden_hit_coverage",
+    "permitted_actions": [
+      "report_explicit_negative_assertions"
+    ],
+    "prohibited_actions": [
+      "infer_safety_from_positive_recall_only"
+    ],
+    "selected_action": "report_explicit_negative_assertions",
+    "selection_mode": "deterministic",
+    "expected_invariants": [
+      "candidate_discovery_not_equal_admission",
+      "admission_not_equal_context_surface",
+      "context_surface_not_equal_downstream_authority",
+      "forbidden_hit_must_name_blocking_stage",
+      "positive_recall_not_equal_lifecycle_safety"
+    ]
+  },
+  "memory_unit": {
+    "id": "uor:test:forbidden-hit-matrix",
+    "type": "fact",
+    "state": "disputed",
+    "provenance": {
+      "origin": "synthetic conformance matrix",
+      "observer": "reference-conformance",
+      "method": "negative lifecycle assertion mapping",
+      "timestamp": "2026-08-12T18:30:00Z",
+      "source_refs": [
+        "issue://148"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "evidence:forbidden-hit-matrix",
+        "kind": "conformance_mapping",
+        "ref": "issue://148",
+        "confidence": 1.0
+      }
+    ],
+    "saturation": {
+      "sigma": 0.0,
+      "calibrated": false,
+      "durability_dimensions": [
+        "conformance_assertion"
+      ]
+    },
+    "authority": {
+      "pama_outcome": "allow_with_ledger",
+      "risk_class": "low",
+      "policy_refs": [
+        "ADR-015",
+        "ADR-020",
+        "ADR-022"
+      ],
+      "permitted_actions": [
+        "report_explicit_negative_assertions"
+      ],
+      "prohibited_actions": [
+        "infer_safety_from_positive_recall_only"
+      ],
+      "selection_mode": "deterministic"
+    },
+    "created_at": "2026-08-12T18:30:00Z"
+  },
+  "forbidden_hit_assertions": [
+    {
+      "assertion_id": "superseded-current-truth",
+      "forbidden_class": "superseded_or_corrected_current_truth",
+      "source_lifecycle_state": "superseded",
+      "source_evidence": "reference/tests/test_governed_paths.py::test_superseded_memory_stays_distinguishable",
+      "candidate_discovered": true,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "superseded_not_current"
+    },
+    {
+      "assertion_id": "tombstoned-current-use",
+      "forbidden_class": "tombstoned_state",
+      "source_lifecycle_state": "tombstoned",
+      "source_evidence": "fixtures/deletion-residue.json",
+      "candidate_discovered": true,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "tombstoned"
+    },
+    {
+      "assertion_id": "deleted-source-derived-residue",
+      "forbidden_class": "derived_from_deleted_or_tombstoned_source",
+      "source_lifecycle_state": "derived_residue",
+      "source_evidence": "fixtures/deletion-residue.json",
+      "candidate_discovered": true,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "derived_from_tombstoned_source"
+    },
+    {
+      "assertion_id": "disputed-current-use",
+      "forbidden_class": "disputed_state",
+      "source_lifecycle_state": "disputed",
+      "source_evidence": "fixtures/contradicted-memory.json",
+      "candidate_discovered": true,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "disputed"
+    },
+    {
+      "assertion_id": "cross-project-admission",
+      "forbidden_class": "project_scope_mismatch",
+      "source_lifecycle_state": "current",
+      "source_evidence": "fixtures/same-agent-cross-project-isolation.json",
+      "candidate_discovered": true,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "project_scope_mismatch"
+    },
+    {
+      "assertion_id": "revoked-shared-membership",
+      "forbidden_class": "revoked_shared_memory_membership",
+      "source_lifecycle_state": "current",
+      "source_evidence": "fixtures/shared-space-non-member-recall.json",
+      "candidate_discovered": true,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "shared_space_non_member"
+    },
+    {
+      "assertion_id": "missing-required-compartment",
+      "forbidden_class": "required_isolation_domain_missing",
+      "source_lifecycle_state": "current",
+      "source_evidence": "reference/tests/test_isolation_domains.py::test_same_tenant_missing_required_compartment_is_blocked",
+      "candidate_discovered": true,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "required_isolation_domain_missing"
+    },
+    {
+      "assertion_id": "rejected-value-reentry",
+      "forbidden_class": "rejected_value_reentry",
+      "source_lifecycle_state": "blocked_pending_verification",
+      "source_evidence": "reference/tests/test_rejected_value_readmission.py",
+      "candidate_discovered": false,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "correction_parked_pending_verification:evidence_qualification"
+    },
+    {
+      "assertion_id": "stale-authorized-write",
+      "forbidden_class": "stale_authorization",
+      "source_lifecycle_state": "stale_authority",
+      "source_evidence": "reference/tests/test_governed_paths.py::test_stale_authorization_does_not_commit",
+      "candidate_discovered": false,
+      "admitted": false,
+      "context_surfaced": false,
+      "downstream_influence": false,
+      "expected_refusal": "stale_authorization"
+    }
+  ],
+  "adr_037_notes": {
+    "rejected-value-reentry": "Changed by ADR-037 step 4b-2 (ledger entry #24), operator ruling 2026-09-05. This row previously expected 'rejected_value_requires_reconciliation', which required first committing a correction on review_satisfied=True plus approval:human. That discharge path was removed, and forbidden_hits holds nothing establishing that the deploy window is Friday rather than Thursday -- its executable observations and this matrix establish forbidden-hit LIFECYCLE behaviour, a different proposition. Reusing them as review evidence would be evidence-purpose laundering. So the correction parks and the re-entry premise is unreachable. The row is retained, carrying the unmet criterion, so the gap is visible rather than silently absent."
+  }
+}

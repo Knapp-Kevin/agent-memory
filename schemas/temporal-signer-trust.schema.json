@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/temporal-signer-trust.schema.json",
+  "title": "Agent Memory Temporal Signer Trust Evidence",
+  "description": "Verified trust evidence binding a logical signer key reference to exact public-key material without granting Agent Memory authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile_id", "key_ref", "public_key_digest", "trust_status", "verification_status", "trust_source_ref", "verified_at", "evidence_refs", "interpretation"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "profile_id": {"const": "agent-memory/temporal-signer-trust"},
+    "key_ref": {"type": "string", "minLength": 1},
+    "public_key_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "trust_status": {"type": "string", "enum": ["trusted", "untrusted", "revoked", "unknown"]},
+    "verification_status": {"type": "string", "enum": ["verified", "invalid", "unknown"]},
+    "trust_source_ref": {"type": "string", "minLength": 1},
+    "verified_at": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "valid_from": {"type": ["string", "null"]},
+    "valid_to": {"type": ["string", "null"]},
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_effect", "currentness", "trusted_time", "event_truth"],
+      "properties": {
+        "authority_effect": {"const": "none"},
+        "currentness": {"const": "not_established"},
+        "trusted_time": {"const": "not_established"},
+        "event_truth": {"const": "not_established"}
+      }
+    }
+  }
+}

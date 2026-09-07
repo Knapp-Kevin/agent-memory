@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/temporal-transparency-receipt.schema.json",
+  "title": "Agent Memory Temporal Transparency Receipt Evidence",
+  "description": "Provider-neutral verified inclusion or consistency evidence bound to an exact temporal subject.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile_id", "subject_reference_profile", "subject_ref", "claim_kind", "vds_profile", "verification_status", "receipt_ref", "verifier", "evidence_refs", "interpretation"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "profile_id": {"const": "agent-memory/temporal-transparency-receipt"},
+    "subject_reference_profile": {"type": "string", "minLength": 1},
+    "subject_ref": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "claim_kind": {"type": "string", "enum": ["inclusion", "consistency"]},
+    "vds_profile": {"type": "string", "minLength": 1},
+    "verification_status": {"type": "string", "enum": ["verified", "invalid", "unknown"]},
+    "receipt_ref": {"type": "string", "minLength": 1},
+    "tree_size": {"type": ["integer", "null"], "minimum": 1},
+    "prior_tree_size": {"type": ["integer", "null"], "minimum": 1},
+    "root_ref": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+    "prior_root_ref": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "version", "source_ref"],
+      "properties": {
+        "profile": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "source_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_effect", "event_occurrence_time_proven", "currentness", "complete_history_proven", "global_non_equivocation_proven"],
+      "properties": {
+        "authority_effect": {"const": "none"},
+        "event_occurrence_time_proven": {"const": false},
+        "currentness": {"const": "not_established"},
+        "complete_history_proven": {"const": false},
+        "global_non_equivocation_proven": {"const": false}
+      }
+    }
+  }
+}

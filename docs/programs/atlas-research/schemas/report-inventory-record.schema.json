@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agent-memory://research/atlas/report-inventory-record/1.0.0",
+  "title": "Agent Memory Atlas Report Inventory Record",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "atlas_snapshot",
+    "report_slug",
+    "system_name",
+    "upstream_repo",
+    "atlas_report_path",
+    "atlas_report_blob_sha",
+    "atlas_analyzed_revision",
+    "atlas_analyzed_at",
+    "capability_marks",
+    "stack_storage",
+    "stack_retrieval",
+    "stack_source",
+    "memory_unit_summary",
+    "write_summary",
+    "retrieval_summary",
+    "update_delete_summary",
+    "scope_summary",
+    "trust_summary",
+    "background_summary",
+    "strengths_summary",
+    "risks_summary",
+    "steal_claims",
+    "avoid_claims",
+    "open_questions",
+    "exact_evidence_refs",
+    "claim_enrichment_status"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "atlas_snapshot": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
+    "report_slug": { "type": "string", "minLength": 1 },
+    "system_name": { "type": "string", "minLength": 1 },
+    "upstream_repo": { "type": ["string", "null"] },
+    "atlas_report_path": { "type": "string", "minLength": 1 },
+    "atlas_report_blob_sha": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
+    "atlas_analyzed_revision": { "type": ["string", "null"] },
+    "atlas_analyzed_at": { "type": ["string", "null"] },
+    "capability_marks": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "stack_storage": { "type": ["string", "null"] },
+    "stack_retrieval": { "type": ["string", "null"] },
+    "stack_source": { "type": ["string", "null"] },
+    "memory_unit_summary": { "$ref": "#/$defs/nullableSummary" },
+    "write_summary": { "$ref": "#/$defs/nullableSummary" },
+    "retrieval_summary": { "$ref": "#/$defs/nullableSummary" },
+    "update_delete_summary": { "$ref": "#/$defs/nullableSummary" },
+    "scope_summary": { "$ref": "#/$defs/nullableSummary" },
+    "trust_summary": { "$ref": "#/$defs/nullableSummary" },
+    "background_summary": { "$ref": "#/$defs/nullableSummary" },
+    "strengths_summary": { "$ref": "#/$defs/nullableSummary" },
+    "risks_summary": { "$ref": "#/$defs/nullableSummary" },
+    "steal_claims": { "$ref": "#/$defs/stringArray" },
+    "avoid_claims": { "$ref": "#/$defs/stringArray" },
+    "open_questions": { "$ref": "#/$defs/stringArray" },
+    "exact_evidence_refs": { "$ref": "#/$defs/stringArray" },
+    "claim_enrichment_status": {
+      "type": "string",
+      "enum": ["frontmatter_only", "bounded_human_summary", "primary_source_verified"]
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "nullableSummary": { "type": ["string", "null"] },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

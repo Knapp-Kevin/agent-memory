@@ -1,0 +1,80 @@
+name: Doctrine or architecture proposal
+description: Propose a change, challenge, clarification, integration, or new boundary in Agent Memory doctrine
+title: "[Doctrine] "
+labels:
+  - agent-memory
+  - doctrine
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when you believe Agent Memory's architecture, doctrine, or technical direction should change or be reconsidered.
+
+        You do not need to know the repository's ADRs, PAMA terminology, conformance levels, or governance model to contribute a useful proposal. Explain what you see, what you suggest, and why. Maintainers can map it to the relevant doctrine and request deeper evidence or acceptance criteria if the proposal advances.
+
+        Strong challenges are welcome. Incomplete proposals are welcome too when they expose a real problem or useful external work.
+
+  - type: dropdown
+    id: change_type
+    attributes:
+      label: What kind of proposal is this?
+      options:
+        - Clarification or documentation improvement
+        - Architecture or implementation direction
+        - External project or integration to evaluate
+        - New doctrine requirement
+        - Change to accepted doctrine
+        - Challenge, counterexample, or failure mode
+        - ADR proposal or revision
+        - Governance refinement
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_state
+    attributes:
+      label: What problem, gap, or opportunity do you see?
+      description: Describe the current situation in your own words. Link a document, issue, implementation, or external project if useful.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What do you propose?
+      description: Describe the change, direction, integration, or question you want the project to evaluate.
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why might this be valuable?
+      description: Explain the benefit, failure mode, avoided duplication, evidence, implementation pressure, or contradiction motivating the proposal. A concise answer is fine.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Supporting or challenging material
+      description: Optional. Link research, repositories, standards, benchmarks, examples, or counterevidence. Please summarize third-party material rather than pasting large excerpts.
+
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Known tradeoffs, risks, or reasons not to do this
+      description: Optional. If you know of drawbacks, compatibility concerns, uncertainty, or contrary evidence, note them here.
+
+  - type: textarea
+    id: affected_surfaces
+    attributes:
+      label: Related Agent Memory areas
+      description: Optional. If you know which docs, ADRs, schemas, fixtures, APIs, or implementation areas this touches, list them. Maintainers can perform this mapping if you do not know.
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: How could we evaluate this?
+      description: Optional. Suggest tests, evidence, comparisons, acceptance criteria, or conditions that would weaken the proposal. This is not required for initial intake.

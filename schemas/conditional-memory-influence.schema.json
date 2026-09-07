@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/conditional-memory-influence.schema.json",
+  "title": "Model-Internal Conditional Memory Influence Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_version",
+    "influence_id",
+    "lookup_ref",
+    "opaque_address_digest",
+    "table",
+    "request",
+    "currentness",
+    "suppression",
+    "gate",
+    "enforcement_posture",
+    "correlation_ref",
+    "observed_at",
+    "nonclaims"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "profile_version": {"const": "0.1.0"},
+    "influence_id": {"type": "string", "minLength": 1},
+    "lookup_ref": {"type": "string", "minLength": 1},
+    "opaque_address_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["table_id", "table_digest", "model_ref", "checkpoint_ref", "tokenizer_ref", "addressing_config_ref", "injection_point_ref", "partition_ref", "derivation_ref", "currentness_ref", "suppression_overlay_ref", "build_receipt_ref"],
+      "properties": {
+        "table_id": {"type": "string", "minLength": 1},
+        "table_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "model_ref": {"type": "string", "minLength": 1},
+        "checkpoint_ref": {"type": "string", "minLength": 1},
+        "tokenizer_ref": {"type": "string", "minLength": 1},
+        "normalization_ref": {"type": "string", "minLength": 1},
+        "addressing_config_ref": {"type": "string", "minLength": 1},
+        "injection_point_ref": {"type": "string", "minLength": 1},
+        "partition_ref": {"type": "string", "minLength": 1},
+        "derivation_ref": {"type": "string", "minLength": 1},
+        "currentness_ref": {"type": "string", "minLength": 1},
+        "suppression_overlay_ref": {"type": "string", "minLength": 1},
+        "build_receipt_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["partition_ref", "tenant_ref", "purpose"],
+      "properties": {
+        "partition_ref": {"type": "string", "minLength": 1},
+        "tenant_ref": {"type": "string", "minLength": 1},
+        "project_ref": {"type": "string", "minLength": 1},
+        "purpose": {"type": "string", "minLength": 1}
+      }
+    },
+    "currentness": {
+      "type": "string",
+      "enum": ["current", "stale", "revoked", "deleted_residue", "unknown"]
+    },
+    "suppression": {
+      "type": "string",
+      "enum": ["clear", "suppressed", "unknown"]
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result", "reasons", "influence_eligible"],
+      "properties": {
+        "result": {"type": "string", "enum": ["allow", "block_stale", "block_scope", "block_suppressed", "block_unknown"]},
+        "reasons": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "influence_eligible": {"type": "boolean"}
+      }
+    },
+    "enforcement_posture": {
+      "type": "string",
+      "enum": ["mechanically_enforced", "cooperative", "unknown"]
+    },
+    "correlation_ref": {"type": "string", "minLength": 1},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "collision_ref": {"type": "string", "minLength": 1},
+    "nonclaims": {
+      "type": "array",
+      "items": {"type": "string", "enum": ["address_is_not_identity", "prefetch_is_not_admission", "external_deletion_is_not_internal_forgetting", "influence_is_not_mutation_authority", "collision_is_not_equivalence", "configured_gate_is_not_enforcement_proof"]},
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  }
+}
