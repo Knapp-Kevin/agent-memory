@@ -108,6 +108,8 @@ Live for plan duration; archived at substantiate. Drift signal: plan shipped but
 | Sprint 3d research brief | `docs/research-brief-sprint3d-packaging-remainder-2026-09-06.md` | sprint3d-packaging-remainder |
 | Sprint 4a plan | `docs/plan-sprint4a-public-api-contract.md` | sprint4a-public-api-contract |
 | Sprint 4 research brief | `docs/research-brief-sprint4-public-api-2026-09-06.md` | sprint4-public-api |
+| Sprint 4b plan | `docs/plan-sprint4b-js-pama.md` | sprint4b-js-pama |
+| Sprint 4b research brief | `docs/research-brief-sprint4b-js-pama-2026-09-07.md` | sprint4b-js-pama |
 
 ## Tier 5 — Reference Material
 

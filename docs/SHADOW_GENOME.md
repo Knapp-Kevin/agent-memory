@@ -373,6 +373,41 @@ An L3 contract plan written from the research brief's map of the surface: the ad
 
 ---
 
+### Failure #11: Sprint 4b plan iteration 1 VETOed because a faithful evaluation port left the runtime unable to commit, and the plan described the dead paths as unchanged
+
+**Date**: 2026-09-07
+**Iteration**: 1 (audit attempt 1 of 5)
+**Verdict ID**: AUDIT_REPORT_4b_attempt1 2026-09-07T03:20 VETO (V1-V3)
+**Category**: SPEC_DRIFT
+
+#### What Was Attempted
+
+A transcription of the PAMA table, floors, modifiers and envelope into the JS runtime, proven cell by cell by a Python-generated fixture (the transcription was verified: 65 cases, 0 mismatches). The plan then had `correct` park on every non-allowing outcome without porting any discharge, and wrote around the consequence: it kept the concurrency and error paths "as they are", promised committed receipts, and declared the Python contract version.
+
+#### Why It Failed
+
+- Every correction cell is non-allowing and an attestation discharges only the critical row, so a runtime with an evaluation and no discharge cannot commit a correction at all. The plan stated that in LD6 and contradicted it in LD2, the non-goals and FX025.
+- The version claim came from the operator's "same contract" decision read as a field-name adoption rather than as the stages and compatibility semantics `docs/44` defines.
+- A downstream implementer of the storage port (another repository) was not in the blast-radius reasoning.
+
+#### Pattern to Avoid
+
+**Anti-Pattern**: porting a control's decision half without its discharge half and describing the result as governed; declaring a contract version on the strength of field names; scoping blast radius to this repository when a port declares an interface others implement.
+
+**Correct Pattern**: when a fail-closed change makes a path unreachable, say which tests and error codes die and who downstream is affected, and put the discharge route on the same plan or an explicitly ordered next one; a version claim is earned by implementing the contract's stages, not its names.
+
+#### Resolution
+
+| Status | Action Taken |
+|--------|--------------|
+| HELD | Operator ruled 2026-09-07: hold Sprint 4b, defer to a later research phase, proceed with Sprint 4c. The plan is marked HELD in place; no implementation started. |
+
+#### Related Entries
+- Ledger Entry: #47 (GATE TRIBUNAL, VETO)
+- Audit Report: `.agent/staging/AUDIT_REPORT_4b_attempt1.md`
+
+---
+
 ## Pattern Library (Extracted Lessons)
 
 ### Section 4 Razor Violations
@@ -408,10 +443,10 @@ An L3 contract plan written from the research brief's map of the surface: the ad
 | GHOST_PATH | 0 | - |
 | HALLUCINATION | 2 | 2026-09-01 |
 | ORPHAN | 0 | - |
-| SPEC_DRIFT | 9 | 2026-09-06 |
+| SPEC_DRIFT | 10 | 2026-09-07 |
 | CHAIN_BREAK | 0 | - |
 
-**Total Failures Recorded**: 10
+**Total Failures Recorded**: 11
 **Failures Resolved**: 8 (Failure #2; Failures #3 and #4 grounds closed by the following iteration; Failure #6 fixed at Entry #28; Failure #8 grounds closed by iteration 2; Failure #7 fixed at Entry #32; Failure #9 grounds closed by iterations 2-3; Failure #10 grounds closed by iteration 2)
 **Patterns Extracted**: 5
 
