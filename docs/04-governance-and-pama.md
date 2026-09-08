@@ -107,6 +107,7 @@ Agent Memory additionally classifies **the operation being requested**. These ar
 | Permanent deletion | Intentionally make recovery unavailable | explicit high-consequence authority and deletion scope required |
 | Scope expansion | Share memory with broader actor or tenant scope | explicit authority appropriate to target scope |
 | Policy mutation | Change governance rules | require human or equivalently authoritative approval |
+| Action execution | Exercise authority already possessed to cause an externally meaningful action; distinct from `authority_change` (admitted by the schema, absent from the table by decision: [`33-pama-decision-table.md`](33-pama-decision-table.md), "Operations admitted ... deliberately absent"), which alters what an actor may do | allow with ledger at low risk; review above; the A4/A5 floors are independent constraints (ADR-038) |
 
 A compliant decision therefore considers at least:
 

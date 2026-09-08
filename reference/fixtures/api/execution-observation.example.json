@@ -1,0 +1,14 @@
+{
+  "contract_version": "1.2.0",
+  "action_id": "action:release-workflow@v1:1",
+  "witness_ref": "runtime:audit:release-1",
+  "enforcement_mode": "mechanical",
+  "delivery_status": "delivered",
+  "enforcement_point_status": "reached",
+  "action_status": "executed",
+  "liveness_status": "healthy",
+  "observed_at": "2026-09-07T15:00:00Z",
+  "evidence_refs": [
+    "evidence:runtime-log-1"
+  ]
+}

@@ -34,7 +34,7 @@ agent-memory/
 |   |-- run_*.py               68 evidence emitters
 |   |-- native/                1 Rust driver
 |   |-- policies/, fixtures/ (15 JSON), testdata/
-|   `-- tests/                 145 test files, 1150 tests
+|   `-- tests/                 148 test files, 1195 tests
 |-- integrations/
 |   |-- agent-memory-runtime/  JS, 1 source + 1 test, private
 |   `-- hermes-agent-memory/   Python, 10 modules, 6 tests
@@ -119,7 +119,7 @@ Pre-existing at genesis. Any new file under `/qor-plan` must meet the razor.
 
 | Component | Test File | Exists | Passing |
 |-----------|-----------|--------|---------|
-| Reference runtime (all) | `reference/tests/` (137 files) | OK | 1109 pass / 0 fail / 7 skip under pinned `cryptography==50.0.1`; CI green on `main` |
+| Reference runtime (all) | `reference/tests/` (148 files) | OK | 1195 run / 0 fail / 7 skip under pinned `cryptography==50.0.1` (Sprint 4c-2 seal, local); CI green on `main` |
 | Cedar digest pin | `reference/tests/test_cedar_policy_comparator.py:71` | OK | FAIL on Windows checkouts (GAP-RT-02) |
 | Third-party version pins | `test_agent_manifest_correlation.py:151`, `test_trace_action_evidence.py:118` | OK | FAIL unless env matches requirements (GAP-RT-03) |
 | Graphiti substrate | `reference/tests/test_graphiti_substrate.py` | OK | SKIPPED (7) without graphiti/kuzu (GAP-RT-07) |
@@ -156,7 +156,7 @@ Sprint 1 install correctness (branch `feat/agent-memory-genesis`, staged, uncomm
 | Merkle Chain | VALID | Entries #1-#8; Entry #6 hashes recomputed once for a verdict-line format fix (recorded in-entry) |
 | Blueprint Sync | SYNCED | File tree and Dependencies table updated at Sprint 1 |
 | Section 4 Compliance | VIOLATIONS (pre-existing) | New code clean; 58 file + 175 function pre-existing overages (GAP-RT-04, Sprint 11) |
-| Test Status | PASS | 1109 run, 0 fail, 7 skipped (Graphiti/kuzu absent) under the pinned `cryptography==50.0.1`; fresh-venv wheel smoke exit 0 |
+| Test Status | PASS | 1195 run, 0 fail, 7 skipped (Graphiti/kuzu absent) under the pinned `cryptography==50.0.1` (Sprint 4c-2 seal, local); fresh-venv wheel smoke exit 0 |
 
 ---
 

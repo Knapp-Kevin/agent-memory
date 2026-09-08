@@ -24,12 +24,19 @@ EXAMPLE = json.loads((REPO / "reference/fixtures/api/proposal-envelope.example.j
 ORG = "org:example"
 WRITERS = {"commit": surface.commit, "forget": surface.forget}
 READERS = {"propose": surface.propose, "approve": surface.approve, "recall": surface.recall, "history": surface.history, "posture": surface.posture}
+# Sprint 4c-2: `authorize` forwards evidence and attestation to the adapter's evaluator and binds through
+# `apply_action_governance`; `witness` consumes an authorization at `record_runtime_execution`. Neither is a
+# reader (both retain state) and neither reaches a mutation seam.
+AUTHORITY = {"authorize": surface.authorize, "witness": surface.witness}
+ACTION = json.loads((REPO / "reference/fixtures/api/action-envelope.example.json").read_text(encoding="utf-8"))
+OBSERVATION = json.loads((REPO / "reference/fixtures/api/execution-observation.example.json").read_text(encoding="utf-8"))
 
 
 class RecordingAdapter(GovernedMemoryAdapter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.calls: list[tuple[str, object, object]] = []
+        self.evaluations: list[tuple[object, object]] = []
 
     def commit_proposal(self, proposal, fact_text, *args, **kwargs):
         self.calls.append(("commit_proposal", kwargs.get("evidence"), kwargs.get("attestation")))
@@ -38,6 +45,10 @@ class RecordingAdapter(GovernedMemoryAdapter):
     def governed_delete(self, *args, **kwargs):
         self.calls.append(("governed_delete", kwargs.get("evidence"), kwargs.get("external_verification")))
         return super().governed_delete(*args, **kwargs)
+
+    def evaluate_proposal(self, proposal, *, evidence=None, attestation=None):
+        self.evaluations.append((evidence, attestation))
+        return super().evaluate_proposal(proposal, evidence=evidence, attestation=attestation)
 
 
 def _medium_correction(target: str) -> dict:
@@ -53,7 +64,7 @@ class PublicSurfaceForwardsOrParks(unittest.TestCase):
         self.target = EXAMPLE["target_reference"]
 
     def test_every_public_function_is_classified(self):
-        self.assertEqual(set(surface.__all__), set(WRITERS) | set(READERS))
+        self.assertEqual(set(surface.__all__), set(WRITERS) | set(READERS) | set(AUTHORITY))
 
     def test_writers_forward_evidence_and_attestation_unchanged(self):
         corpus = corpus_for(rule(rule_id="rule:api-dod20", target=self.target, criterion="value-correction",
@@ -95,6 +106,35 @@ class PublicSurfaceForwardsOrParks(unittest.TestCase):
         self.assertNotIn("memory", inspect.signature(surface.posture).parameters)  # posture takes no adapter: structurally read-only
         self.assertEqual(self.memory.calls, [])
         self.assertEqual(self.memory.state_version(self.target), 1)
+
+    def test_authority_stages_reach_no_mutation_seam(self):
+        bound = surface.authorize(self.memory, ACTION)
+        self.assertTrue(bound["action_authority"]["bound"])
+        witnessed = surface.witness(self.memory, OBSERVATION)
+        self.assertEqual(witnessed["witness"]["decision_alignment"], "consistent")
+        self.assertEqual(self.memory.calls, [])
+
+    def test_authorize_forwards_evidence_and_attestation_unchanged(self):
+        attestation = policy.ExternalVerification(bound_proposal_id=ACTION["proposal_id"], verifier_principal_id="human:reviewer",
+                                                  authority_kind=policy.HUMAN_CONFIRMATION, max_risk_class="critical")
+        from agentmem_ref import procedural_memory as pm
+        skill = pm.SkillArtifact(skill_id="release-workflow", version=1, purpose="release", scope="project", isolation_domain_refs=("project:example",),
+                                 required_isolation_domain_refs=("project:example",), procedure_markdown="- cut", provenance_refs=("prov-1",))
+        evidence = list(pm.evidence_for(skill))
+        self.memory.evaluations.clear()
+        surface.authorize(self.memory, {**ACTION, "risk_class": "medium"}, evidence=evidence, attestation=attestation)
+        (seen_evidence, seen_attestation), = self.memory.evaluations
+        self.assertEqual(list(seen_evidence), list(evidence))
+        self.assertIs(seen_attestation, attestation)
+
+    def test_authorize_parks_at_medium_without_evidence(self):
+        result = surface.authorize(self.memory, {**ACTION, "risk_class": "medium"})
+        self.assertEqual(result["outcome"], policy.REQUIRE_REVIEW)
+        self.assertFalse(result["action_authority"]["bound"])
+        self.assertEqual(result["action_authority"]["requirement"], "enter_pending_verification")
+        refused = surface.witness(self.memory, OBSERVATION)
+        self.assertEqual(refused["refusal"], "no bound decision for action")
+        self.assertNotIn("witness", refused)
 
 
 if __name__ == "__main__":

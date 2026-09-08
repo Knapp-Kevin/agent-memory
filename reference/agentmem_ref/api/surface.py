@@ -1,10 +1,14 @@
-"""The public surface: six of PRD-001 R1's stages as functions of an adapter and an envelope.
+"""The public surface: PRD-001 R1's stages as functions of an adapter and an envelope.
 
 Sprint 4a (plan LD4-LD6). Every function first evaluates ADR-030 compatibility
 and validates the envelope; a stage runs only on ``current``. ``propose`` and
 ``approve`` write nothing. ``commit`` and ``forget`` forward the caller's
 evidence and attestation to the adapter unchanged and otherwise park there
 (DoD 20). No function accepts a verifier: the registry is the adapter's own.
+
+Sprint 4c-2 (ADR-038): ``authorize`` binds an executable decision only for terminal
+PAMA outcomes with no authority-floor constraint, after its ledger exists; ``witness``
+binds the host's observation to that decision and consumes the authorization once.
 """
 
 from __future__ import annotations
@@ -14,11 +18,12 @@ from typing import Any, Mapping, Sequence
 from pathlib import Path
 
 from ..core import policy
+from ..memory import action_authority
 from ..runtime import doctor
 from ..runtime.adapter import GovernedMemoryAdapter
 from . import contract
 
-__all__ = ["propose", "approve", "commit", "recall", "forget", "history", "posture"]
+__all__ = ["propose", "approve", "commit", "recall", "forget", "history", "posture", "authorize", "witness"]
 
 
 def _gate(envelope: Mapping[str, Any], validator, stage: str):
@@ -121,3 +126,41 @@ def posture(config_path: str | Path, *, qualification_path: str | Path | None = 
     except (ValueError, OSError) as exc:
         return contract.result("none", contract.CURRENT, validation_error=f"{type(exc).__name__}: {exc}")
     return contract.result("posture", contract.CURRENT, posture=report)
+
+
+def authorize(memory: GovernedMemoryAdapter, action_envelope: Mapping[str, Any], *,
+              evidence: Sequence = (), attestation: policy.ExternalVerification | None = None) -> dict:
+    """The action-authority stage: the adapter decides; a terminal outcome binds, after its ledger; else nothing binds."""
+    compat, validated, early = _gate(action_envelope, contract.validate_action_envelope, "action_authority")
+    if early is not None:
+        return early
+    action, proposal = contract.action_from_envelope(validated)
+    try:
+        authority = action_authority.authorize_action(memory, action, proposal,
+                                                      evidence=list(evidence) or None, attestation=attestation)
+    except ValueError as exc:
+        return contract.result("action_authority", compat, refusal=str(exc))
+    return contract.result(
+        "action_authority", compat, outcome=authority.decision.outcome,
+        decision=contract.decision_projection(authority.decision),
+        action_authority={
+            "decision_ref": authority.decision_ref,
+            "bound": authority.bound,
+            "execution_status": None if authority.action is None else authority.action.execution_status,
+            "ledger_required": authority.ledger_required,
+            "requirement": authority.requirement,
+            "composition_id": None if authority.composition is None else authority.composition["composition_id"],
+        },
+    )
+
+
+def witness(memory: GovernedMemoryAdapter, observation_envelope: Mapping[str, Any]) -> dict:
+    """The execution-evidence stage: the host's observation, bound to the decision the adapter bound; consumes once."""
+    compat, validated, early = _gate(observation_envelope, contract.validate_observation_envelope, "execution_evidence")
+    if early is not None:
+        return early
+    try:
+        document = action_authority.witness_execution(memory, validated["action_id"], validated)
+    except ValueError as exc:
+        return contract.result("execution_evidence", compat, refusal=str(exc))
+    return contract.result("execution_evidence", compat, witness=document)

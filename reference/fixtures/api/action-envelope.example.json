@@ -1,0 +1,31 @@
+{
+  "contract_version": "1.2.0",
+  "proposal_id": "proposal-action-1",
+  "actor_id": "agent:release-planner",
+  "charter_version": "charter-v1",
+  "target_reference": "skill:release-workflow@v1",
+  "target_class": "M3_REUSABLE_PROCEDURE_OR_CAPABILITY",
+  "scope": "project:example",
+  "operation": "action_execution",
+  "current_strength": "promoted",
+  "proposed_strength": "promoted",
+  "downstream_authority": "A3_LOCAL_WORKFLOW_MUTATION",
+  "reversibility": "reversible",
+  "risk_class": "low",
+  "evidence_refs": [
+    "evidence:release-notes-v1"
+  ],
+  "state_snapshot": "v1",
+  "purpose": "release planning",
+  "isolation_domain_refs": [
+    "org:example",
+    "project:example"
+  ],
+  "required_isolation_domain_refs": [
+    "project:example"
+  ],
+  "project_ref": "project:example",
+  "action_id": "action:release-workflow@v1:1",
+  "description": "cut the release branch",
+  "skill_version_ref": "skill:release-workflow@v1"
+}

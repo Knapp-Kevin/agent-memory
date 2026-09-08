@@ -2634,3 +2634,361 @@ printed each record from each builder and branch before locking; attempt 2
 FIXED. Sprint 4c-2 (action authority, execution evidence) waits on ideation;
 Sprint 4b is held. Review Boundary: staged, not committed; no push, PR, tag
 or merge.
+---
+
+### Entry #52: RESEARCH BRIEF
+
+**Timestamp**: 2026-09-07T10:40:00-04:00
+**Phase**: RESEARCH
+**Author**: Analyst
+**Risk Grade**: L3 (a doctrine table gains an operation; the action boundary gains authority)
+**Session**: 2026-09-07T1000-d4e5f6
+
+**Content Hash**:
+```
+SHA256(docs/research-brief-sprint4c2-action-authority-2026-09-07.md)
+= 2571fb15f8fc25b8271fe2e5d67d64e9b4ed5d65c9fa8b231bf0fb56e914abda
+```
+
+**Previous Hash**: `cbb191919e727a6089e3eed8e7d7ec231c4bb0b70b031783841aa440d23db057`
+**Chain Hash**:
+```
+SHA256(content_hash + previous_hash)
+= c7a71400b10e50f12ab9d9c20693ec36c866094468184595bf7ef493e3376bf3
+```
+
+**Decision**: Loop 23 (Sprint 4c-2) research complete, from the ideation gate
+`2026-09-07T1000-d4e5f6/ideation-iter1.json` (operator-accepted spark record and problem
+frame; PAMA action operation selected over an external governance projection,
+2026-09-07). Findings: PAMA doctrine already carries the action-authority
+**dimension** -- A3/A4/A5 downstream authority with floors the reference
+enforces (`_AUTHORITY_FLOOR`, A4 -> require_review, A5 ->
+require_external_verification) and `docs/33:43`'s rule that A4 authority
+needs "a separate PAMA decision" -- and lacks only the **operation** row; the
+schema admits `authority_change` without a base cell, but that word means
+changing authority, not acting under it, so the recommendation is a new
+`action_execution` operation (schema enum, docs 04 and 33, `_BASE_TABLE`, a
+short ADR), rows for the plan to lock, floors unchanged. The seam
+`ActionGovernanceDecision` is two-valued (allow/deny) where PAMA is
+five-valued: the parked state is unrepresentable, so the adapter-produced
+decision needs a `pending` form. The producer is `evaluate_proposal`'s
+existing three-way selection -- no new evaluator, no new authority seam.
+Execution evidence: the host supplies observations only; `effective_decision`
+and `decision_alignment` come from the adapter's decision through
+`build_execution_witness`, so an executed-while-parked action records
+`violation` rather than being refused. Drift: three (two-valued decision;
+caller-settable `requires_governance`; execution recorded as a bare ref).
+Recommendation: contract `1.2.0`, three phases (doctrine, adapter, surface
+`authorize` + `witness`). Next: /qor-plan for Sprint 4c-2.
+---
+
+### Entry #53: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-07T12:05:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: VETO
+**Session**: 2026-09-07T1000-d4e5f6
+**Target**: docs/plan-sprint4c2-action-authority.md (iteration 1; plan content hash 18116e6e733f068b11d102267564197c59a4bb648540cc6856f6a79f8d4c8ea6)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_4c2_attempt1.md) = 5889056cf20a14984cb8186e80051ead02b7d32772162ccc77b431d613fcf6dd
+
+**Previous Hash**: `c7a71400b10e50f12ab9d9c20693ec36c866094468184595bf7ef493e3376bf3`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 9be136a770e9460f8d1b3c091fd0a9366c5668461b88b27aa871445dd87e0f81
+
+**Decision**: VETO, attempt 1 of 5, Option B mandatory (`high-citation-surface`)
+and performed by an independent reviewer; V1 and V4 reproduced by the Judge
+before this entry. V1 -- LD6 promised `witness: null` on refusal, but
+`contract.result()` strips top-level `None` (`api/contract.py:118`), so the key
+is absent and the declared test is vacuous. V2 -- LD5 pre-checks exactly the
+condition `record_runtime_execution` guards, so the seam's guard never fires,
+and nothing stops a second `executed` observation against the same bound
+allow from being witnessed `consistent`: one decision, N executions. V3 --
+`decision_ref` names a `pama-decision` document LD4 never builds (no
+`build_pama_decision`, no `build_receipt`, no `memory.receipt`), so
+`allow_with_ledger` binds with no ledger artifact and the composition's
+`local_decision_ref` dangles; the A5-attested case would also fail the
+decision schema's A5 rule. V4 -- the doctrine text LD1 writes ("strictest of
+cell and floors"; "risk and authority class are independent") is false on the
+path LD4 forwards: `evaluate_with_qualified_evidence` discharges
+`require_review` whether a cell or the A4 floor produced it
+(`core/policy.py:499-539`), so A4/low with one asserted artifact-bound item
+binds an executable allow, and A5's floor discharges at low/medium on a
+non-human attestation. V5 -- adding `witness` to `READERS` changes no
+executed assertion in `test_readers_reach_no_mutation_seam`. Conditions
+C1-C7 and advisories A1-A6 recorded in the report. Three items need the
+operator: C1 (witness for deny-bound actions), C6 (what "ledger obligation
+preserved" materialises), C7 (whether evidence and attestation may discharge
+the A4/A5 floors on the action path). Required next action: Governor amends
+the plan after the operator rules; re-run /qor-audit.
+---
+
+### Entry #54: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-07T13:10:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: VETO
+**Session**: 2026-09-07T1000-d4e5f6
+**Target**: docs/plan-sprint4c2-action-authority.md (iteration 2; plan content hash a6a7b406063dd54214d217c1a239495860dfdc4444d6cb10ff9d1a5d6a93d1f6)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_4c2_attempt2.md) = 9ec5b9efa89a78ef85e43d4594585649964baa44c4cca73518118ab4ad7c9bda
+
+**Previous Hash**: `9be136a770e9460f8d1b3c091fd0a9366c5668461b88b27aa871445dd87e0f81`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 11f1a6e655a08dd7d1b6a75c7e59b9781a3263af50b642ff1873eef681bc1b96
+
+**Decision**: VETO, attempt 2 of 5, Option B performed by a fresh independent
+reviewer; every attempt-1 ground and condition closed except where the two new
+grounds reopen them. V1 -- LD4's `block` branch passed `selection_mode="none"`
+to `build_pama_decision`, whose schema admits `null` but not `"none"`
+(`pama-decision.schema.json:261-264`; `adapter.py:332` already passes `None`
+for `NO_ACTION`), and named a `selected=` parameter that does not exist
+(`receipts.py:140-146`): under the plan's own fail-closed rule every `block`
+raises instead of binding deny, so R3's "block binds deny" and C6's "every
+bound decision has its document" were unreachable and four declared tests
+unsatisfiable. V2 -- the replay invariant was keyed on the caller-minted
+`action_id` while every ledger artifact's identity is per `proposal_id`
+(`receipts.py:83`; the projection carries no action id and is closed), so one
+consumed decision could be re-bound under a new `action_id` with the same
+`decision_ref` and `composition_id` and witnessed `consistent` again: the
+single-consumption property held only for a key the caller controls.
+Conditions C1-C6 (decision-projection key-set test; `witness` consumes and
+is not a reader; the `selected_action`/`selection_mode` mechanics; selector
+mode recorded when no selector chose; fixture reversibility; state_snapshot
+is an identity input) and advisories A1-A7 recorded in the report. No
+operator decision is required. Required next action: Governor amends the
+plan (iteration 3); re-run /qor-audit.
+---
+
+### Entry #55: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-07T13:40:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: VETO
+**Session**: 2026-09-07T1000-d4e5f6
+**Target**: docs/plan-sprint4c2-action-authority.md (iteration 3; plan content hash 477833500c6e4317a967b013b51943fca54bc15cdf49cd90cab64145c4f16612)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_4c2_attempt3.md) = 3858803e343e323c8fd7c3062c7a3c3a9f52f9ee21c3ea9863513b40358d037b
+
+**Previous Hash**: `11f1a6e655a08dd7d1b6a75c7e59b9781a3263af50b642ff1873eef681bc1b96`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = 5e7ffc850e92f96f2e95dde1e4dcb6ee4a9022636b10187c23451e4fc8a3c95d
+
+**Decision**: VETO, attempt 3 of 5, Option B performed by a fresh independent
+reviewer; every attempt-2 ground and condition closed and the closures
+verified against the tree. V1 -- `test_second_execution_is_refused_at_the_seam`
+as declared cannot observe the seam: an adapter that pre-checks the
+`authorized_not_executed` condition and raises the same message is
+observably identical (same exception text, no second `action.witness` event,
+same stored state), so the CI negative "pre-check replaces the seam call ->
+test fails" would not go red and the seal's adversarial record would be
+false; the cure is to patch `record_runtime_execution` in the test and assert
+it is called on the second observation, or chain its error via `__cause__`.
+Conditions C1-C4 (`enter_pending_verification` names no route on this path:
+an unbound action is not FX012's parked state and docs must say so;
+`api-posture-report` carries no `contract_version`, so four schemas not five;
+FX005 MODIFIED (56 cells); the forwarding test needs an `evaluate_proposal`
+override and list-equality/identity stated) and advisories A1-A5 recorded.
+This is the third consecutive VETO in session 2026-09-07T1000-d4e5f6: the cycle-count
+escalator's legal next action is /qor-remediate, not a fourth audit. Raised
+to the operator.
+---
+
+### Entry #56: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-07T14:20:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: VETO
+**Session**: 2026-09-07T1000-d4e5f6
+**Target**: docs/plan-sprint4c2-action-authority.md (iteration 4; plan content hash 02f63fee15a4cb89106bf71a676d9626b9282c3882bdb20405e1b932615c1191)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_4c2_attempt4.md) = 1ff0252988154bd45a8eb2c5644f11d58501301270597e550df46435698e7ef3
+
+**Previous Hash**: `5e7ffc850e92f96f2e95dde1e4dcb6ee4a9022636b10187c23451e4fc8a3c95d`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = addd93f1bba42ab4ad139c39d028aee2dead746bc0f9cd9cbb3ade90f12020ca
+
+**Decision**: VETO, attempt 4 of 5 (the operator approved this attempt over
+remediation), Option B performed by a fresh independent reviewer; attempt-3
+V1, C1-C4 and A1-A5 closed and verified. V1 -- LD4/LD5 host the action path
+inside `runtime/adapter.py` and bind `record_runtime_execution` there, but
+the package's layer order forbids `runtime` importing `memory`
+(`test_package_layout.test_no_layer_imports_a_later_layer`, which walks lazy
+imports too), and `memory/procedural_memory.py:25` imports `runtime.adapter`
+at module level, so the declared binding is a circular import that breaks
+package import; lazy, it fails the layout test and leaves nothing to patch.
+The plan was unimplementable as written and its "full suite 0 failures"
+claim false. Cure: host `ActionAuthority`, `authorize_action` and
+`witness_execution` in a `memory`-layer module that takes the adapter as a
+collaborator, tabled in the mover, with the patch re-targeted. Conditions
+C1-C3 (consumption across `restart_runtime` snapshots; the new module in the
+mover table and the exact patch target; `proposal_id` collision with the
+memory path) and advisories A1-A3 recorded. Fourth consecutive VETO, four
+distinct signatures. Raised to the operator.
+---
+
+### Entry #57: GATE TRIBUNAL
+
+**Timestamp**: 2026-09-07T15:10:00-04:00
+**Phase**: GATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: PASS
+**Session**: 2026-09-07T1000-d4e5f6
+**Target**: docs/plan-sprint4c2-action-authority.md (iteration 5; plan content hash 2108d43b66e438bd4af3f38a802d3bf304dd9377c3638b7ac2c4defdf9f4290a)
+
+**Content Hash**:
+SHA256(.agent/staging/AUDIT_REPORT_4c2_attempt5.md) = cb3ea8603312b393f6720d371e290b0fdab2959aec31a689a924d315b0e207fc
+
+**Previous Hash**: `addd93f1bba42ab4ad139c39d028aee2dead746bc0f9cd9cbb3ade90f12020ca`
+**Chain Hash**:
+SHA256(content_hash + previous_hash) = c775977e8bb14a88979d44d053ceb39ff28017affd4ff02314f6feb2b456ed2c
+
+**Decision**: PASS, attempt 5 of 5 (the operator approved the fifth attempt
+with a frozen amendment boundary: relocate the orchestration to a
+`memory`-layer module with the adapter injected, table it in the mover,
+retarget the seam patch, persist consumption across restart fail-closed,
+document the cross-path proposal-id namespace limitation, change nothing
+else), Option B performed by a fresh independent reviewer. No grounds: every
+attempt-4 item closed against the tree; all 26 grep-evidence statements and
+the inline line citations match `origin/main`; the layering, alias-identity,
+restart-snapshot, adapter-accessor and ledger-schema claims each verified;
+the new tests' premises verified non-vacuous (the A4 discharge and the
+non-human A5 attestation genuinely occur in policy, so the non-discharge
+tests observe a real difference). Binding conditions applied to the plan
+before implementation: C1 the DoD-20 recorder records evaluations in a new
+attribute and the zero-mutation assertion is stated on `calls`; C2 the
+restart invariant holds for state a checkpoint captured, a host on
+`RestartSafeRuntime` checkpoints after `witness_execution`, and the test
+calls `checkpoint()` explicitly; C3 the malformed-state test corrupts the
+governance dict handed to `_restore_adapter`, since an on-disk edit trips
+the digest check first; C4 `_load` is the first statement of both entry
+points and rebuilds tuples; C5 `extension_state` is adapter-owned ledger
+state with no setter. Advisories A1-A4 applied (isolation domains bound in
+the matrix fixture; `observed_at` host-asserted; target envelope carries no
+pattern; default selector in the restart test). Next: /qor-implement.
+---
+
+### Entry #58: SESSION SEAL - Phase 23 (Sprint 4c-2: action authority as a PAMA `action_execution` operation; execution evidence bound to it; contract 1.2.0)
+
+**Entry ID**: `6fe68218904c`
+**Content Hash**: `2108d43b66e438bd4af3f38a802d3bf304dd9377c3638b7ac2c4defdf9f4290a`
+**Previous Hash**: `c775977e8bb14a88979d44d053ceb39ff28017affd4ff02314f6feb2b456ed2c`
+**Chain Hash**: `cee236efa5ab6595d28559011137ee3937e07e0b4665d37b2d6ae7d40885f4a4`
+**Timestamp**: 2026-09-07T17:30:00-04:00
+**Phase**: SUBSTANTIATE
+**Author**: Judge
+**Risk Grade**: L3
+**Verdict**: PASS
+**Session**: 2026-09-07T1000-d4e5f6
+**Plan**: docs/plan-sprint4c2-action-authority.md (iteration 5 with the attempt-5 conditions C1-C5 and advisories A1-A4 applied; change_class feature; gate `plan-iter7.json`)
+**SSDF Practices**: PO.1.4, PS.2.1, PW.1.1
+
+**Merkle Seal** (SHA256 over `git write-tree` of the staged index c09d0beadfad7f62dabe4a71e228256d7aea09f0):
+`3f10cd44ad313003aba331a6a29d4ef353db70f40fa8f1ffb4cff2b1a455e413`
+
+**Anchor**: `refs/seals/entry-58`.
+
+**What this adds.** ADR-038: `action_execution` is a new PAMA operation --
+exercising authority already possessed to cause an externally meaningful
+action -- in `pama-decision.schema.json`, `docs/04`, `docs/33` and
+`policy._BASE_TABLE` (low `allow_with_ledger`, medium and high
+`require_review`, critical `require_external_verification`); `authority_change`
+is not reinterpreted. `policy.Decision.constraints` preserves why an outcome
+exists (`risk_cell`; `authority_floor:<A4|A5>`; `target_floor:<M4|M5>`),
+derived from the proposal so no discharge removes it; `docs/33` states the
+effective rule and that authority-class floors are independent constraints
+non-dischargeable on the action path. `memory/action_authority.py` hosts the
+action path with the runtime adapter injected (`memory` -> `runtime`, never the
+reverse; tabled in the mover, aliased): `authorize_action` evaluates through
+`evaluate_proposal`, binds allow or deny at `apply_action_governance` only
+after the PAMA decision document, the receipt and the receipt event exist,
+binds nothing for review outcomes or for any outcome reached by discharging
+an authority floor, and refuses a reused `action_id` or `proposal_id`;
+`witness_execution` requires a bound decision (deny included: a deny-bound
+execution is a `violation` witness; an unbound report is
+`action.unbound_execution_reported`), lets the seam consume the authorization
+exactly once (`record_runtime_execution`, its error chained as `__cause__`),
+and keeps its records in the adapter's `extension_state`, which
+`restart_runtime` snapshots beside `events` and restores fail-closed. Contract
+`1.2.0`: `surface.authorize` (stage `action_authority`) and `surface.witness`
+(stage `execution_evidence`), `api-action-envelope` and
+`api-execution-observation` (closed; every assertion and alignment field
+refused), the result envelope's `action_authority` object, `witness` document
+and `decision.constraints`. The adapter gained only `extension_state`,
+`record_event`, `mint_id`, `now`.
+
+**Verification.** 45 new tests (policy 7, adapter path 20, surface 13, contract
+3, DoD-20 3) and the four declared existing-test edits; suite 1150 -> 1195,
+0 failures, 7 skipped under `cryptography==50.0.1`, in all three CI discover
+styles; layout `problems() == []` and `test_package_layout` green. Adversarial
+4 of 4: the four cells removed, the C7 floor check removed, the seam call
+replaced by a pre-check (the `__cause__` and recorded-call observable), the
+action envelope opened. Wheel smoke by the job's own extended step from outside
+the checkout: exit 0 with seven `api-*` schemas and contract `1.2.0`; exit 1
+built without `api-action-envelope`. Restart: consumption survives
+`RestartSafeRuntime.checkpoint`/`recover`; a malformed slot refuses the first
+later call. `validate_schemas`, `validate_fixtures`, `validate_markdown_links`
+clean; feature index 26 (FX027 new; FX024, FX005 modified; FX025 reserved);
+governance index enforced; ADR-038 indexed. This seal's writer re-ran the
+layout check, the suite, the four mutations and the installed-wheel smoke, and
+inspected the wheel, before writing.
+
+**Decision**: five audits (Entries #53-#57), all Option B with a fresh
+independent reviewer each time: attempt 1 VETO (record shapes, replay,
+dangling `decision_ref`, a doctrine sentence false on the evidence path,
+a presence-only test); attempt 2 VETO (a selection-mode literal the decision
+schema rejects; replay keyed on a caller-minted id); attempt 3 VETO (a test
+that could not tell the seam from a pre-check); attempt 4 VETO (the action
+path hosted in a layer that cannot import the seam); attempt 5 PASS with C1-C5.
+The operator ruled R1-R3, C7 (floors non-dischargeable, structural), C6 (ledger
+materialised before binding), C1 (witness needs a bound decision), the
+single-consumption invariant, the iteration-5 relocation with restart-safe
+consumption and the documented proposal-id namespace limitation, and approved
+attempts 4 and 5 over remediation with a frozen amendment boundary that held.
+Sprint 4b stays held; #395 and #392 open. Review Boundary: staged, not
+committed; no push, PR, tag or merge.
+---
+
+### Entry #59: AMENDMENT
+
+**Timestamp**: 2026-09-07T20:30:00-04:00
+**Phase**: IMPLEMENT
+**Author**: Specialist
+**Risk Grade**: L2
+**Session**: 2026-09-07T1000-d4e5f6
+
+**Artifact**: `reference/agentmem_ref/memory/action_authority.py`
+**Content Hash**: `dba832e14f9c4ee35a0efafd1cc053a3e6344c54af76718cbb4f68adaed81977`
+**Previous Hash**: `cee236efa5ab6595d28559011137ee3937e07e0b4665d37b2d6ae7d40885f4a4`
+**Chain Hash**: `3398ceba3b78c1c1755ecdddcca189b65aa958c37b5061d81fbdfcf0c612c022`
+
+**Decision**: PR #398's `validate` (pinned Mem0 P6 comparator) and
+`characterize` (P9 characterization) jobs failed with
+`ModuleNotFoundError: No module named 'rfc8785'`: both install `jsonschema`
+only, and Entry #58's `memory/action_authority.py` imported
+`enforcement_composition` and `enforcement_evidence` at module level, so
+`import agentmem_ref` (which imports `api.surface`, which imports the action
+module) now required `rfc8785`. The correction defers those two same-layer
+imports into `_ledger` and `witness_execution`, the only functions that use
+them; the layer order is unaffected (same layer) and the seam binding the
+tests patch stays module-level. This entry is written by a script that
+confirms the working tree changes only this artifact, that a venv holding
+`jsonschema` alone (no `rfc8785`) imports the package and runs
+`tests.test_systems_characterization` to `OK`, and that the full suite (1195),
+the layout check and the four adversarial mutations still pass; it refuses to
+write otherwise. `refs/seals/entry-58` still points at the sealed tree
+(`c09d0beadfad7f62dabe4a71e228256d7aea09f0`); the corrected tree is
+`3b3d81d970c5c9327a56e2e02e9d5e393d9faae1`. Chain integrity is unaffected.

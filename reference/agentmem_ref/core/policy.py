@@ -108,6 +108,13 @@ _BASE_TABLE: dict[tuple[str, str], str] = {
     ("policy_mutation", "medium"): REQUIRE_EXTERNAL_VERIFICATION,
     ("policy_mutation", "high"): REQUIRE_EXTERNAL_VERIFICATION,
     ("policy_mutation", "critical"): REQUIRE_EXTERNAL_VERIFICATION,
+    # ADR-038 (Sprint 4c-2, operator ruling R2): exercising authority already
+    # held to cause an externally meaningful action. Not a memory mutation; the
+    # A4/A5 authority-class floors apply independently through _apply_floors.
+    ("action_execution", "low"): ALLOW_WITH_LEDGER,
+    ("action_execution", "medium"): REQUIRE_REVIEW,
+    ("action_execution", "high"): REQUIRE_REVIEW,
+    ("action_execution", "critical"): REQUIRE_EXTERNAL_VERIFICATION,
 }
 
 # Foundational class floors. A base cell may never resolve weaker than these.
@@ -198,6 +205,14 @@ class Decision:
     #: Collapsing the two would merge two of ADR-037's four variables inside
     #: the module that defines them. Defaulted, on the Loop 7 precedent.
     discharge_authority: str = ""
+    #: Sprint 4c-2 (ADR-038, operator ruling C7): why the outcome exists -- the
+    #: active governance constraints, derived from the proposal rather than
+    #: from the outcome, so a discharge cannot remove them. `risk_cell` always;
+    #: `authority_floor:<class>` for A4/A5; `target_floor:<class>` for M4/M5.
+    #: `require_review` from a cell and `require_review` from the A4 floor are
+    #: different obligations, and only the first is dischargeable on the
+    #: action path. Defaulted, on the Loop 7 precedent.
+    constraints: tuple[str, ...] = ()
 
 
 def _strictest(*outcomes: str) -> str:
@@ -219,6 +234,20 @@ def _apply_floors(outcome: str, proposal: Proposal) -> tuple[str, list[str]]:
         outcome = authority_floor
         reasons.append(f"authority floor {proposal.downstream_authority}")
     return outcome, reasons
+
+
+def _constraints(proposal: Proposal) -> tuple[str, ...]:
+    """The active constraints a decision carries (ADR-038).
+
+    Derived from the proposal so they are present whether or not a floor
+    changed the ordinal, and survive every discharge.
+    """
+    active = ["risk_cell"]
+    if proposal.target_class in _TARGET_FLOOR:
+        active.append(f"target_floor:{proposal.target_class}")
+    if proposal.downstream_authority in _AUTHORITY_FLOOR:
+        active.append(f"authority_floor:{proposal.downstream_authority}")
+    return tuple(active)
 
 
 def _apply_modifiers(outcome: str, proposal: Proposal) -> tuple[str, list[str]]:
@@ -342,6 +371,7 @@ def evaluate_with_base_outcome(
         prohibited_actions=prohibited,
         reasons=tuple(floor_reasons + modifier_reasons + review_reasons),
         review_discharge=review_discharge,
+        constraints=_constraints(proposal),
     )
 
 
@@ -431,6 +461,7 @@ def evaluate_with_external_verification(
         reasons=decision.reasons
         + (f"external verification attested by {attestation.verifier_principal_id}",),
         review_discharge="verified",
+        constraints=decision.constraints,
     )
 
 
@@ -560,6 +591,7 @@ def _redecide(
         policy_version=decision.policy_version,
         review_discharge=decision.review_discharge,
         discharge_authority=authority,
+        constraints=decision.constraints,
     )
 
 

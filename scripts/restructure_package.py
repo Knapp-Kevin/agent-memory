@@ -67,7 +67,7 @@ LAYERS: dict[str, tuple[str, ...]] = {
         "reusable_grants", "runtime_trace_correlation", "security_finding",
         "structural_mutation", "structural_pama", "telemetry", "telemetry_retention",
         "temporal_commitment", "temporal_transparency", "temporal_trust",
-        "trace_action_evidence", "uor_content_reference",
+        "trace_action_evidence", "uor_content_reference", "action_authority",
     ),
     "api": ("contract", "surface"),
     "crg": (
