@@ -2960,3 +2960,35 @@ consumption and the documented proposal-id namespace limitation, and approved
 attempts 4 and 5 over remediation with a frozen amendment boundary that held.
 Sprint 4b stays held; #395 and #392 open. Review Boundary: staged, not
 committed; no push, PR, tag or merge.
+---
+
+### Entry #59: AMENDMENT
+
+**Timestamp**: 2026-09-07T20:30:00-04:00
+**Phase**: IMPLEMENT
+**Author**: Specialist
+**Risk Grade**: L2
+**Session**: 2026-09-07T1000-d4e5f6
+
+**Artifact**: `reference/agentmem_ref/memory/action_authority.py`
+**Content Hash**: `dba832e14f9c4ee35a0efafd1cc053a3e6344c54af76718cbb4f68adaed81977`
+**Previous Hash**: `cee236efa5ab6595d28559011137ee3937e07e0b4665d37b2d6ae7d40885f4a4`
+**Chain Hash**: `3398ceba3b78c1c1755ecdddcca189b65aa958c37b5061d81fbdfcf0c612c022`
+
+**Decision**: PR #398's `validate` (pinned Mem0 P6 comparator) and
+`characterize` (P9 characterization) jobs failed with
+`ModuleNotFoundError: No module named 'rfc8785'`: both install `jsonschema`
+only, and Entry #58's `memory/action_authority.py` imported
+`enforcement_composition` and `enforcement_evidence` at module level, so
+`import agentmem_ref` (which imports `api.surface`, which imports the action
+module) now required `rfc8785`. The correction defers those two same-layer
+imports into `_ledger` and `witness_execution`, the only functions that use
+them; the layer order is unaffected (same layer) and the seam binding the
+tests patch stays module-level. This entry is written by a script that
+confirms the working tree changes only this artifact, that a venv holding
+`jsonschema` alone (no `rfc8785`) imports the package and runs
+`tests.test_systems_characterization` to `OK`, and that the full suite (1195),
+the layout check and the four adversarial mutations still pass; it refuses to
+write otherwise. `refs/seals/entry-58` still points at the sealed tree
+(`c09d0beadfad7f62dabe4a71e228256d7aea09f0`); the corrected tree is
+`3b3d81d970c5c9327a56e2e02e9d5e393d9faae1`. Chain integrity is unaffected.

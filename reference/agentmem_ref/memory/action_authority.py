@@ -35,8 +35,6 @@ from typing import Any, Mapping
 
 from ..core import policy, receipts
 from ..runtime.adapter import GovernedMemoryAdapter
-from .enforcement_composition import PROVIDER_NONE, build_projection, compose
-from .enforcement_evidence import build_execution_witness
 from .procedural_memory import (
     ActionGovernanceDecision,
     ActionProposal,
@@ -152,6 +150,10 @@ def _requirement(decision: policy.Decision, floors: list[str]) -> str:
 def _ledger(memory: GovernedMemoryAdapter, action: ActionProposal, proposal: policy.Proposal,
             decision: policy.Decision, allow: bool) -> tuple[dict, dict, dict, str]:
     """The canonical decision document, the receipt and the composition, before any binding."""
+    # Same-layer imports, deferred: enforcement_composition needs rfc8785, which the package import
+    # must not require (the P9 characterization and P6 comparator jobs install jsonschema only).
+    from .enforcement_composition import PROVIDER_NONE, build_projection, compose
+
     selected = OPERATION if allow else receipts.NO_ACTION
     receipt_id = memory.mint_id()
     pama_decision = receipts.build_pama_decision(proposal, decision, selected, "deterministic" if allow else None, receipt_id)
@@ -223,6 +225,8 @@ def authorize_action(memory: GovernedMemoryAdapter, action: ActionProposal, prop
 
 def witness_execution(memory: GovernedMemoryAdapter, action_id: str, observation: Mapping[str, Any]) -> dict:
     """Bind the host's observation of an execution to the decision the adapter bound."""
+    from .enforcement_evidence import build_execution_witness  # same layer, deferred (rfc8785)
+
     authorities, proposals = _load(memory)
     authority = authorities.get(action_id)
     status = observation.get("action_status")
