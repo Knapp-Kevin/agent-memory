@@ -159,6 +159,10 @@ class GovernedMemoryAdapter:
         self._current_fact_by_memory: dict[str, str] = {}
         self._rejected_values = RejectedValueRegistry()
         self.events: list[dict] = []
+        # Sprint 4c-2 (ADR-038): adapter-owned ledger state for layers above this one
+        # (the memory-layer action path keeps its consumption records here). Persisted
+        # by restart_runtime beside `events`; JSON-able; not a host interface.
+        self.extension_state: dict[str, dict] = {}
 
     # -- isolation-domain administration -------------------------------
 
@@ -817,6 +821,20 @@ class GovernedMemoryAdapter:
 
     def tombstone(self, fact_uuid: str) -> dict | None:
         return self._tombstones.get(fact_uuid)
+
+    # -- accessors for collaborators in later layers (Sprint 4c-2) ------
+
+    def record_event(self, event_type: str, memory_id: str, correlation: str, **extra) -> dict:
+        """Build an audit event through `_event` and retain it."""
+        event = self._event(event_type, memory_id, correlation, **extra)
+        self.events.append(event)
+        return event
+
+    def mint_id(self) -> str:
+        return self._ids.next()
+
+    def now(self) -> str:
+        return self._clock.now()
 
     # -- helpers --------------------------------------------------------
 

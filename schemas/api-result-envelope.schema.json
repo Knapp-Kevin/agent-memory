@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-result-envelope.schema.json",
   "title": "Agent Memory Public API: Result Envelope",
-  "description": "What every public stage returns (Sprint 4a, contract 1.0.0): the contract version, the ADR-030 compatibility state of the input envelope, the stage that ran, and the decision projection; a receipt when a commit happened; a refusal when the adapter refused; candidates and admissions for recall.",
+  "description": "What every public stage returns (Sprint 4a, contract 1.0.0): the contract version, the ADR-030 compatibility state of the input envelope, the stage that ran, and the decision projection; a receipt when a commit happened; a refusal when the adapter refused; candidates and admissions for recall; contract 1.2.0 (Sprint 4c-2, ADR-038) adds the action_authority and execution_evidence stages, the action_authority object and the witness document, and the decision's active constraints.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,7 +15,8 @@
       "type": "string",
       "enum": [
         "1.0.0",
-        "1.1.0"
+        "1.1.0",
+        "1.2.0"
       ]
     },
     "compatibility": {
@@ -37,7 +38,9 @@
         "recall",
         "forget",
         "history",
-        "posture"
+        "posture",
+        "action_authority",
+        "execution_evidence"
       ]
     },
     "outcome": {
@@ -94,6 +97,12 @@
         },
         "review_discharge": {
           "type": "string"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -177,6 +186,48 @@
       }
     },
     "posture": {
+      "type": "object"
+    },
+    "action_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_ref",
+        "bound",
+        "execution_status",
+        "ledger_required",
+        "requirement",
+        "composition_id"
+      ],
+      "properties": {
+        "decision_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bound": {
+          "type": "boolean"
+        },
+        "execution_status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ledger_required": {
+          "type": "boolean"
+        },
+        "requirement": {
+          "type": "string"
+        },
+        "composition_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "witness": {
       "type": "object"
     }
   }

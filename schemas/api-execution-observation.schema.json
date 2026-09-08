@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-execution-observation.schema.json",
+  "title": "Agent Memory Public API: Execution Observation",
+  "description": "What a host observed about an action's execution (Sprint 4c-2, contract 1.2.0, ADR-038), bound by the adapter to the decision it bound. The host supplies observations only: effective_decision, decision_alignment and every approval field are computed or refused, never accepted. observed_at is host-asserted text; the reference validator enforces no date-time format.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "action_id",
+    "witness_ref",
+    "enforcement_mode",
+    "delivery_status",
+    "enforcement_point_status",
+    "action_status",
+    "liveness_status",
+    "observed_at"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": [
+        "1.0.0",
+        "1.1.0",
+        "1.2.0"
+      ]
+    },
+    "action_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "witness_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "enforcement_mode": {
+      "type": "string",
+      "enum": [
+        "mechanical",
+        "cooperative",
+        "unknown"
+      ]
+    },
+    "delivery_status": {
+      "type": "string",
+      "enum": [
+        "delivered",
+        "failed",
+        "not_observed"
+      ]
+    },
+    "enforcement_point_status": {
+      "type": "string",
+      "enum": [
+        "reached",
+        "unavailable",
+        "not_observed"
+      ]
+    },
+    "action_status": {
+      "type": "string",
+      "enum": [
+        "executed",
+        "prevented",
+        "refused",
+        "unknown",
+        "not_observed"
+      ]
+    },
+    "liveness_status": {
+      "type": "string",
+      "enum": [
+        "healthy",
+        "degraded",
+        "unavailable",
+        "unknown"
+      ]
+    },
+    "observed_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

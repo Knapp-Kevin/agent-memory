@@ -71,7 +71,13 @@ The operation table must not undercut PAMA's target and downstream-authority sem
 | **A4** external action | never granted merely because a memory or capability is reliable |
 | **A5** governance change | never granted through a lower-authority mutation pathway |
 
-If a base operation/risk cell is weaker than one of these floors, the PAMA class floor wins.
+If a base operation/risk cell is weaker than one of these floors, the PAMA class floor wins. Stated as a rule, over the outcome ordering `allow < allow_with_ledger < require_review < require_external_verification < block`:
+
+```text
+effective_outcome = strictest(operation_risk_cell, target_class_floor, authority_class_floor, applicable modifier floors)
+```
+
+Risk answers "how dangerous is this action?"; authority class answers "what kind of delegated power is being exercised?". Neither substitutes for the other. **Risk-derived action policy and authority-class floors are independent governance constraints, and an authority-floor constraint is not dischargeable within the ordinary action-authorization evidence path** (ADR-038). A decision therefore carries its **active constraints** -- `risk_cell` always, `authority_floor:<class>` for A4/A5, `target_floor:<class>` for M4/M5 -- derived from the proposal rather than the outcome, because `require_review` produced by a cell and `require_review` produced by the A4 floor are different obligations: qualified evidence may discharge the first, and the second remains. Target-class floors keep the discharge behaviour they have on the memory path; the non-discharge rule's scope is the authority-class floors. Reference implementation: `policy.Decision.constraints`, `policy._constraints`; the action path's use of them is `memory/action_authority.py`.
 
 ## Base decision table
 
@@ -92,6 +98,9 @@ Operational mutation types are defined in `04-governance-and-pama.md`. Risk clas
 | Permanent deletion | require_review | require_review | require_external_verification | require_external_verification |
 | Scope expansion | require_review | require_review | require_external_verification | block |
 | Policy mutation | require_review | require_external_verification | require_external_verification | require_external_verification |
+| Action execution | allow_with_ledger | require_review | require_review | require_external_verification |
+
+`Action execution` was added by ADR-038 (Sprint 4c-2): exercising authority already possessed. It is not `authority_change`, which changes the set or degree of authority an actor possesses, and the two are kept distinct so a reviewer can answer "who changed this agent's authority?" and "which actions did it perform under that authority?" independently. Nor is it a memory mutation merely because its decision and evidence are recorded in memory.
 
 Operations admitted by `pama-decision.schema.json` but deliberately absent from
 this table: `capability_promotion`, `authority_change`, and `other`. They carry no

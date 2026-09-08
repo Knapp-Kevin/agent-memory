@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-proposal-envelope.schema.json",
-  "title": "Agent Memory Public API: Proposal Envelope",
-  "description": "The public, versioned form of a proposal (Sprint 4a, contract 1.0.0). Exactly the Proposal fields a consumer may set; the evaluator-side fields (review_satisfied, approval_refs, approves_own_authority, actor_authority_resolved) are not part of the contract and are rejected.",
+  "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/api-action-envelope.schema.json",
+  "title": "Agent Memory Public API: Action Envelope",
+  "description": "The public form of an action proposal (Sprint 4c-2, contract 1.2.0, ADR-038): the proposal envelope's fields with operation fixed to action_execution and state_snapshot required (the enforcement projection needs it), plus the action's identity. Every assertion field (requires_governance, outcome, decision_ref, review_satisfied, approval_refs, effective_decision) is rejected: the adapter decides, the host executes.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -19,7 +19,11 @@
     "downstream_authority",
     "reversibility",
     "risk_class",
-    "evidence_refs"
+    "evidence_refs",
+    "state_snapshot",
+    "action_id",
+    "description",
+    "skill_version_ref"
   ],
   "properties": {
     "contract_version": {
@@ -63,24 +67,7 @@
     },
     "operation": {
       "type": "string",
-      "enum": [
-        "runtime_assembly",
-        "score_adjustment",
-        "link_creation",
-        "link_deletion",
-        "correction",
-        "decision_overwrite",
-        "domain_schema_mutation",
-        "promotion",
-        "crystallization",
-        "pruning",
-        "permanent_deletion",
-        "scope_expansion",
-        "policy_mutation",
-        "capability_promotion",
-        "authority_change",
-        "other"
-      ]
+      "const": "action_execution"
     },
     "current_strength": {
       "type": "string",
@@ -173,7 +160,8 @@
       "type": "string"
     },
     "state_snapshot": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "tenant_ref": {
       "type": "string"
@@ -198,6 +186,18 @@
     },
     "task_ref": {
       "type": "string"
+    },
+    "action_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "skill_version_ref": {
+      "type": "string",
+      "minLength": 1
     }
   }
 }

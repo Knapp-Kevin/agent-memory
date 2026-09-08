@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/MythologIQ-Labs-LLC/agent-memory/schemas/pama-decision.schema.json",
   "title": "Proportional Adaptive Mutation Authority Decision",
-  "description": "Doctrine-level compatibility contract for PAMA authority evaluations. PAMA decision 1.1.0 adds decision_overwrite, 1.2.0 adds domain_schema_mutation, and 1.3.0 adds explicit ADR-032 structural-impact bindings for deterministic S1 delegation while preserving historical 1.2.0 behavior.",
+  "description": "Doctrine-level compatibility contract for PAMA authority evaluations. PAMA decision 1.1.0 adds decision_overwrite, 1.2.0 adds domain_schema_mutation, and 1.3.0 adds explicit ADR-032 structural-impact bindings for deterministic S1 delegation while preserving historical 1.2.0 behavior. action_execution (ADR-038, Sprint 4c-2) is emitted under 1.0.0 like every operation other than decision_overwrite: exercising authority already held is not a memory mutation, and its cells are characterised in docs/33.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -89,6 +89,7 @@
             "permanent_deletion",
             "scope_expansion",
             "policy_mutation",
+            "action_execution",
             "capability_promotion",
             "authority_change",
             "other"

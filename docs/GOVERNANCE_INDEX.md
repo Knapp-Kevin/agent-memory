@@ -41,7 +41,7 @@ Stable; changes are explicit doctrine events. Drift signal: rules contradict eac
 | Artifact | Path |
 |----------|------|
 | ADR index (canonical status) | `docs/adr/README.md` (31 Accepted, 6 Proposed) |
-| ADRs | `docs/adr/ADR-001` through `ADR-037` |
+| ADRs | `docs/adr/ADR-001` through `ADR-038` |
 | PAMA foundation | `docs/pama/README.md`, `docs/04-governance-and-pama.md`, `docs/33-pama-decision-table.md` |
 | Memory threat model | `docs/15-memory-threat-model.md` |
 | Source rights policy | `docs/SOURCE_RIGHTS_POLICY.md` |
@@ -112,6 +112,8 @@ Live for plan duration; archived at substantiate. Drift signal: plan shipped but
 | Sprint 4b research brief | `docs/research-brief-sprint4b-js-pama-2026-09-07.md` | sprint4b-js-pama |
 | Sprint 4c-1 plan | `docs/plan-sprint4c1-history-posture.md` | sprint4c1-history-posture |
 | Sprint 4c research brief | `docs/research-brief-sprint4c-remaining-stages-2026-09-07.md` | sprint4c-remaining-stages |
+| Sprint 4c-2 plan | `docs/plan-sprint4c2-action-authority.md` | sprint4c2-action-authority |
+| Sprint 4c-2 research brief | `docs/research-brief-sprint4c2-action-authority-2026-09-07.md` | sprint4c2-action-authority-brief |
 
 ## Tier 5 — Reference Material
 

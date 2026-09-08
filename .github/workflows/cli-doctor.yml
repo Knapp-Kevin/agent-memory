@@ -197,6 +197,21 @@ jobs:
               print(f"api: target envelope schema NOT resolved from wheel: {type(exc).__name__}: {exc}")
               sys.exit(1)
           print("api: target envelope validated from wheel; contract", contract.CONTRACT_VERSION)
+          # Sprint 4c-2: the action-authority and execution-evidence stages and their schemas ship too.
+          if not {"authorize", "witness"} <= set(surface.__all__):
+              print("api: authorize/witness missing from surface.__all__:", surface.__all__)
+              sys.exit(1)
+          try:
+              contract.validate_action_envelope({**envelope, "operation": "action_execution", "state_snapshot": "v1",
+                                                 "action_id": "action:1", "description": "d", "skill_version_ref": "t"})
+              contract.validate_observation_envelope({"contract_version": contract.CONTRACT_VERSION, "action_id": "action:1",
+                                                      "witness_ref": "w", "enforcement_mode": "mechanical", "delivery_status": "delivered",
+                                                      "enforcement_point_status": "reached", "action_status": "executed",
+                                                      "liveness_status": "healthy", "observed_at": "now"})
+          except Exception as exc:
+              print(f"api: action/observation schema NOT resolved from wheel: {type(exc).__name__}: {exc}")
+              sys.exit(1)
+          print("api: action envelope and execution observation validated from wheel; contract", contract.CONTRACT_VERSION)
           sys.exit(0)
           PY
       - name: Installed evidence modules import

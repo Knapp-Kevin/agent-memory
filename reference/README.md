@@ -44,7 +44,7 @@ The Governance Context Projection adds a complementary boundary: remembered cont
 
 ## Public API
 
-Consumers call `agentmem_ref.surface` -- `propose`, `approve`, `commit`, `recall`, `forget`, and the read-only `history` and `posture` -- with schema-backed, versioned envelopes (contract `1.1.0`) (`schemas/api-*.schema.json`; examples under `reference/fixtures/api/`) and get a result envelope naming the contract version, its ADR-030 compatibility state, the stage and the decision. The adapter's dataclasses are not the contract. `docs/44-public-api-contract.md` is the contract's home, including what the surface refuses and why.
+Consumers call `agentmem_ref.surface` -- `propose`, `approve`, `commit`, `recall`, `forget`, the read-only `history` and `posture`, and the action stages `authorize` and `witness` (ADR-038: the adapter decides an `action_execution` proposal, binds an executable allow or deny after its ledger exists, and consumes the authorization exactly once when the host's observation is witnessed) -- with schema-backed, versioned envelopes (contract `1.2.0`) (`schemas/api-*.schema.json`; examples under `reference/fixtures/api/`) and get a result envelope naming the contract version, its ADR-030 compatibility state, the stage and the decision. The adapter's dataclasses are not the contract. `docs/44-public-api-contract.md` is the contract's home, including what the surface refuses and why.
 
 ## Layout
 

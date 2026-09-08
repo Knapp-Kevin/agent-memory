@@ -15,15 +15,18 @@ from dataclasses import asdict
 from typing import Any, Mapping
 
 from ..core import policy, receipts
+from ..memory.procedural_memory import ActionProposal
 from ..runtime.adapter import RecallContext
 
-CONTRACT_VERSION = "1.1.0"
+CONTRACT_VERSION = "1.2.0"
 
 PROPOSAL_SCHEMA = "api-proposal-envelope.schema.json"
 RECALL_CONTEXT_SCHEMA = "api-recall-context.schema.json"
 RESULT_SCHEMA = "api-result-envelope.schema.json"
 TARGET_SCHEMA = "api-target-envelope.schema.json"
 POSTURE_SCHEMA = "api-posture-report.schema.json"
+ACTION_SCHEMA = "api-action-envelope.schema.json"
+OBSERVATION_SCHEMA = "api-execution-observation.schema.json"
 
 CURRENT = "current"
 MIGRATION_REQUIRED = "migration_required"
@@ -81,6 +84,16 @@ def validate_posture_report(report: Mapping[str, Any]) -> dict:
     return dict(report)
 
 
+def validate_action_envelope(envelope: Mapping[str, Any]) -> dict:
+    receipts.validate(ACTION_SCHEMA, dict(envelope))
+    return dict(envelope)
+
+
+def validate_observation_envelope(envelope: Mapping[str, Any]) -> dict:
+    receipts.validate(OBSERVATION_SCHEMA, dict(envelope))
+    return dict(envelope)
+
+
 def proposal_from_envelope(envelope: Mapping[str, Any]) -> policy.Proposal:
     """The internal Proposal; evaluator-side fields keep their defaults."""
     fields = {name: envelope[name] for name in PUBLIC_PROPOSAL_FIELDS if name in envelope}
@@ -88,6 +101,13 @@ def proposal_from_envelope(envelope: Mapping[str, Any]) -> policy.Proposal:
         if name in fields:
             fields[name] = tuple(fields[name])
     return policy.Proposal(**fields)
+
+
+def action_from_envelope(envelope: Mapping[str, Any]) -> tuple[ActionProposal, policy.Proposal]:
+    """The action and its PAMA proposal (Sprint 4c-2). `requires_governance` is never read from input."""
+    action = ActionProposal(action_id=envelope["action_id"], description=envelope["description"],
+                            skill_version_ref=envelope["skill_version_ref"])
+    return action, proposal_from_envelope(envelope)
 
 
 def recall_context_from_envelope(envelope: Mapping[str, Any]) -> RecallContext:
@@ -109,6 +129,7 @@ def decision_projection(decision: policy.Decision) -> dict:
         "policy_version": decision.policy_version,
         "discharge_authority": decision.discharge_authority,
         "review_discharge": decision.review_discharge,
+        "constraints": list(decision.constraints),
     }
 
 
@@ -122,7 +143,8 @@ def result(stage: str, compat: str, **fields: Any) -> dict:
 
 __all__ = [
     "CONTRACT_VERSION", "CURRENT", "MIGRATION_REQUIRED", "INCOMPATIBLE", "UNKNOWN",
-    "PUBLIC_PROPOSAL_FIELDS", "TARGET_SCHEMA", "POSTURE_SCHEMA", "compatibility", "validate_proposal_envelope",
+    "PUBLIC_PROPOSAL_FIELDS", "TARGET_SCHEMA", "POSTURE_SCHEMA", "ACTION_SCHEMA", "OBSERVATION_SCHEMA", "compatibility", "validate_proposal_envelope",
+    "validate_action_envelope", "validate_observation_envelope", "action_from_envelope",
     "validate_recall_context", "validate_target_envelope", "validate_posture_report", "proposal_from_envelope", "recall_context_from_envelope",
     "decision_projection", "result",
 ]

@@ -228,6 +228,9 @@ def _snapshot_governance(
             "rejected_values": _snapshot_rejections(adapter._rejected_values),
             "containment_violations": list(adapter.containment_violations),
             "events": list(adapter.events),
+            # Sprint 4c-2 (ADR-038): adapter-owned state of later layers (action-authority
+            # consumption records). Additive; a pre-1.2.0 snapshot restores an empty slot.
+            "extension_state": {key: adapter.extension_state[key] for key in sorted(adapter.extension_state)},
         },
         "visibility_snapshots": visibility_snapshots,
     }
@@ -275,6 +278,10 @@ def _restore_adapter(substrate: InMemoryTemporalGraph, snapshot: dict, verifier_
         adapter.events = list(raw.get("events", ()))
     except (TypeError, ValueError) as exc:
         raise RuntimeRecoveryError("governance adapter state cannot be reconstructed") from exc
+    extension_state = raw.get("extension_state", {})
+    if not isinstance(extension_state, dict):
+        raise RuntimeRecoveryError("extension state is not a mapping")
+    adapter.extension_state = dict(extension_state)
 
     visibility = snapshot.get("visibility_snapshots", {})
     if not isinstance(visibility, dict):

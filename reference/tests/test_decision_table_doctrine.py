@@ -29,6 +29,8 @@ DOCTRINE = {
     "permanent_deletion": (REVIEW, REVIEW, EXTERNAL, EXTERNAL),
     "scope_expansion": (REVIEW, REVIEW, EXTERNAL, BLOCK),
     "policy_mutation": (REVIEW, EXTERNAL, EXTERNAL, EXTERNAL),
+    # ADR-038 (Sprint 4c-2): exercising authority already held.
+    "action_execution": (ALLOW, REVIEW, REVIEW, EXTERNAL),
 }
 RISKS = ("low", "medium", "high", "critical")
 
@@ -71,7 +73,7 @@ class DecisionTableDoctrineTest(unittest.TestCase):
                         f"{operation}/{risk_class}: docs/33 says {expected}",
                     )
                 checked += 1
-        self.assertEqual(52, checked, "13 operations x 4 risk classes")
+        self.assertEqual(56, checked, "14 operations x 4 risk classes")
 
     def test_score_adjustment_critical_blocks(self):
         """Previously resolved require_review via the fallback -- weaker than

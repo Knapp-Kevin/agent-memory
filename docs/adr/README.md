@@ -43,9 +43,10 @@ ADR-034: Accepted
 ADR-035: Accepted
 ADR-036: Accepted
 ADR-037: Accepted
+ADR-038: Accepted
 ```
 
-ADRs 001-020, ADR-022, ADR-024, ADR-028, ADR-030, ADR-031, ADR-032, ADR-033, ADR-034, ADR-035, ADR-036, and ADR-037 have satisfied their doctrine-maturity gates.
+ADRs 001-020, ADR-022, ADR-024, ADR-028, ADR-030, ADR-031, ADR-032, ADR-033, ADR-034, ADR-035, ADR-036, ADR-037, and ADR-038 have satisfied their doctrine-maturity gates.
 
 Several accepted decisions deliberately required stronger-than-documentation evidence. ADR-020 required executable end-to-end governed-consequence evidence and adversarial negative paths. ADR-024 required executable shared-write coordination evidence. ADR-034 required a real procedural-memory vertical slice proving that retained/recalled skills do not become standing execution or metamemory authority. ADR-035 required an executable Cognitive Mesh path plus native first-party Cognitive Metabolism evidence crossing the mesh/PAMA/recall boundary without provider authority laundering.
 
@@ -412,3 +413,16 @@ governance becomes numerology.
 Acceptance is doctrine, not implementation. The implementation order is rigid:
 parked state, then evidence qualification and dependence lineage, then governed
 resumption, and only then the fail-closed conversion of the 51 callers.
+
+### Action execution is not authority change
+
+[`ADR-038`](ADR-038-action-execution-is-not-authority-change.md) is **Accepted**.
+
+`action_execution` is a new PAMA operation: exercising authority already
+possessed to cause an externally meaningful action. It is not
+`authority_change`, which alters what an actor may do, and it is not a memory
+mutation because its decision or evidence is recorded in memory. Risk-derived
+action policy and the A4/A5 authority-class floors are independent constraints;
+the floors are not dischargeable by ordinary action evidence. A bound decision
+has its ledger before it is exposed; a witness requires a bound decision; a
+bound execution authorization is consumed exactly once, across restart.
