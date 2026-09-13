@@ -15,17 +15,9 @@ from ..core import policy, receipts
 DOMAIN_SCHEMA_MUTATION = "domain_schema_mutation"
 PAMA_SCHEMA_VERSION = "1.2.0"
 
-_OUTCOME_ORDER = {
-    policy.ALLOW: 0,
-    policy.ALLOW_WITH_LEDGER: 1,
-    policy.REQUIRE_REVIEW: 2,
-    policy.REQUIRE_EXTERNAL_VERIFICATION: 3,
-    policy.BLOCK: 4,
-}
-
 
 def required_outcome_for_risk(risk_class: str) -> str:
-    """Return the minimum PAMA posture for domain-schema mutation."""
+    """Return the PAMA 1.2 base posture for domain-schema mutation."""
     if risk_class in ("low", "medium"):
         return policy.REQUIRE_REVIEW
     if risk_class in ("high", "critical"):
@@ -33,99 +25,62 @@ def required_outcome_for_risk(risk_class: str) -> str:
     raise ValueError(f"unsupported risk class {risk_class!r}")
 
 
-def _envelope(outcome: str, operation: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
-    if outcome == policy.REQUIRE_REVIEW:
-        return ("enter_pending_verification", "collect_more_evidence", "defer"), (operation,)
-    if outcome == policy.REQUIRE_EXTERNAL_VERIFICATION:
-        return ("request_external_verification", "collect_more_evidence", "defer"), (operation,)
-    if outcome == policy.BLOCK:
-        return (), (operation, "enter_pending_verification", "request_external_verification")
-    if outcome in (policy.ALLOW, policy.ALLOW_WITH_LEDGER):
-        return (operation, "collect_more_evidence", "defer"), ()
-    raise ValueError(f"unsupported outcome {outcome!r}")
-
-
-def _strictest_decision(
-    current: policy.Decision,
-    minimum_outcome: str,
-    operation: str,
-    reason: str,
-) -> policy.Decision:
-    if _OUTCOME_ORDER[current.outcome] >= _OUTCOME_ORDER[minimum_outcome]:
-        return current
-    permitted, prohibited = _envelope(minimum_outcome, operation)
-    return policy.Decision(
-        outcome=minimum_outcome,
-        permitted_actions=permitted,
-        prohibited_actions=prohibited,
-        reasons=current.reasons + (reason,),
-        policy_version=current.policy_version,
-    )
-
-
-def _scope_expansion_floor(proposal: policy.Proposal) -> policy.Decision:
-    scope_proposal = replace(proposal, operation="scope_expansion", review_satisfied=False)
-    return policy.evaluate(scope_proposal)
-
-
-def _discharge_review(decision: policy.Decision, proposal: policy.Proposal) -> policy.Decision:
-    if decision.outcome not in (policy.REQUIRE_REVIEW, policy.REQUIRE_EXTERNAL_VERIFICATION):
-        return decision
-    if not proposal.review_satisfied:
-        return decision
-    if not proposal.approval_refs or proposal.approves_own_authority:
-        return policy.Decision(
-            outcome=decision.outcome,
-            permitted_actions=decision.permitted_actions,
-            prohibited_actions=decision.prohibited_actions,
-            reasons=decision.reasons + ("review claimed without an external approval record",),
-            policy_version=decision.policy_version,
-        )
-    permitted, prohibited = _envelope(policy.ALLOW_WITH_LEDGER, proposal.operation)
-    return policy.Decision(
-        outcome=policy.ALLOW_WITH_LEDGER,
-        permitted_actions=permitted,
-        prohibited_actions=prohibited,
-        reasons=decision.reasons + (f"review discharged by {list(proposal.approval_refs)}",),
-        policy_version=decision.policy_version,
-    )
-
-
 def evaluate(
     proposal: policy.Proposal,
     *,
     requested_scope_change: str = "",
+    evidence=None,
+    attestation: policy.ExternalVerification | None = None,
+    verifier_registry=None,
 ) -> policy.Decision:
-    """Evaluate a domain-schema mutation while preserving stricter PAMA floors.
+    """Evaluate PAMA 1.2 domain-schema mutation through shared authority logic.
 
-    The generic evaluator first runs with review discharge disabled, preserving
-    actor, target-class, downstream-authority, isolation, reversibility, and
-    evidence constraints. The explicit operation and any scope-expansion floor
-    are then applied. Only after those floors exist may a valid external review
-    discharge the resulting review/verification requirement.
+    The 1.2 profile owns the operation's base risk cell. Shared PAMA owns every
+    authority floor, modifier, and discharge mechanism. This matters because
+    ADR-037 removed caller-asserted ``review_satisfied`` / ``approval_refs`` as
+    an authority path after this profile originally shipped.
+
+    Qualified evidence is grouped through an evaluator-held ``VerifierRegistry``
+    when one is supplied. A bound attestation can discharge only an existing
+    ``require_external_verification`` outcome. With neither, review remains
+    fail-closed and the shared evaluator names the remediation route.
     """
     if proposal.operation != DOMAIN_SCHEMA_MUTATION:
         raise ValueError("domain-schema evaluator requires domain_schema_mutation")
 
-    undecided_review = replace(proposal, review_satisfied=False)
-    decision = policy.evaluate(undecided_review)
-    decision = _strictest_decision(
-        decision,
-        required_outcome_for_risk(proposal.risk_class),
-        proposal.operation,
-        "domain-schema mutation minimum",
+    if requested_scope_change and proposal.requested_scope_change:
+        if requested_scope_change != proposal.requested_scope_change:
+            raise ValueError("requested_scope_change disagrees with proposal")
+    scope_change = requested_scope_change or proposal.requested_scope_change
+    evaluated = (
+        replace(proposal, requested_scope_change=scope_change)
+        if scope_change != proposal.requested_scope_change
+        else proposal
     )
+    base = required_outcome_for_risk(evaluated.risk_class)
 
-    if requested_scope_change:
-        scope_decision = _scope_expansion_floor(undecided_review)
-        decision = _strictest_decision(
-            decision,
-            scope_decision.outcome,
-            proposal.operation,
-            "scope-expansion floor preserved",
+    if evidence:
+        from ..core.evidence_qualification import group_by_dependence
+
+        return policy.evaluate_with_qualified_evidence(
+            evaluated,
+            group_by_dependence(
+                evidence,
+                verifiers=(verifier_registry.as_mapping() if verifier_registry else None),
+            ),
+            base_outcome=base,
+            attestation=attestation,
         )
-
-    return _discharge_review(decision, proposal)
+    if attestation is not None:
+        return policy.evaluate_with_external_verification(
+            evaluated,
+            attestation,
+            base_outcome=base,
+        )
+    return policy.evaluate_with_base_outcome(
+        evaluated,
+        base_outcome=base,
+    )
 
 
 def build_pama_decision(
@@ -172,8 +127,9 @@ def build_pama_decision(
             "decision_receipt_ref": receipt_ref,
         },
     }
-    if requested_scope_change:
-        document["mutation"]["requested_scope_change"] = requested_scope_change
+    scope_change = requested_scope_change or proposal.requested_scope_change
+    if scope_change:
+        document["mutation"]["requested_scope_change"] = scope_change
     if proposal.tenant_ref:
         document["target"]["tenant_ref"] = proposal.tenant_ref
     if proposal.purpose:

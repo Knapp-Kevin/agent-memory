@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from tests.qualified_fixtures import corpus_for, registry_for, rule
+
 from agentmem_ref import domain_schema_mutation as dsm
 from agentmem_ref import policy, receipts
 from agentmem_ref.maintenance_run_state import seal
@@ -27,6 +29,11 @@ def pama_decision(
     purpose: str = "memory maintenance",
     reviewed: bool = False,
 ):
+    # `reviewed` predates ADR-037. For the PAMA 1.2 domain-schema positive
+    # fixture it now means "the evaluator has qualifying transition evidence",
+    # not "the caller set review_satisfied plus an approval string". Other
+    # historical operation fixtures retain their existing shape.
+    legacy_review_assertion = reviewed and operation != dsm.DOMAIN_SCHEMA_MUTATION
     proposal = policy.Proposal(
         proposal_id=f"maintenance:{operation}:{risk}:{tenant}",
         actor_id="agent:maintenance",
@@ -41,8 +48,8 @@ def pama_decision(
         reversibility="versioned_revocable",
         risk_class=risk,
         evidence_refs=("evidence:source-a",),
-        approval_refs=("approval:independent",) if reviewed else (),
-        review_satisfied=reviewed,
+        approval_refs=("approval:independent",) if legacy_review_assertion else (),
+        review_satisfied=legacy_review_assertion,
         tenant_ref=tenant,
         purpose=purpose,
         isolation_domain_refs=(f"{tenant}/project-a",),
@@ -50,7 +57,27 @@ def pama_decision(
         project_ref="project-a",
     )
     if operation == dsm.DOMAIN_SCHEMA_MUTATION:
-        decision = dsm.evaluate(proposal)
+        if reviewed:
+            corpus = corpus_for(rule(
+                rule_id="rule:maintenance-domain-schema",
+                target=proposal.target_reference,
+                criterion="maintenance-domain-schema-transition",
+                from_state="v1",
+                to_values=("v2",),
+            ))
+            evidence = corpus.evidence_for(
+                target_reference=proposal.target_reference,
+                criterion="maintenance-domain-schema-transition",
+                pre_state="v1",
+                proposed_value="v2",
+            )
+            decision = dsm.evaluate(
+                proposal,
+                evidence=evidence,
+                verifier_registry=registry_for(corpus),
+            )
+        else:
+            decision = dsm.evaluate(proposal)
         document = dsm.build_pama_decision(
             proposal,
             decision,
