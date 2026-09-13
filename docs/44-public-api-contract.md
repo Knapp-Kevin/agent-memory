@@ -58,10 +58,15 @@ The decision projection carries `outcome`, `permitted_actions`, `prohibited_acti
 
 ## What `commit` forwards and what the adapter does with it
 
-`commit` and `forget` forward both `evidence` and `attestation` unchanged (DoD 20, asserted by `reference/tests/test_api_dod20.py` through a recording adapter). The adapter's two seams differ in what they do with an attestation alone:
+`commit` and `forget` forward both `evidence` and `attestation` unchanged (DoD 20, asserted by `reference/tests/test_api_dod20.py` through a recording adapter). The adapter's proposal evaluation, commit, and delete seams use the same three-way authority selection:
 
-- `governed_delete` selects three ways: evidence (with optional attestation) -> qualified-evidence discharge; attestation alone -> external-verification discharge; else the base evaluation.
-- `commit_proposal` selects two ways: evidence -> qualified-evidence discharge (the attestation is passed along); else the base evaluation. **An attestation without evidence is ignored there.** `approve` uses the three-way selection (`GovernedMemoryAdapter.evaluate_proposal`), so a consumer can see a critical correction discharge at `approve` and then park at `commit` unless evidence accompanies the attestation. This asymmetry is pre-existing, pinned by `test_commit_attestation_only_is_ignored_by_the_adapter_today`, and raised as a follow-up rather than changed here: aligning `commit_proposal` is a behaviour change to a seam 48 files call.
+- evidence present, with an optional attestation -> qualified-evidence evaluation through the adapter-owned verifier registry;
+- no evidence and an attestation present -> external-verification evaluation;
+- neither -> base evaluation.
+
+The attestation-only path is intentionally narrow. `policy.evaluate_with_external_verification` changes only a base `require_external_verification` outcome; a medium-risk correction that requires qualified review evidence remains `require_review` even when an attestation is supplied. Binding, self-verification, authority-kind, and risk-ceiling checks remain in the shared evaluator.
+
+Issue #395 corrected the former `commit_proposal` asymmetry in which `approve` and `governed_delete` honored an attestation alone while commit accepted the parameter and ignored it. This is an implementation correction to the already-sanctioned ADR-037 step 4b-2 entry-point channel, not a new envelope or signature, so the public contract remains `1.2.0`.
 
 ## Action authority and execution evidence (contract `1.2.0`, ADR-038)
 
