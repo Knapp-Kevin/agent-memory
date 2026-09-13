@@ -93,7 +93,7 @@ At the reconciliation boundary the repository has eight open issues and one open
 
 ## Branch State
 
-Five normal branches were present at reconciliation:
+Normal branches visible during reconciliation include:
 
 - `main`
 - `docs/reconcile-governance-state-2026-09-12` (this reconciliation)
@@ -110,11 +110,11 @@ The historical/work branches must be compared for unique commits before deletion
 
 | Surface | Drift found | Resolution state |
 |---------|-------------|------------------|
-| `docs/SYSTEM_STATE.md` | Snapshot stopped at Sprint 2n while newer sections partially reflected Sprint 4c-2 | corrected in this branch |
-| `docs/GOVERNANCE_INDEX.md` | Tier 1 claimed ledger #1-#10, Sprint 1 state, 11 feature entries, and an active committed `.qor` roadmap that is not present on `main` | being corrected in this branch |
-| `docs/BACKLOG.md` | Treated the Python runtime API boundary as future work despite contract 1.2.0 shipping | corrected in this branch |
-| `docs/CONCEPT.md` | Pointed the forward objective at `.qor/roadmaps/agent-memory-1_0-completion/events.jsonl`, which is not present on `main` | corrected in this branch |
-| `docs/FEATURE_INDEX.md` | Coverage summary says 25 verified while the table contains 26 verified feature rows (FX001-FX024, FX026-FX027; FX025 intentionally reserved) | correction pending in this branch |
+| `docs/SYSTEM_STATE.md` | Snapshot stopped at Sprint 2n while newer sections partially reflected Sprint 4c-2 | corrected on this branch |
+| `docs/GOVERNANCE_INDEX.md` | Tier 1 claimed ledger #1-#10, Sprint 1 state, 11 feature entries, and an active committed `.qor` roadmap that is not present on `main` | corrected on this branch |
+| `docs/BACKLOG.md` | Treated the Python runtime API boundary as future work despite contract 1.2.0 shipping | corrected on this branch |
+| `docs/CONCEPT.md` | Pointed the forward objective at `.qor/roadmaps/agent-memory-1_0-completion/events.jsonl`, which is not present on `main` | corrected on this branch |
+| `docs/FEATURE_INDEX.md` | Coverage summary said 25 verified while the table contained 26 verified feature rows (FX001-FX024, FX026-FX027; FX025 intentionally reserved) | corrected and compacted on this branch |
 
 Historical ledger statements are not rewritten when later reality changes. They remain evidence of what was believed/decided at that time.
 
@@ -133,7 +133,7 @@ Historical ledger statements are not rewritten when later reality changes. They 
 | JS parity | **HELD INTENTIONALLY** | Sprint 4b audit veto |
 | External conformance | **INCOMPLETE** | #332, #361 |
 | Field efficacy | **UNPROVEN** | #387, #388 |
-| Control-plane documentation | **RECONCILING** | this branch |
+| Control-plane documentation | **RECONCILED ON BRANCH** | merge/CI validation still required |
 
 ---
 
@@ -141,7 +141,7 @@ Historical ledger statements are not rewritten when later reality changes. They 
 
 Sequence work in this order:
 
-1. **Finish governance-state reconciliation**: `SYSTEM_STATE`, `GOVERNANCE_INDEX`, `BACKLOG`, `CONCEPT`, and the `FEATURE_INDEX` summary must agree with `main`.
+1. **Validate and merge governance-state reconciliation** so `SYSTEM_STATE`, `GOVERNANCE_INDEX`, `BACKLOG`, `CONCEPT`, and `FEATURE_INDEX` agree with `main`.
 2. **Resolve inconsistency #395** without weakening the review/evidence model.
 3. **Close incomplete authority work #364**, preserving the explicit host-authentication boundary while governing shared-domain membership and scope expansion.
 4. **Take #363 as the next major runtime tranche**: define a real state/persistence port before making production-readiness claims.
