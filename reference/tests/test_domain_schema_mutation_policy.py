@@ -2,6 +2,8 @@
 
 import unittest
 
+from tests.qualified_fixtures import corpus_for, registry_for, rule
+
 from agentmem_ref import domain_schema_mutation as dsm
 from agentmem_ref import policy
 
@@ -18,6 +20,32 @@ def make_proposal(risk="medium", target=policy.M3, authority=policy.A3, evidence
         state_snapshot="snapshot:model:v4", tenant_ref="tenant-a", purpose="ontology evolution",
         isolation_domain_refs=("tenant-a/project-a",), required_isolation_domain_refs=("tenant-a/project-a",),
         project_ref="project-a",
+    )
+
+
+def transition_evidence(proposal):
+    corpus = corpus_for(rule(
+        rule_id="rule:domain-schema-transition",
+        target=proposal.target_reference,
+        criterion="domain-schema-transition",
+        from_state="v4",
+        to_values=("v5",),
+    ))
+    evidence = corpus.evidence_for(
+        target_reference=proposal.target_reference,
+        criterion="domain-schema-transition",
+        pre_state="v4",
+        proposed_value="v5",
+    )
+    return evidence, registry_for(corpus)
+
+
+def attestation(proposal, *, proposal_id=None, principal="human:schema-owner"):
+    return policy.ExternalVerification(
+        bound_proposal_id=proposal_id or proposal.proposal_id,
+        verifier_principal_id=principal,
+        authority_kind=policy.HUMAN_CONFIRMATION,
+        max_risk_class="critical",
     )
 
 
@@ -44,10 +72,54 @@ class DomainSchemaMutationPolicyTests(unittest.TestCase):
         governance = dsm.evaluate(make_proposal(risk="low", target=policy.M5, authority=policy.A5))
         self.assertEqual(governance.outcome, policy.REQUIRE_EXTERNAL_VERIFICATION)
 
-    def test_review_discharges_only_after_floors(self):
-        result = dsm.evaluate(make_proposal(risk="high", reviewed=True, approvals=("approval:independent",)))
+    def test_asserted_review_no_longer_discharges_medium_or_high(self):
+        medium = dsm.evaluate(make_proposal(risk="medium", reviewed=True, approvals=("approval:independent",)))
+        self.assertEqual(medium.outcome, policy.REQUIRE_REVIEW)
+        self.assertIn(policy.REVIEW_REQUIRES_QUALIFIED_EVIDENCE, medium.reasons)
+
+        high = dsm.evaluate(make_proposal(risk="high", reviewed=True, approvals=("approval:independent",)))
+        self.assertEqual(high.outcome, policy.REQUIRE_EXTERNAL_VERIFICATION)
+        self.assertIn("external_verification_requires_attestation", high.reasons)
+
+    def test_medium_qualified_transition_evidence_discharges_review(self):
+        proposal = make_proposal(risk="medium")
+        evidence, registry = transition_evidence(proposal)
+        result = dsm.evaluate(proposal, evidence=evidence, verifier_registry=registry)
         self.assertEqual(result.outcome, policy.ALLOW_WITH_LEDGER)
         self.assertIn(dsm.DOMAIN_SCHEMA_MUTATION, result.permitted_actions)
+        self.assertEqual(result.discharge_authority, policy.DELEGATED_POLICY)
+
+    def test_high_bound_human_attestation_discharges_external_verification(self):
+        proposal = make_proposal(risk="high")
+        result = dsm.evaluate(proposal, attestation=attestation(proposal))
+        self.assertEqual(result.outcome, policy.ALLOW_WITH_LEDGER)
+        self.assertEqual(result.review_discharge, "verified")
+        self.assertIn(dsm.DOMAIN_SCHEMA_MUTATION, result.permitted_actions)
+
+    def test_high_attestation_still_enforces_binding_and_separation(self):
+        proposal = make_proposal(risk="high")
+        wrong = dsm.evaluate(
+            proposal,
+            attestation=attestation(proposal, proposal_id="schema:other"),
+        )
+        self.assertEqual(wrong.outcome, policy.REQUIRE_EXTERNAL_VERIFICATION)
+        self.assertIn("attestation_not_bound_to_proposal", wrong.reasons)
+
+        self_verified = dsm.evaluate(
+            proposal,
+            attestation=attestation(proposal, principal=proposal.actor_id),
+        )
+        self.assertEqual(self_verified.outcome, policy.REQUIRE_EXTERNAL_VERIFICATION)
+        self.assertIn("attestation_self_verified", self_verified.reasons)
+
+    def test_scope_change_argument_cannot_disagree_with_proposal(self):
+        proposal = make_proposal(risk="high")
+        proposal = policy.replace(proposal, requested_scope_change="project -> tenant") if hasattr(policy, "replace") else proposal
+        # Proposal does not expose a helper; construct the disagreement directly.
+        if not proposal.requested_scope_change:
+            proposal = policy.Proposal(**{**proposal.__dict__, "requested_scope_change": "project -> tenant"})
+        with self.assertRaisesRegex(ValueError, "requested_scope_change disagrees"):
+            dsm.evaluate(proposal, requested_scope_change="project -> global")
 
 
 if __name__ == "__main__":
