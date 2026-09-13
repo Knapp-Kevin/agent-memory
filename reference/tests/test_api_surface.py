@@ -98,11 +98,41 @@ class PublicSurface(unittest.TestCase):
         self.assertTrue(committed["committed"]); self.assertEqual(committed["receipt"]["decision_outcome"], policy.ALLOW_WITH_LEDGER)
         self.assertEqual(self.memory.state_version(TARGET), 2)
 
-    def test_commit_attestation_only_is_ignored_by_the_adapter_today(self):
-        # commit_proposal's selection is two-way (evidence or base evaluation); an attestation alone
-        # does not reach evaluate_with_external_verification there. Pinned so the follow-up has a red test.
-        result = surface.commit(self.memory, _correction("critical"), "release branch main", attestation=_attestation())
-        self.assertFalse(result["committed"]); self.assertEqual(result["outcome"], policy.REQUIRE_EXTERNAL_VERIFICATION)
+    def test_commit_attestation_only_discharges_external_verification_at_critical(self):
+        result = surface.commit(
+            self.memory,
+            _correction("critical"),
+            "release branch main",
+            attestation=_attestation(),
+        )
+        self.assertTrue(result["committed"])
+        self.assertEqual(result["outcome"], policy.ALLOW_WITH_LEDGER)
+        self.assertEqual(result["decision"]["review_discharge"], "verified")
+        self.assertEqual(self.memory.state_version(TARGET), 2)
+
+    def test_commit_attestation_only_does_not_discharge_require_review(self):
+        result = surface.commit(
+            self.memory,
+            _correction("medium"),
+            "release branch main",
+            attestation=_attestation(),
+        )
+        self.assertFalse(result["committed"])
+        self.assertEqual(result["outcome"], policy.REQUIRE_REVIEW)
+        self.assertEqual(result["decision"]["review_discharge"], "")
+        self.assertEqual(self.memory.state_version(TARGET), 1)
+
+    def test_commit_attestation_only_still_enforces_proposal_binding(self):
+        result = surface.commit(
+            self.memory,
+            _correction("critical"),
+            "release branch main",
+            attestation=_attestation("proposal:wrong"),
+        )
+        self.assertFalse(result["committed"])
+        self.assertEqual(result["outcome"], policy.REQUIRE_EXTERNAL_VERIFICATION)
+        self.assertIn("attestation_not_bound_to_proposal", result["decision"]["reasons"])
+        self.assertEqual(self.memory.state_version(TARGET), 1)
 
     def test_recall_returns_candidates_and_admissions(self):
         fact = self.memory.current_fact_uuid(TARGET)
