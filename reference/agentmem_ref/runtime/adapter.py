@@ -188,10 +188,10 @@ class GovernedMemoryAdapter:
     ) -> policy.Decision:
         """Evaluate without writing, through this adapter's own verifier registry.
 
-        Sprint 4a (LD5): the public ``approve`` stage. The selection mirrors
-        ``governed_delete``: qualified evidence (with an optional attestation),
-        else an attestation alone, else the base evaluation. ``commit_proposal``
-        keeps its own two-way selection; see the public contract document.
+        Sprint 4a (LD5): the public ``approve`` stage. Qualified evidence (with
+        an optional attestation) uses the evidence path; an attestation alone
+        uses external verification; otherwise the base evaluation runs. The
+        governed commit and delete paths use the same selection.
         """
         if evidence:
             from ..core.evidence_qualification import group_by_dependence
@@ -224,9 +224,13 @@ class GovernedMemoryAdapter:
         ADR-037's sequencing principle forbids.
 
         `evidence` is optional and defaults to None, so a caller that supplies
-        none behaves exactly as before -- it simply parks where it used to
-        discharge on assertion. Supplying evidence routes through
-        `policy.evaluate_with_qualified_evidence`, which enforces R5's ladder.
+        none behaves exactly as before unless it supplies an `attestation` for
+        an existing external-verification authority path. Supplying evidence
+        routes through `policy.evaluate_with_qualified_evidence`, which enforces
+        R5's ladder. Supplying only an attestation routes through
+        `policy.evaluate_with_external_verification`; that evaluator changes
+        only `require_external_verification` outcomes and leaves ordinary
+        `require_review` parked.
 
         **There is deliberately no `verifiers=` parameter.** Verifier trust is
         held by this adapter's `verifier_registry`, configured by the host that
@@ -257,6 +261,8 @@ class GovernedMemoryAdapter:
                 ),
                 attestation=attestation,
             )
+        elif attestation is not None:
+            decision = policy.evaluate_with_external_verification(proposal, attestation)
         else:
             decision = policy.evaluate(proposal)
         authorize_event = self._event(
