@@ -97,12 +97,14 @@ def governed_adapter(substrate, tenant, clock, corpus, **kw):
 
 
 def commit_adjudicated(adapter, corpus, proposal, fact_text, *, pre_state,
-                       criterion="value-correction", episode=None):
+                       criterion="value-correction", episode=None,
+                       attestation=None):
     """Commit with evidence from a rule the evaluator already held.
 
     Returns the commit result. When no rule covers the transition the evidence
     is empty and the proposal parks — deliberately, rather than being given
-    something that looks like evidence.
+    something that looks like evidence. ``attestation`` remains a separate
+    authority input; passing both preserves ADR-037's evidence/authority split.
     """
     evidence = corpus.evidence_for(
         target_reference=proposal.target_reference,
@@ -110,11 +112,13 @@ def commit_adjudicated(adapter, corpus, proposal, fact_text, *, pre_state,
         pre_state=pre_state,
         proposed_value=fact_text,
     )
-    return adapter.commit_proposal(proposal, fact_text, episode, evidence=evidence)
+    return adapter.commit_proposal(
+        proposal, fact_text, episode, evidence=evidence, attestation=attestation
+    )
 
 
 def attestation_for(proposal: policy.Proposal, *, principal: str = "human:reviewer"):
-    """A separated human-confirmation attestation, for high/critical fixtures."""
+    """A separated human-confirmation attestation, for governed authority fixtures."""
     return policy.ExternalVerification(
         bound_proposal_id=proposal.proposal_id,
         verifier_principal_id=principal,
