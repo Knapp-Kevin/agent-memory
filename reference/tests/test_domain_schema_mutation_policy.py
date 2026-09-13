@@ -1,5 +1,6 @@
 """Focused policy cases for PAMA 1.2 domain-schema mutation."""
 
+from dataclasses import replace
 import unittest
 
 from tests.qualified_fixtures import corpus_for, registry_for, rule
@@ -113,11 +114,7 @@ class DomainSchemaMutationPolicyTests(unittest.TestCase):
         self.assertIn("attestation_self_verified", self_verified.reasons)
 
     def test_scope_change_argument_cannot_disagree_with_proposal(self):
-        proposal = make_proposal(risk="high")
-        proposal = policy.replace(proposal, requested_scope_change="project -> tenant") if hasattr(policy, "replace") else proposal
-        # Proposal does not expose a helper; construct the disagreement directly.
-        if not proposal.requested_scope_change:
-            proposal = policy.Proposal(**{**proposal.__dict__, "requested_scope_change": "project -> tenant"})
+        proposal = replace(make_proposal(risk="high"), requested_scope_change="project -> tenant")
         with self.assertRaisesRegex(ValueError, "requested_scope_change disagrees"):
             dsm.evaluate(proposal, requested_scope_change="project -> global")
 
